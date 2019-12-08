@@ -56,7 +56,7 @@ inline float Degree(const float &rad) {
 
 template<class T>
 inline T Lerp(const T &t, const T &a, const T &b) {
-	return t * a + (1 - t) * b;
+	return a + t * (b - a);
 }
 template<class T>
 inline T Clamp(const T &t, const T  &low, const T &high) {
