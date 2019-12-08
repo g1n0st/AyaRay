@@ -160,7 +160,7 @@ private:
 		if (m_repeat > 0) {
 			return (int)fmodf((float)(x + 1), m_repeat);
 		}
-		return x;
+		return x + 1;
 	}
 	inline float grad(const int &hash, const float &x, const float &y, const float &z) const {
 		int h = hash & 15;
@@ -216,23 +216,24 @@ public:
 		int bbb = PERLIN_PERM[PERLIN_PERM[PERLIN_PERM[inc(xi)] + inc(yi)] + inc(zi)];
 
 		float x1, x2, y1, y2;
-		x1 = Lerp(grad(aaa, xf, yf, zf),
-			grad(baa, xf - 1.f, yf, zf),
-			u);
-		x2 = Lerp(grad(aba, xf, yf - 1.f, zf),
-			grad(bba, xf - 1.f, yf - 1.f, zf),
-			u);
-		y1 = Lerp(x1, x2, v);
+		x1 = Lerp(u,
+			grad(aaa, xf, yf, zf),
+			grad(baa, xf - 1.f, yf, zf));
+		x2 = Lerp(u,
+			grad(aba, xf, yf - 1.f, zf),
+			grad(bba, xf - 1.f, yf - 1.f, zf));
+		y1 = Lerp(v, x1, x2);
 
-		x1 = Lerp(grad(aab, xf, yf, zf - 1.f),
-			grad(bab, xf - 1.f, yf, zf - 1.f),
-			u);
-		x2 = Lerp(grad(abb, xf, yf - 1.f, zf - 1.f),
-			grad(bbb, xf - 1.f, yf - 1.f, zf - 1.f),
-			u);
-		y2 = Lerp(x1, x2, v);
+		x1 = Lerp(u,
+			grad(aab, xf, yf, zf - 1.f),
+			grad(bab, xf - 1.f, yf, zf - 1.f));
+		x2 = Lerp(u,
+			grad(abb, xf, yf - 1.f, zf - 1.f),
+			grad(bbb, xf - 1.f, yf - 1.f, zf - 1.f));
+		y2 = Lerp(v, x1, x2);
 
-		return (Lerp(y1, y2, w) + 1.f) / 2.f;
+		float r = (Lerp(w, y1, y2) + 1.f) / 2.f;
+		return (Lerp(w, y1, y2) + 1.f) / 2.f;
 	}
 };
 
