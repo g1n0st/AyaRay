@@ -23,6 +23,16 @@ bool refract(const Vector3 &v, const Vector3 &n, float iot, Vector3& refracted) 
 
 class Material {
 public:
+#if defined(AYA_USE_SIMD)
+	inline void  *operator new(size_t i) {
+		return _mm_malloc(i, 16);
+	}
+
+	inline void operator delete(void *p) {
+		_mm_free(p);
+	}
+#endif
+
 	virtual bool intersect(const Ray &r_in, const SurfaceInteraction &si, Vector3 &attenuation, Ray &scattered) const = 0;
 	virtual Vector3 emitted(float u, float v, const Vector3 &p) const {
 		return Vector3(0.f, 0.f, 0.f);
