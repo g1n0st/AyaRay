@@ -407,6 +407,14 @@ public:
 		return BaseVector3(dot(v0), dot(v1), dot(v2));
 #endif
 	}
+
+	friend inline std::ostream &operator<<(std::ostream &os, const BaseVector3 &v) {
+		os << "[ " << AYA_SCALAR_OUTPUT(v.m_val[0])
+			<< ", " << AYA_SCALAR_OUTPUT(v.m_val[1])
+			<< ", " << AYA_SCALAR_OUTPUT(v.m_val[2])
+			<< " ]";
+		return os;
+	}
 };
 
 __declspec(align(16))

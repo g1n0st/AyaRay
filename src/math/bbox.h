@@ -136,6 +136,11 @@ public:
 #endif
 			return *this;
 		}
+
+		friend inline std::ostream &operator<<(std::ostream &os, const BBox &b) {
+			os << "[pmin = " << b.m_pmin << ", pmax = " << b.m_pmax << "]";
+			return os;
+		}
 };
 
 #endif

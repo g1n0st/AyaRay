@@ -2,6 +2,7 @@
 #define AYA_CONFIG_H
 
 #define AYA_DEBUG
+#include <iostream>
 
 #ifdef _WIN32
 #if  defined(__GNUC__)	// it should handle both MINGW and CYGWIN

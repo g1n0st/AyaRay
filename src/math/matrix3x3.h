@@ -507,6 +507,14 @@ public:
 		const int &r2, const int &c2) const {
 		return m_el[r1][c1] * m_el[r2][c2] - m_el[r1][c2] * m_el[r2][c1];
 	}
+
+	/**@brief cout debug function of Matrix3x3 */
+	friend inline std::ostream &operator<<(std::ostream &os, const Matrix3x3 &v) {
+		os << "[" << v.m_el[0] << ",\n";
+		os << " " << v.m_el[1] << ",\n";
+		os << " " << v.m_el[2] << "]";
+		return os;
+	}
 };
 
 #endif

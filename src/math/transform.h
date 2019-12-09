@@ -311,6 +311,13 @@ public:
 
 		return ret;
 	}
+
+	friend inline std::ostream &operator<<(std::ostream &os, const Transform &t) {
+		os << t.m_mat << ",\n";
+		os << t.m_inv << ",\n";
+		os << t.m_trans;
+		return os;
+	}
 };
 
 #endif

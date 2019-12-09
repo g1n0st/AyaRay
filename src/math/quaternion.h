@@ -623,8 +623,7 @@ public:
 		const float product = dot(q) / magnitude;
 		const float absproduct = fabsf(product);
 
-		if (absproduct < 1.0f - SIMD_EPSILON)
-		{
+		if (absproduct < 1.0f - SIMD_EPSILON) {
 			// Take care of long angle case see http://en.wikipedia.org/wiki/Slerp
 			const float theta = cosf(absproduct);
 			const float d = sinf(theta);
@@ -640,10 +639,19 @@ public:
 				(m_val[2] * s0 + q.z() * s1),
 				(m_val[3] * s0 + q.w() * s1));
 		}
-		else
-		{
+		else {
 			return *this;
 		}
+	}
+
+	/**@brief cout debug function of Quaternion */
+	friend inline std::ostream &operator<<(std::ostream &os, const Quaternion &q) {
+		os << "[ " << AYA_SCALAR_OUTPUT(q.m_val[0])
+			<< ", " << AYA_SCALAR_OUTPUT(q.m_val[1])
+			<< ", " << AYA_SCALAR_OUTPUT(q.m_val[2])
+			<< ", " << AYA_SCALAR_OUTPUT(q.m_val[3])
+			<< " ]";
+		return os;
 	}
 };
 

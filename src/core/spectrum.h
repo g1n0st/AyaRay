@@ -254,6 +254,14 @@ public:
 		m_val[2] = Sqrt(m_val[2]);
 		return *this;
 	}
+
+	friend inline std::ostream &operator<<(std::ostream &os, const Spectrum &v) {
+		os << "[ " << AYA_SCALAR_OUTPUT(v.m_val[0])
+			<< ", " << AYA_SCALAR_OUTPUT(v.m_val[1])
+			<< ", " << AYA_SCALAR_OUTPUT(v.m_val[2])
+			<< " ]";
+		return os;
+	}
 };
 
 #endif

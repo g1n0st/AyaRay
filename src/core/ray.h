@@ -26,6 +26,13 @@ public:
 	inline Point3 operator() (const float &t) const {
 		return m_ori + m_dir * t;
 	}
+
+	/**@brief cout debug function of Ray */
+	friend __forceinline std::ostream &operator<<(std::ostream &os, const Ray &r) {
+		os << "[ ori = " << r.m_ori << ", dir = " << r.m_dir << ", maxt = " << r.m_maxt
+			<< ", time = " << r.m_time << "]";
+		return os;
+	}
 };
 
 #endif
