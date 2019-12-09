@@ -90,10 +90,10 @@ public:
 #if defined(AYA_USE_SIMD)
 		return (0xf == _mm_movemask_ps((__m128)_mm_cmpeq_ps(m_val128, s.m_val128)));
 #else
-		return ((m_val[0] == v.m_val[0]) &&
-			(m_val[1] == v.m_val[1]) &&
-			(m_val[2] == v.m_val[2]) &&
-			(m_val[3] == v.m_val[3]));
+		return ((m_val[0] == s.m_val[0]) &&
+			(m_val[1] == s.m_val[1]) &&
+			(m_val[2] == s.m_val[2]) &&
+			(m_val[3] == s.m_val[3]));
 #endif
 	}
 	inline bool operator != (const Spectrum &s) const {
@@ -104,18 +104,18 @@ public:
 #if defined(AYA_USE_SIMD)
 		m_val128 = _mm_max_ps(m_val128, s.m_val128);
 #else
-		SetMax(m_val[0], v.m_val[0]);
-		SetMax(m_val[1], v.m_val[1]);
-		SetMax(m_val[2], v.m_val[2]);
+		SetMax(m_val[0], s.m_val[0]);
+		SetMax(m_val[1], s.m_val[1]);
+		SetMax(m_val[2], s.m_val[2]);
 #endif
 	}
 	inline void setMin(const Spectrum &s) {
 #if defined(AYA_USE_SIMD)
 		m_val128 = _mm_min_ps(m_val128, s.m_val128);
 #else
-		SetMin(m_val[0], v.m_val[0]);
-		SetMin(m_val[1], v.m_val[1]);
-		SetMin(m_val[2], v.m_val[2]);
+		SetMin(m_val[0], s.m_val[0]);
+		SetMin(m_val[1], s.m_val[1]);
+		SetMin(m_val[2], s.m_val[2]);
 #endif
 	}
 	inline void setZero() {
@@ -137,18 +137,18 @@ public:
 #if defined(AYA_USE_SIMD)
 		return Spectrum(_mm_add_ps(m_val128, s.m_val128));
 #else
-		return Spectrum(m_val[0] + v.m_val[0],
-			m_val[1] + v.m_val[1],
-			m_val[2] + v.m_val[2]);
+		return Spectrum(m_val[0] + s.m_val[0],
+			m_val[1] + s.m_val[1],
+			m_val[2] + s.m_val[2]);
 #endif
 	}
 	inline Spectrum & operator += (const Spectrum &s) {
 #if defined(AYA_USE_SIMD)
 		m_val128 = _mm_add_ps(m_val128, s.m_val128);
 #else
-		m_val[0] += v.m_val[0];
-		m_val[1] += v.m_val[1];
-		m_val[2] += v.m_val[2];
+		m_val[0] += s.m_val[0];
+		m_val[1] += s.m_val[1];
+		m_val[2] += s.m_val[2];
 #endif
 		numericValid(1);
 		return *this;
@@ -157,18 +157,18 @@ public:
 #if defined(AYA_USE_SIMD)
 		return Spectrum(_mm_sub_ps(m_val128, s.m_val128));
 #else
-		return Spectrum(m_val[0] - v.m_val[0],
-			m_val[1] - v.m_val[1],
-			m_val[2] - v.m_val[2]);
+		return Spectrum(m_val[0] - s.m_val[0],
+			m_val[1] - s.m_val[1],
+			m_val[2] - s.m_val[2]);
 #endif
 	}
 	inline Spectrum & operator -= (const Spectrum &s) {
 #if defined(AYA_USE_SIMD)
 		m_val128 = _mm_sub_ps(m_val128, s.m_val128);
 #else
-		m_val[0] -= v.m_val[0];
-		m_val[1] -= v.m_val[1];
-		m_val[2] -= v.m_val[2];
+		m_val[0] -= s.m_val[0];
+		m_val[1] -= s.m_val[1];
+		m_val[2] -= s.m_val[2];
 #endif
 		numericValid(1);
 		return *this;
@@ -185,18 +185,18 @@ public:
 #if defined(AYA_USE_SIMD)
 		return Spectrum(_mm_mul_ps(m_val128, s.m_val128));
 #else
-		return Spectrum(m_val[0] * v.m_val[0],
-			m_val[1] * v.m_val[1],
-			m_val[2] * v.m_val[2]);
+		return Spectrum(m_val[0] * s.m_val[0],
+			m_val[1] * s.m_val[1],
+			m_val[2] * s.m_val[2]);
 #endif
 	}
 	inline Spectrum & operator *= (const Spectrum &s) {
 #if defined(AYA_USE_SIMD)
 		m_val128 = _mm_mul_ps(m_val128, s.m_val128);
 #else
-		m_val[0] *= v.m_val[0];
-		m_val[1] *= v.m_val[1];
-		m_val[2] *= v.m_val[2];
+		m_val[0] *= s.m_val[0];
+		m_val[1] *= s.m_val[1];
+		m_val[2] *= s.m_val[2];
 #endif
 		numericValid(1);
 		return *this;
@@ -255,10 +255,10 @@ public:
 		return *this;
 	}
 
-	friend inline std::ostream &operator<<(std::ostream &os, const Spectrum &v) {
-		os << "[ " << AYA_SCALAR_OUTPUT(v.m_val[0])
-			<< ", " << AYA_SCALAR_OUTPUT(v.m_val[1])
-			<< ", " << AYA_SCALAR_OUTPUT(v.m_val[2])
+	friend inline std::ostream &operator<<(std::ostream &os, const Spectrum &s) {
+		os << "[ " << AYA_SCALAR_OUTPUT(s.m_val[0])
+			<< ", " << AYA_SCALAR_OUTPUT(s.m_val[1])
+			<< ", " << AYA_SCALAR_OUTPUT(s.m_val[2])
 			<< " ]";
 		return os;
 	}
