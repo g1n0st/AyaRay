@@ -28,7 +28,7 @@ public:
 	}
 };
 
-class Sphere : Shape {
+class Sphere : public Shape {
 public:
 	float m_radius;
 	Material *m_mat;
