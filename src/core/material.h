@@ -33,9 +33,9 @@ public:
 	}
 #endif
 
-	virtual bool scatter(const Ray &r_in, const SurfaceInteraction &si, Vector3 &attenuation, Ray &scattered) const = 0;
-	virtual Vector3 emitted(float u, float v, const Vector3 &p) const {
-		return Vector3(0.f, 0.f, 0.f);
+	virtual bool scatter(const Ray &r_in, const SurfaceInteraction &si, Spectrum &attenuation, Ray &scattered) const = 0;
+	virtual Spectrum emitted(float u, float v, const Vector3 &p) const {
+		return Spectrum(0.f, 0.f, 0.f);
 	}
 };
 
@@ -45,10 +45,10 @@ public:
 
 public:
 	DiffuseLight(Texture *light) : m_light(light) {}
-	virtual bool scatter(const Ray &r_in, const SurfaceInteraction &si, Vector3 &attenuation, Ray &scattered) const {
+	virtual bool scatter(const Ray &r_in, const SurfaceInteraction &si, Spectrum &attenuation, Ray &scattered) const {
 		return false;
 	}
-	virtual Vector3 emitted(float u, float v, const Vector3 &p) const {
+	virtual Spectrum emitted(float u, float v, const Vector3 &p) const {
 		return m_light->value(u, v, p);
 	}
 };
@@ -62,7 +62,7 @@ private:
 
 public:
 	IsotropicMaterial(Texture *albedo) : m_albedo(albedo) {}
-	virtual bool scatter(const Ray &r_in, const SurfaceInteraction &si, Vector3 &attenuation, Ray &scattered) const {
+	virtual bool scatter(const Ray &r_in, const SurfaceInteraction &si, Spectrum &attenuation, Ray &scattered) const {
 		scattered = Ray(si.p, (Vector3)rng.randomUnitDisk(), r_in.m_time);
 		attenuation = m_albedo->value(si.u, si.v, si.p);
 		return true;
@@ -79,7 +79,7 @@ private:
 public:
 	LambertianMaterial(Texture *albedo) : m_albedo(albedo) {}
 
-	virtual bool scatter(const Ray &r_in, const SurfaceInteraction &si, Vector3 &attenuation, Ray &scattered) const {
+	virtual bool scatter(const Ray &r_in, const SurfaceInteraction &si, Spectrum &attenuation, Ray &scattered) const {
 		Vector3 target = si.p + si.n + rng.randomUnitDisk();
 		scattered = Ray(si.p, target - si.p, r_in.m_time);
 		attenuation = m_albedo->value(si.u, si.v, si.p);
@@ -89,16 +89,16 @@ public:
 
 class MentalMaterial : public Material {
 public:
-	Vector3 m_albedo;
+	Spectrum m_albedo;
 	float m_fuzz;
 
 private:
 	mutable RNG rng;
 
 public:
-	MentalMaterial(const Vector3 &albedo, float fuzz) : m_albedo(albedo), m_fuzz(Min(fuzz, 1.f)) {}
+	MentalMaterial(const Spectrum &albedo, float fuzz) : m_albedo(albedo), m_fuzz(Min(fuzz, 1.f)) {}
 
-	virtual bool scatter(const Ray &r_in, const SurfaceInteraction &si, Vector3 &attenuation, Ray &scattered) const {
+	virtual bool scatter(const Ray &r_in, const SurfaceInteraction &si, Spectrum &attenuation, Ray &scattered) const {
 		Vector3 nd = r_in.m_dir;
 		nd.normalize();
 		
