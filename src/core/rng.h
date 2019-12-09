@@ -62,6 +62,14 @@ public:
 	inline float drand48() {
 		return Min(FLOAT_ONE_MINUS_EPSILON, rand32() * 2.3283064365386963e-10f);
 	}
+
+	Point3 randomUnitDisk() {
+		Point3 p;
+		do {
+			p = (Point3(drand48(), drand48(), 0.f) - Point3(1.f, 1.f, 0.f)) * 2.f;
+		} while (p.length2() >= 1.f);
+		return p;
+	}
 };
 
 // MT19937RNG 
@@ -117,17 +125,6 @@ public:
 };
 
 typedef PbrtRNG RNG;
-
-class RandomUnitDisk {
-public:
-	Point3 rand(RNG &rng) {
-		Point3 p;
-		do {
-			p = (Point3(rng.drand48(), rng.drand48(), 0.f) - Point3(1.f, 1.f, 0.f)) * 2.f;
-		} while (p.length2() >= 1.f);
-		return p;
-	}
-};
 
 // Hash lookup table as defined by Ken Perlin.  This is a randomly
 // arranged array of all numbers from 0-255 inclusive.

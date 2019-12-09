@@ -10,7 +10,7 @@ public:
 	virtual Ray getRay(const float &s, const float &t) const = 0;
 };
 
-class PerspectiveCamera : public Camera {
+class ProjectiveCamera : public Camera {
 public:
 	Point3 m_origin;
 	Vector3 m_horizontal, m_vertical, m_lower_left_corner;
@@ -22,8 +22,8 @@ private:
 	mutable RNG rng;
 
 public:
-	PerspectiveCamera() {}
-	PerspectiveCamera(const Point3 &lookform, const Point3 &lookat, const Vector3 &vup,
+	ProjectiveCamera() {}
+	ProjectiveCamera(const Point3 &lookform, const Point3 &lookat, const Vector3 &vup,
 		float vfov, float aspect, float aperture, float focus_dist, float t0, float t1) {
 		m_t0 = t0;
 		m_t1 = t1;
@@ -38,13 +38,13 @@ public:
 		m_u = vup.cross(m_w).normalize();
 		m_v = m_w.cross(m_u);
 
-		m_lower_left_corner = m_origin - (m_u * half_width - m_v * half_height - m_w) * focus_dist;
+		m_lower_left_corner = m_origin - (m_u * half_width + m_v * half_height + m_w) * focus_dist;
 		m_horizontal = m_u * half_width * focus_dist * 2;
 		m_vertical = m_v * half_height * focus_dist * 2;
 	}
 
 	Ray getRay(const float &s, const float &t) const {
-		Point3 rd = m_lens_radius * RandomUnitDisk().rand(rng);
+		Point3 rd = m_lens_radius * rng.randomUnitDisk();
 		Vector3 offset = rd.x() * m_u + rd.y() * m_v;
 		float time = Lerp(rng.drand48(), m_t0, m_t1);
 
