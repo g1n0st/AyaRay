@@ -78,10 +78,14 @@ public:
 			if (t < ray.m_maxt && t > ray.m_mint) {
 				(*hit_t) = t;
 				si->t = t;
-				si->p = (*o2w)(r(t));
+				si->p = r(t);
 				getUV(si->p / m_radius, &si->u, &si->v);
-				si->n = (*o2w)((Normal3)si->p.normalize());
+				si->n = si->p;
+				si->n.normalize();
 				si->mat = m_mat;
+
+				(*o2w)(si->p);
+				(*o2w)(si->n);
 
 				return true;
 			}
@@ -90,10 +94,14 @@ public:
 			if (t < ray.m_maxt && t > ray.m_mint) {
 				(*hit_t) = t;
 				si->t = t;
-				si->p = (*o2w)(r(t));
+				si->p = r(t);
 				getUV(si->p / m_radius, &si->u, &si->v);
-				si->n = (*o2w)((Normal3)si->p.normalize());
+				si->n = si->p;
+				si->n.normalize();
 				si->mat = m_mat;
+
+				(*o2w)(si->p);
+				(*o2w)(si->n);
 
 				return true;
 			}
