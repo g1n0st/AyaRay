@@ -3,6 +3,7 @@
 
 #include "vector3.h"
 
+__declspec(align(16))
 class BBox {
 public:
 		Point3 m_pmin, m_pmax;
@@ -21,6 +22,15 @@ public:
 			m_pmin = Point3(Min(p1.x(), p2.x()), Min(p1.y(), p2.y()), Min(p1.z(), p2.z()));
 #endif
 		}
+#if defined(AYA_USE_SIMD)
+		inline void  *operator new(size_t i) {
+			return _mm_malloc(i, 16);
+		}
+
+		inline void operator delete(void *p) {
+			_mm_free(p);
+		}
+#endif
 
 		inline bool overlaps(const BBox &b) const {
 #if defined(AYA_USE_SIMD)

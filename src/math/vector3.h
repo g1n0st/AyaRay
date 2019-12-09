@@ -31,7 +31,8 @@
 
 #endif
 
-struct BaseVector3 {
+__declspec(align(16)) 
+class BaseVector3 {
 #if defined(AYA_USE_SIMD)
 public:
 	union {
@@ -73,6 +74,15 @@ public:
 		m_val[3] = .0f;
 		numericValid(1);
 	}
+#if defined(AYA_USE_SIMD)
+	inline void  *operator new(size_t i) {
+		return _mm_malloc(i, 16);
+	}
+
+	inline void operator delete(void *p) {
+		_mm_free(p);
+	}
+#endif
 
 #if defined(AYA_USE_SIMD)
 	inline BaseVector3(const __m128 &v128) {
@@ -399,6 +409,7 @@ public:
 	}
 };
 
+__declspec(align(16))
 class Vector3 : public BaseVector3 {
 public:
 	Vector3() {}
@@ -408,6 +419,15 @@ public:
 		m_val[2] = z;
 		m_val[3] = .0f;
 	}
+#if defined(AYA_USE_SIMD)
+	inline void  *operator new(size_t i) {
+		return _mm_malloc(i, 16);
+	}
+
+	inline void operator delete(void *p) {
+		_mm_free(p);
+	}
+#endif
 
 #if defined(AYA_USE_SIMD)
 	inline Vector3(const __m128 &v128) {
@@ -435,6 +455,7 @@ public:
 #endif
 };
 
+__declspec(align(16))
 class Point3 : public BaseVector3 {
 public:
 	Point3() {}
@@ -444,6 +465,15 @@ public:
 		m_val[2] = z;
 		m_val[3] = .0f;
 	}
+#if defined(AYA_USE_SIMD)
+	inline void  *operator new(size_t i) {
+		return _mm_malloc(i, 16);
+	}
+
+	inline void operator delete(void *p) {
+		_mm_free(p);
+	}
+#endif
 
 #if defined(AYA_USE_SIMD)
 	inline Point3(const __m128 &v128) {
@@ -471,6 +501,7 @@ public:
 #endif
 };
 
+__declspec(align(16))
 class Normal3 : public BaseVector3 {
 public:
 	Normal3() {}
@@ -480,6 +511,15 @@ public:
 		m_val[2] = z;
 		m_val[3] = .0f;
 	}
+#if defined(AYA_USE_SIMD)
+	inline void  *operator new(size_t i) {
+		return _mm_malloc(i, 16);
+	}
+
+	inline void operator delete(void *p) {
+		_mm_free(p);
+	}
+#endif
 
 #if defined(AYA_USE_SIMD)
 	inline Normal3(const __m128 &v128) {

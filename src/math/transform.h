@@ -8,6 +8,7 @@
 
 #include "..\core\ray.h"
 
+__declspec(align(16))
 class Transform {
 public:
 	Matrix3x3 m_mat, m_inv;
@@ -36,6 +37,15 @@ public:
 		m_trans = rhs.m_trans;
 		return *this;
 	}
+#if defined(AYA_USE_SIMD)
+	inline void  *operator new(size_t i) {
+		return _mm_malloc(i, 16);
+	}
+
+	inline void operator delete(void *p) {
+		_mm_free(p);
+	}
+#endif
 
 	/**@brief Return the inverse of this transform */
 	inline Transform inverse() const {
@@ -295,8 +305,11 @@ public:
 		return ret;
 	}
 	inline Ray operator() (const Ray &r) const {
-		(*this)(r.m_ori);
-		(*this)(r.m_dir);
+		Ray ret = r;
+		ret.m_ori = (*this)(ret.m_ori);
+		ret.m_dir = (*this)(ret.m_dir);
+
+		return ret;
 	}
 };
 

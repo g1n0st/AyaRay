@@ -10,6 +10,7 @@
 #define vPPPM (_mm_set_ps(-0.0f, +0.0f, +0.0f, +0.0f))
 #endif
 
+__declspec(align(16))
 class Quaternion {
 #if defined(AYA_USE_SIMD)
 public:
@@ -54,6 +55,16 @@ public:
 		m_val[3] = w;
 		numericValid(1);
 	}
+#if defined(AYA_USE_SIMD)
+	inline void  *operator new(size_t i) {
+		return _mm_malloc(i, 16);
+	}
+
+	inline void operator delete(void *p) {
+		_mm_free(p);
+	}
+#endif
+
 	/**@brief Axis angle Constructor
 * @param axis The axis which the rotation is around
 * @param angle The magnitude of the rotation around the angle (Radians) */

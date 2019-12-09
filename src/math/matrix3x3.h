@@ -11,6 +11,7 @@
 #endif
 
 /**@brief The btMatrix3x3 class implements a 3x3 matrix, to perform linear algebra in combination with Quaternion, Transform and BaseVector3.*/
+__declspec(align(16))
 class Matrix3x3 {
 public:
 	BaseVector3 m_el[3];
@@ -49,6 +50,16 @@ public:
 
 		return *this;
 	}
+#if defined(AYA_USE_SIMD)
+	inline void  *operator new(size_t i) {
+		return _mm_malloc(i, 16);
+	}
+
+	inline void operator delete(void *p) {
+		_mm_free(p);
+	}
+#endif
+
 #else
 	inline Matrix3x3(const BaseVector3 &v0, const BaseVector3 &v1, const BaseVector3 &v2) {
 		m_el[0] = v0;
