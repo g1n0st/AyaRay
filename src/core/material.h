@@ -33,7 +33,7 @@ public:
 	}
 #endif
 
-	virtual bool intersect(const Ray &r_in, const SurfaceInteraction &si, Vector3 &attenuation, Ray &scattered) const = 0;
+	virtual bool scatter(const Ray &r_in, const SurfaceInteraction &si, Vector3 &attenuation, Ray &scattered) const = 0;
 	virtual Vector3 emitted(float u, float v, const Vector3 &p) const {
 		return Vector3(0.f, 0.f, 0.f);
 	}
@@ -45,7 +45,7 @@ public:
 
 public:
 	DiffuseLight(Texture *light) : m_light(light) {}
-	virtual bool intersect(const Ray &r_in, const SurfaceInteraction &si, Vector3 &attenuation, Ray &scattered) const {
+	virtual bool scatter(const Ray &r_in, const SurfaceInteraction &si, Vector3 &attenuation, Ray &scattered) const {
 		return false;
 	}
 	virtual Vector3 emitted(float u, float v, const Vector3 &p) const {
@@ -62,7 +62,7 @@ private:
 
 public:
 	IsotropicMaterial(Texture *albedo) : m_albedo(albedo) {}
-	virtual bool intersect(const Ray &r_in, const SurfaceInteraction &si, Vector3 &attenuation, Ray &scattered) const {
+	virtual bool scatter(const Ray &r_in, const SurfaceInteraction &si, Vector3 &attenuation, Ray &scattered) const {
 		scattered = Ray(si.p, (Vector3)rng.randomUnitDisk(), r_in.m_time);
 		attenuation = m_albedo->value(si.u, si.v, si.p);
 		return true;
@@ -79,7 +79,7 @@ private:
 public:
 	LambertianMaterial(Texture *albedo) : m_albedo(albedo) {}
 
-	virtual bool intersect(const Ray &r_in, const SurfaceInteraction &si, Vector3 &attenuation, Ray &scattered) const {
+	virtual bool scatter(const Ray &r_in, const SurfaceInteraction &si, Vector3 &attenuation, Ray &scattered) const {
 		Vector3 target = si.p + si.n + rng.randomUnitDisk();
 		scattered = Ray(si.p, target - si.p, r_in.m_time);
 		attenuation = m_albedo->value(si.u, si.v, si.p);
@@ -98,7 +98,7 @@ private:
 public:
 	MentalMaterial(const Vector3 &albedo, float fuzz) : m_albedo(albedo), m_fuzz(Min(fuzz, 1.f)) {}
 
-	virtual bool intersect(const Ray &r_in, const SurfaceInteraction &si, Vector3 &attenuation, Ray &scattered) const {
+	virtual bool scatter(const Ray &r_in, const SurfaceInteraction &si, Vector3 &attenuation, Ray &scattered) const {
 		Vector3 nd = r_in.m_dir;
 		nd.normalize();
 		
