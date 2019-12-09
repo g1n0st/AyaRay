@@ -11,6 +11,16 @@
 
 class Shape {
 public:
+#if defined(AYA_USE_SIMD)
+	inline void  *operator new(size_t i) {
+		return _mm_malloc(i, 16);
+	}
+
+	inline void operator delete(void *p) {
+		_mm_free(p);
+	}
+#endif
+
 	const Transform *o2w, *w2o;
 
 public:
