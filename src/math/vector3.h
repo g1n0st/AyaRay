@@ -31,7 +31,9 @@
 
 #endif
 
-__declspec(align(16)) 
+#if defined(AYA_USE_SIMD)
+__declspec(align(16))
+#endif
 class BaseVector3 {
 #if defined(AYA_USE_SIMD)
 public:
@@ -417,7 +419,9 @@ public:
 	}
 };
 
+#if defined(AYA_USE_SIMD)
 __declspec(align(16))
+#endif
 class Vector3 : public BaseVector3 {
 public:
 	Vector3() {}
@@ -463,7 +467,9 @@ public:
 #endif
 };
 
+#if defined(AYA_USE_SIMD)
 __declspec(align(16))
+#endif
 class Point3 : public BaseVector3 {
 public:
 	Point3() {}
@@ -509,7 +515,9 @@ public:
 #endif
 };
 
+#if defined(AYA_USE_SIMD)
 __declspec(align(16))
+#endif
 class Normal3 : public BaseVector3 {
 public:
 	Normal3() {}

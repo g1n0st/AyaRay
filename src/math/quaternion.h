@@ -10,7 +10,9 @@
 #define vPPPM (_mm_set_ps(-0.0f, +0.0f, +0.0f, +0.0f))
 #endif
 
+#if defined(AYA_USE_SIMD)
 __declspec(align(16))
+#endif
 class Quaternion {
 #if defined(AYA_USE_SIMD)
 public:

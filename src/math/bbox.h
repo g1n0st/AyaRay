@@ -3,7 +3,9 @@
 
 #include "vector3.h"
 
+#if defined(AYA_USE_SIMD)
 __declspec(align(16))
+#endif
 class BBox {
 public:
 		Point3 m_pmin, m_pmax;

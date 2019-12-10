@@ -8,7 +8,9 @@
 
 #include "..\core\ray.h"
 
+#if defined(AYA_USE_SIMD)
 __declspec(align(16))
+#endif
 class Transform {
 public:
 	Matrix3x3 m_mat, m_inv;
