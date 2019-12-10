@@ -95,7 +95,7 @@ public:
 
 private:
 	inline Vector3 reflect(const Vector3 &v, const Normal3 &n) const {
-		return v - v.dot(n) * n * 2;
+		return v - v.dot(n) * n * 2.f;
 	}
 };
 
@@ -126,7 +126,7 @@ public:
 		if (r_in.m_dir.dot(si.n) > 0) {
 			outward_normal = -si.n;
 			iot = m_refractive_idx;
-			cosine = iot * r_in.m_dir.dot(si.n) / r_in.m_dir.length();
+			cosine = m_refractive_idx * r_in.m_dir.dot(si.n) / r_in.m_dir.length();
 		}
 		// out to in
 		else {
@@ -136,7 +136,7 @@ public:
 		}
 
 		if (refract(r_in.m_dir, outward_normal, iot, refracted)) {
-			reflect_prob = schlick(cosine, iot);
+			reflect_prob = schlick(cosine, m_refractive_idx);
 		}
 		else {
 			scattered = Ray(si.p, reflected, r_in.m_time);
@@ -154,7 +154,7 @@ public:
 	}
 
 private:
-	inline bool refract(const Vector3 &v, const Vector3 &n, float iot, Vector3& refracted) const {
+	inline bool refract(const Vector3 &v, const Normal3 &n, float iot, Vector3& refracted) const {
 		Vector3 uv = v;
 		uv.normalize();
 
