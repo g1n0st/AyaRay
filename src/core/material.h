@@ -48,7 +48,7 @@ private:
 public:
 	IsotropicMaterial(Texture *albedo) : m_albedo(albedo) {}
 	virtual bool scatter(const Ray &r_in, const SurfaceInteraction &si, Spectrum &attenuation, Ray &scattered) const {
-		scattered = Ray(si.p, (Vector3)rng.randomUnitDisk(), r_in.m_time);
+		scattered = Ray(si.p, (Vector3)rng.randomInUnitSphere(), r_in.m_time);
 		attenuation = m_albedo->value(si.u, si.v, si.p);
 		return true;
 	}
@@ -65,7 +65,7 @@ public:
 	LambertianMaterial(Texture *albedo) : m_albedo(albedo) {}
 
 	virtual bool scatter(const Ray &r_in, const SurfaceInteraction &si, Spectrum &attenuation, Ray &scattered) const {
-		Vector3 target = si.p + si.n + rng.randomUnitDisk();
+		Vector3 target = si.p + si.n + rng.randomInUnitSphere();
 		scattered = Ray(si.p, target - si.p, r_in.m_time);
 		attenuation = m_albedo->value(si.u, si.v, si.p);
 		return true;
@@ -88,7 +88,7 @@ public:
 		nd.normalize();
 		
 		Vector3 reflected = reflect(nd, si.n);
-		scattered = Ray(si.p, reflected + rng.randomUnitDisk() * m_fuzz, r_in.m_time);
+		scattered = Ray(si.p, reflected + rng.randomInUnitSphere() * m_fuzz, r_in.m_time);
 		attenuation = m_albedo;
 		return scattered.m_dir.dot(si.n) > 0;
 	}

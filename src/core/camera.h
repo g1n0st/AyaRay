@@ -44,7 +44,7 @@ public:
 	}
 
 	Ray getRay(const float &s, const float &t) const {
-		Point3 rd = m_lens_radius * rng.randomUnitDisk();
+		Point3 rd = m_lens_radius * rng.randomInUnitDisk();
 		Vector3 offset = rd.x() * m_u + rd.y() * m_v;
 		float time = Lerp(rng.drand48(), m_t0, m_t1);
 
