@@ -84,8 +84,8 @@ public:
 				si->n.normalize();
 				si->mat = m_mat;
 
-				(*o2w)(si->p);
-				(*o2w)(si->n);
+				si->p = (*o2w)(si->p);
+				si->n = (*o2w)(si->n);
 
 				return true;
 			}
@@ -100,8 +100,8 @@ public:
 				si->n.normalize();
 				si->mat = m_mat;
 
-				(*o2w)(si->p);
-				(*o2w)(si->n);
+				si->p = (*o2w)(si->p);
+				si->n = (*o2w)(si->n);
 
 				return true;
 			}
