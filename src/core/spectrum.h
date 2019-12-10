@@ -254,6 +254,12 @@ public:
 		m_val[2] = Sqrt(m_val[2]);
 		return *this;
 	}
+	inline Spectrum & clamp(const float &low, const float &high) {
+		m_val[0] = Clamp(m_val[0], low, high);
+		m_val[1] = Clamp(m_val[1], low, high);
+		m_val[2] = Clamp(m_val[2], low, high);
+		return *this;
+	}
 
 	friend inline std::ostream &operator<<(std::ostream &os, const Spectrum &s) {
 		os << "[ " << AYA_SCALAR_OUTPUT(s.m_val[0])
