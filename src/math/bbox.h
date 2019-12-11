@@ -140,6 +140,23 @@ namespace Aya {
 				return *this;
 			}
 
+			inline bool intersect(const Ray &r) const {
+				float t0, t1;
+				float tmin = r.m_mint, tmax = r.m_maxt;
+				for (int a = 0; a < 3; a++) {
+					t0 = Min((m_pmin[a] - r.m_ori[a]) / r.m_dir[a],
+						(m_pmax[a] - r.m_ori[a]) / r.m_dir[a]);
+					t1 = Max((m_pmin[a] - r.m_ori[a]) / r.m_dir[a],
+						(m_pmax[a] - r.m_ori[a]) / r.m_dir[a]);
+					tmin = Max(t0, tmin);
+					tmax = Min(t1, tmax);
+					if (tmax <= tmin) {
+						return false;
+					}
+				}
+				return true;
+			}
+
 			friend inline std::ostream &operator<<(std::ostream &os, const BBox &b) {
 				os << "[pmin = " << b.m_pmin << ", pmax = " << b.m_pmax << "]";
 				return os;
