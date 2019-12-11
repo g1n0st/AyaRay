@@ -8,26 +8,21 @@
 namespace Aya {
 	class Integrator {
 	public:
-		virtual Spectrum li(const Ray &ray, GeometricPrimitive **prim, int shape_size, int depth) const = 0;
+		virtual Spectrum li(const Ray &ray, Accelerator *acclerator, int depth) const = 0;
 	};
 
 	class SampleIntegrator : Integrator {
 	public:
-		virtual Spectrum li(const Ray &ray, GeometricPrimitive **prim, int shape_size, int depth) const {
+		virtual Spectrum li(const Ray &ray, Accelerator *acclerator, int depth) const {
 			SurfaceInteraction si;
-			bool hit_object = false;
-			for (int i = 0; i < shape_size; i++) {
-				if (prim[i]->intersect(ray, &si)) {
-					hit_object = true;
-				}
-			}
+			bool hit_object = acclerator->intersect(ray, &si);
 			if (hit_object) {
 				Ray scatter;
 				Spectrum attenuation;
 
 				Spectrum emitted = si.prim->m_material->emitted(si.u, si.v, si.p);
 				if (depth < 50 && si.prim->m_material->scatter(ray, si, attenuation, scatter)) {
-					return (emitted + attenuation * li(scatter, prim, shape_size, depth + 1)).clamp(0.f, 1.f);
+					return (emitted + attenuation * li(scatter, acclerator, depth + 1)).clamp(0.f, 1.f);
 				}
 				else {
 					return emitted;

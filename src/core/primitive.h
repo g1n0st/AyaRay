@@ -30,5 +30,17 @@ namespace Aya {
 		virtual bool intersect(const Ray &ray, SurfaceInteraction *si) const;
 		virtual void refine(std::vector<SharedPtr<Primitive> > &refined) const;
 	};
+
+	class Accelerator : public Primitive {
+	public:
+		Accelerator() {}
+
+		virtual void construct(std::vector<SharedPtr<Primitive> > prims) = 0;
+		virtual BBox worldBound() const = 0;
+		virtual bool canIntersect() {
+			return false;
+		}
+		virtual bool intersect(const Ray &ray, SurfaceInteraction *si) const = 0;
+	};
 }
 #endif
