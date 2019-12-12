@@ -139,11 +139,11 @@ namespace Aya {
 				+ b2 * m_mesh->m_n[m_v[2]]));
 		}
 		else {
-			Normal3 nn = e1.cross(e2);
+			Normal3 nn = (*o2w)((Normal3)e1.cross(e2).normalize());
 			if (nn.dot(ray.m_dir) > 0) {
 				nn = -nn;
 			}
-			si->n = (*o2w)(nn);
+			si->n = nn;
 		}
 		si->u = b0 * uvs[0][0] + b1 * uvs[1][0] + b2 * uvs[2][0];
 		si->v = b0 * uvs[0][1] + b1 * uvs[1][1] + b2 * uvs[2][1];
