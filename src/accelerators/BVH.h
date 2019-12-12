@@ -50,6 +50,10 @@ namespace Aya {
 		BVHAccel() {
 			m_root = NULL;
 		}
+		~BVHAccel() {
+			freeNode(&m_root);
+			m_prims.clear();
+		}
 
 		virtual void construct(std::vector<SharedPtr<Primitive> > prims);
 		virtual BBox worldBound() const;
@@ -61,6 +65,7 @@ namespace Aya {
 	private:
 		bool intersect(BVHNode *node, const Ray &ray, SurfaceInteraction *si) const;
 		void construct(BVHNode **node, const int &L, const int &R);
+		void freeNode(BVHNode **node);
 	};
 }
 

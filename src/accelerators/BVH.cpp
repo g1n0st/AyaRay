@@ -94,4 +94,13 @@ namespace Aya {
 		construct(&(*node)->r_l, mid + 1, R);
 		(*node)->unity();
 	}
+	void BVHAccel::freeNode(BVHNode **node) {
+		if ((*node)->l_l != NULL) {
+			freeNode(&(*node)->l_l);
+		}
+		if ((*node)->r_l != NULL) {
+			freeNode(&(*node)->r_l);
+		}
+		delete *node;
+	}
 }
