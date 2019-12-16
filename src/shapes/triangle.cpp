@@ -122,7 +122,7 @@ namespace Aya {
 		}
 
 		float t = e2.dot(s2) * inv_div;
-		if (t >= ray.m_maxt - SIMD_EPSILON || t <= ray.m_mint + SIMD_EPSILON) {
+		if (t >= ray.m_maxt || t <= ray.m_mint) {
 			return false;
 		}
 
@@ -132,11 +132,12 @@ namespace Aya {
 
 		(*hit_t) = t;
 		si->t = t;
-		si->p = ray(t);
+		//si->p = ray(t);
+		si->p = b0 * p1 + b1 * p2 + b2 * p3;
 		if (m_mesh->m_n != NULL) {
 			si->n = (*o2w)((Normal3)(b0 * m_mesh->m_n[m_v[0]]
 				+ b1 * m_mesh->m_n[m_v[1]]
-				+ b2 * m_mesh->m_n[m_v[2]]));
+				+ b2 * m_mesh->m_n[m_v[2]]).normalize());
 		}
 		else {
 			Normal3 nn = (*o2w)((Normal3)e1.cross(e2).normalize());
