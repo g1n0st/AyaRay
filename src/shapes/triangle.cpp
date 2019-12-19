@@ -132,8 +132,8 @@ namespace Aya {
 
 		(*hit_t) = t;
 		si->t = t;
-		//si->p = ray(t);
-		si->p = b0 * p1 + b1 * p2 + b2 * p3;
+		si->p = ray(t - SIMD_EPSILON);
+		//si->p = b0 * p1 + b1 * p2 + b2 * p3;
 		if (m_mesh->m_n != NULL) {
 			si->n = (*o2w)((Normal3)(b0 * m_mesh->m_n[m_v[0]]
 				+ b1 * m_mesh->m_n[m_v[1]]
