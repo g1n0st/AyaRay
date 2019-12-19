@@ -34,7 +34,7 @@ namespace Aya {
 				ud.normalize();
 
 				float t = .5f * (ud.y() + 1.f);
-				return ((1.f - t) * Spectrum(.5f, .5f, .5f) + t * Spectrum(.5f, .7f, 1.f)).clamp(0.0f, 1.0f);
+				return ((1.f - t) * Spectrum(.15f, .15f, .15f) + t * Spectrum(.5f, .7f, 1.f)).clamp(0.0f, 1.0f) * 0.3f;
 			}
 		}
 	};
