@@ -8,12 +8,12 @@
 namespace Aya {
 	class Integrator {
 	public:
-		virtual Spectrum li(const Ray &ray, Accelerator *acclerator, int depth) const = 0;
+		virtual Spectrum li(const Ray &ray, SharedPtr<Accelerator> acclerator, int depth) const = 0;
 	};
 
-	class SampleIntegrator : Integrator {
+	class SampleIntegrator : public Integrator {
 	public:
-		virtual Spectrum li(const Ray &ray, Accelerator *acclerator, int depth) const {
+		virtual Spectrum li(const Ray &ray, SharedPtr<Accelerator> acclerator, int depth) const {
 			SurfaceInteraction si;
 			bool hit_object = acclerator->intersect(ray, &si);
 			if (hit_object) {
