@@ -7,6 +7,11 @@
 #include "config.h"
 #include "scene.h"
 
+#include "../shapes/rectangle.h"
+#include "../shapes/sphere.h"
+#include "../shapes/triangle.h"
+#include "../accelerators/BVH.h"
+
 namespace Aya {
 	class Parser {
 	public:
@@ -26,8 +31,6 @@ namespace Aya {
 		Parser();
 		
 		void load(const char *file);
-		//void loadObj(const char *file, int &ts, int &vs, int *vv, Point3 *pp, Normal3 *nn);
-		//void loadObjs(const char *file, int &ts, int &vs, int *vv, Point3 *pp);
 		void run(Scene *scene);
 
 	private:
@@ -54,6 +57,41 @@ namespace Aya {
 
 		inline void READ_CONFIG();
 		inline void READ_CAMERA();
+
+		inline void READ_TRANSFORMS();
+		inline Transform READ_TRANSFORM();
+		inline Transform READ_TRANSLATE();
+		inline Transform READ_SCALE();
+		inline Transform READ_EULER_ZYX();
+		inline Transform READ_EULER_YPR();
+		inline Transform READ_ROTAION();
+		inline Transform READ_ROTATEX();
+		inline Transform READ_ROTATEY();
+		inline Transform READ_ROTATEZ();
+
+		inline void READ_SHAPES();
+		inline void READ_SHAPE();
+		inline void READ_RECTANGLE();
+		inline void READ_SPHERE();
+		inline void READ_TRIANGLE_MESH();
+
+		void loadObj(const char *file, int &ts, int &vs, int **vv, Point3 **pp, Normal3 **nn);
+		void loadObjs(const char *file, int &ts, int &vs, int **vv, Point3 **pp);
+		
+		inline Texture * READ_CONSTANT_TEXTURE();
+		inline Texture * READ_CROSS_TEXTURE();
+		inline Texture * READ_NOISE_TEXTURE();
+		inline Texture * READ_TEXTURE();
+
+		inline void READ_MENTAL_MATERIAL();
+		inline void READ_DIFFUSE_MATERIAL();
+		inline void READ_LAMBERTIAN_MATERIAL();
+		inline void READ_DIELECTRIC_MATERIAL();
+		inline void READ_MATERIAL();
+		inline void READ_MATERIALS();
+
+		inline void READ_PRIMITIVES();
+		inline void READ_PRIMITIVE();
 	};
 }
 
