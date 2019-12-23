@@ -114,39 +114,46 @@ namespace Aya {
 	}
 	inline BaseVector3 Parser::READ_VECTOR() {
 		float x = 0, y = 0, z = 0;
+		bool r_x = false, r_y = false, r_z = false;
 		READ_BRACE_BEGIN();
 		do {
 			std::string index = READ_INDEX();
-			if (index == "x") x = READ_FLOAT();
-			if (index == "y") y = READ_FLOAT();
-			if (index == "z") z = READ_FLOAT();
+			if (index == "x" && !r_x) x = READ_FLOAT(), r_x = true;
+			else if (index == "y" && !r_y) y = READ_FLOAT(), r_y = true;
+			else if (index == "z" && !r_z) z = READ_FLOAT(), r_z = true;
+			else Assert(0);
 		} while (!READ_BRACE_ELEMENT_END());
+		Assert(r_x && r_y && r_z);
 		READ_BRACE_END();
 		return BaseVector3(x, y, z);
 	}
 	inline Spectrum Parser::READ_SPECTRUM1() {
 		float r = 0, g = 0, b = 0;
+		bool r_r = false, r_g = false, r_b = false;
 		READ_BRACE_BEGIN();
 		do {
 			std::string index = READ_INDEX();
-			if (index == "r") r = READ_FLOAT();
-			else if (index == "g") g = READ_FLOAT();
-			else if (index == "b") b = READ_FLOAT();
+			if (index == "r" && !r_r) r = READ_FLOAT(), r_r = true;
+			else if (index == "g" && !r_g) g = READ_FLOAT(), r_g = true;
+			else if (index == "b" && !r_b) b = READ_FLOAT(), r_b = true;
 			else Assert(0);
 		} while (!READ_BRACE_ELEMENT_END());
+		Assert(r_r && r_g && r_b);
 		READ_BRACE_END();
 		return Spectrum(r, g, b);
 	}
 	inline Spectrum Parser::READ_SPECTRUM256() {
 		float r = 0, g = 0, b = 0;
+		bool r_r = false, r_g = false, r_b = false;
 		READ_BRACE_BEGIN();
 		do {
 			std::string index = READ_INDEX();
-			if (index == "r") r = READ_FLOAT();
-			else if (index == "g") g = READ_FLOAT();
-			else if (index == "b") b = READ_FLOAT();
+			if (index == "r" && !r_r) r = READ_FLOAT(), r_r = true;
+			else if (index == "g" && !r_g) g = READ_FLOAT(), r_g = true;
+			else if (index == "b" && !r_b) b = READ_FLOAT(), r_b = true;
 			else Assert(0);
 		} while (!READ_BRACE_ELEMENT_END());
+		Assert(r_r && r_g && r_b);
 		READ_BRACE_END();
 		return Spectrum(r / 256.0, g / 256.0, b / 256.0);
 	}
@@ -159,11 +166,12 @@ namespace Aya {
 
 	inline void Parser::READ_CONFIG() {
 		READ_BRACE_BEGIN();
+		bool r_sx = false, r_sy = false, r_st = false;
 		do {
 			std::string index = READ_INDEX();
-			if (index == "screen_x") m_sx = READ_INT();
-			else if (index == "screen_y") m_sy = READ_INT();
-			else if (index == "sample_times") m_st = READ_INT();
+			if (index == "screen_x" && !r_sx) m_sx = READ_INT(), r_sx = true;
+			else if (index == "screen_y" && !r_sy) m_sy = READ_INT(), r_sy = true;
+			else if (index == "sample_times" && !r_st) m_st = READ_INT(), r_st = true;
 			else Assert(0);
 		} while (!READ_BRACE_ELEMENT_END());
 		READ_BRACE_END();
@@ -172,22 +180,22 @@ namespace Aya {
 		READ_BRACE_BEGIN();
 		BaseVector3 lookfrom, lookat, lookup;
 		float fov, aspect, aperture = .0f, focus_dist, t0 = .0f, t1 = 0;
-		bool l_lookfrom = false, l_lookat = false, l_lookup = false, l_fov = false, l_aspect = false, l_focus_dist = false;
+		bool r_lookfrom = false, r_lookat = false, r_lookup = false, r_fov = false, r_aspect = false, r_focus_dist = false;
 		do {
 			std::string index = READ_INDEX();
-			if (index == "lookfrom") lookfrom = READ_VECTOR(), l_lookfrom = true;
-			else if (index == "lookat") lookat = READ_VECTOR(), l_lookat = true;
-			else if (index == "lookup") lookup = READ_VECTOR(), l_lookup = true;
-			else if (index == "fov") fov = READ_FLOAT(), l_fov = true;
-			else if (index == "aspect") aspect = READ_FLOAT(), l_aspect = true;
+			if (index == "lookfrom" && !r_lookfrom) lookfrom = READ_VECTOR(), r_lookfrom = true;
+			else if (index == "lookat" && !r_lookat) lookat = READ_VECTOR(), r_lookat = true;
+			else if (index == "lookup" && !r_lookup) lookup = READ_VECTOR(), r_lookup = true;
+			else if (index == "fov" && !r_fov) fov = READ_FLOAT(), r_fov = true;
+			else if (index == "aspect" && !r_aspect) aspect = READ_FLOAT(), r_aspect = true;
 			else if (index == "aperture") aperture = READ_FLOAT();
-			else if (index == "focus_dist") focus_dist = READ_FLOAT(), l_focus_dist = true;
+			else if (index == "focus_dist" && !r_focus_dist) focus_dist = READ_FLOAT(), r_focus_dist = true;
 			else if (index == "t0") t0 = READ_FLOAT();
 			else if (index == "t1") t1 = READ_FLOAT();
 			else Assert(0);
 		} while (!READ_BRACE_ELEMENT_END());
 		READ_BRACE_END();
-		Assert(l_lookfrom && l_lookat && l_lookup && l_fov && l_aspect && l_focus_dist);
+		Assert(r_lookfrom && r_lookat && r_lookup && r_fov && r_aspect && r_focus_dist);
 		m_cam = new ProjectiveCamera(lookfrom, lookat, lookup, fov, aspect, aperture, focus_dist, t0, t1);
 		rd_cam = true;
 	}
@@ -217,9 +225,9 @@ namespace Aya {
 		READ_BRACE_BEGIN();
 		do {
 			std::string index = READ_INDEX();
-			if (index == "x") x = READ_FLOAT(), r_x = true;
-			else if (index == "y") y = READ_FLOAT(), r_y = true;
-			else if (index == "z") z = READ_FLOAT(), r_z = true;
+			if (index == "x" && !r_x) x = READ_FLOAT(), r_x = true;
+			else if (index == "y" && !r_y) y = READ_FLOAT(), r_y = true;
+			else if (index == "z" && !r_z) z = READ_FLOAT(), r_z = true;
 			else Assert(0);
 		} while (!READ_BRACE_ELEMENT_END());
 		READ_BRACE_END();
@@ -232,9 +240,9 @@ namespace Aya {
 		READ_BRACE_BEGIN();
 		do {
 			std::string index = READ_INDEX();
-			if (index == "x") x = READ_FLOAT(), r_x = true;
-			else if (index == "y") y = READ_FLOAT(), r_y = true;
-			else if (index == "z") z = READ_FLOAT(), r_z = true;
+			if (index == "x" && !r_x) x = READ_FLOAT(), r_x = true;
+			else if (index == "y" && !r_y) y = READ_FLOAT(), r_y = true;
+			else if (index == "z" && !r_z) z = READ_FLOAT(), r_z = true;
 			else Assert(0);
 		} while (!READ_BRACE_ELEMENT_END());
 		READ_BRACE_END();
@@ -247,9 +255,9 @@ namespace Aya {
 		READ_BRACE_BEGIN();
 		do {
 			std::string index = READ_INDEX();
-			if (index == "x") x = READ_FLOAT(), r_x = true;
-			else if (index == "y") y = READ_FLOAT(), r_y = true;
-			else if (index == "z") z = READ_FLOAT(), r_z = true;
+			if (index == "x" && !r_x) x = READ_FLOAT(), r_x = true;
+			else if (index == "y" && !r_y) y = READ_FLOAT(), r_y = true;
+			else if (index == "z" && !r_z) z = READ_FLOAT(), r_z = true;
 			else Assert(0);
 		} while (!READ_BRACE_ELEMENT_END());
 		READ_BRACE_END();
@@ -262,9 +270,9 @@ namespace Aya {
 		READ_BRACE_BEGIN();
 		do {
 			std::string index = READ_INDEX();
-			if (index == "y") y = READ_FLOAT(), r_y = true;
-			else if (index == "p") p = READ_FLOAT(), r_p = true;
-			else if (index == "r") r = READ_FLOAT(), r_r = true;
+			if (index == "y" && !r_y) y = READ_FLOAT(), r_y = true;
+			else if (index == "p" && !r_p) p = READ_FLOAT(), r_p = true;
+			else if (index == "r" && !r_r) r = READ_FLOAT(), r_r = true;
 			else Assert(0);
 		} while (!READ_BRACE_ELEMENT_END());
 		READ_BRACE_END();
@@ -277,8 +285,8 @@ namespace Aya {
 		bool r_axis = false, r_angle = false;
 		do {
 			std::string index = READ_INDEX();
-			if (index == "axis") axis = READ_VECTOR(), r_axis = true;
-			else if (index == "angle") angle = READ_FLOAT(), r_angle = true;
+			if (index == "axis" && !r_axis) axis = READ_VECTOR(), r_axis = true;
+			else if (index == "angle" && !r_angle) angle = READ_FLOAT(), r_angle = true;
 			else Assert(0);
 		} while (!READ_BRACE_ELEMENT_END());
 		READ_BRACE_END();
@@ -290,7 +298,7 @@ namespace Aya {
 		bool r_angle = false;
 		do {
 			std::string index = READ_INDEX();
-			if (index == "angle") angle = READ_FLOAT(), r_angle = true;
+			if (index == "angle" && !r_angle) angle = READ_FLOAT(), r_angle = true;
 			else Assert(0);
 		} while (!READ_BRACE_ELEMENT_END());
 		READ_BRACE_END();
@@ -302,7 +310,7 @@ namespace Aya {
 		bool r_angle = false;
 		do {
 			std::string index = READ_INDEX();
-			if (index == "angle") angle = READ_FLOAT(), r_angle = true;
+			if (index == "angle" && !r_angle) angle = READ_FLOAT(), r_angle = true;
 			else Assert(0);
 		} while (!READ_BRACE_ELEMENT_END());
 		READ_BRACE_END();
@@ -314,7 +322,7 @@ namespace Aya {
 		bool r_angle = false;
 		do {
 			std::string index = READ_INDEX();
-			if (index == "angle") angle = READ_FLOAT(), r_angle = true;
+			if (index == "angle" && !r_angle) angle = READ_FLOAT(), r_angle = true;
 			else Assert(0);
 		} while (!READ_BRACE_ELEMENT_END());
 		READ_BRACE_END();
@@ -356,9 +364,9 @@ namespace Aya {
 		do {
 			std::string str = READ_INDEX();
 			if (str == "transform") trans_id = READ_INT(), r_trans_id = true;
-			else if (str == "x") x = READ_FLOAT(), r_x = true;
-			else if (str == "y") y = READ_FLOAT(), r_y = true;
-			else if (str == "z") z = READ_FLOAT(), r_z = true;
+			else if (str == "x" && !r_x) x = READ_FLOAT(), r_x = true;
+			else if (str == "y" && !r_y) y = READ_FLOAT(), r_y = true;
+			else if (str == "z" && !r_z) z = READ_FLOAT(), r_z = true;
 			else Assert(0);
 		} while (!READ_BRACE_ELEMENT_END());
 		READ_BRACE_END();
@@ -372,9 +380,9 @@ namespace Aya {
 		bool normal = false, r_file_name = false, r_trans_id = false;
 		do {
 			std::string str = READ_INDEX();
-			if (str == "transform") trans_id = READ_INT(), r_trans_id = true;
+			if (str == "transform" && !r_trans_id) trans_id = READ_INT(), r_trans_id = true;
 			else if (str == "normal") normal = READ_BOOL();
-			else if (str == "file") file_name = READ_STRING(), r_file_name = true;
+			else if (str == "file" && !r_file_name) file_name = READ_STRING(), r_file_name = true;
 			else Assert(0);
 		} while (!READ_BRACE_ELEMENT_END());
 		READ_BRACE_END();
@@ -515,8 +523,8 @@ namespace Aya {
 		bool r_color = false;
 		do {
 			std::string str = READ_INDEX();
-			if (str == "spectrum(1)") color = READ_SPECTRUM1(), r_color = true;
-			else if (str == "spectrum(256)") color = READ_SPECTRUM256(), r_color = true;
+			if (str == "spectrum(1)" && !r_color) color = READ_SPECTRUM1(), r_color = true;
+			else if (str == "spectrum(256)" && !r_color) color = READ_SPECTRUM256(), r_color = true;
 			else Assert(0);
 		} while (!READ_BRACE_ELEMENT_END());
 		READ_BRACE_END();
@@ -529,8 +537,8 @@ namespace Aya {
 		bool r_t1 = false, r_t2 = false;
 		do {
 			std::string str = READ_INDEX();
-			if (str == "t1") t1 = READ_TEXTURE(), r_t1 = true;
-			else if (str == "t2") t2 = READ_TEXTURE(), r_t2 = true;
+			if (str == "t1" && !r_t1) t1 = READ_TEXTURE(), r_t1 = true;
+			else if (str == "t2" && !r_t2) t2 = READ_TEXTURE(), r_t2 = true;
 			else Assert(0);
 		} while (!READ_BRACE_ELEMENT_END());
 		Assert(r_t1 && r_t2);
@@ -542,7 +550,7 @@ namespace Aya {
 		bool r_scale = false;
 		do {
 			std::string str = READ_INDEX();
-			if (str == "scale") scale = READ_FLOAT(), r_scale = true;
+			if (str == "scale" && !r_scale) scale = READ_FLOAT(), r_scale = true;
 			else Assert(0);
 		} while (!READ_BRACE_ELEMENT_END());
 		READ_BRACE_END();
@@ -570,9 +578,9 @@ namespace Aya {
 		bool r_color = false, r_fuzz = false;
 		do {
 			std::string str = READ_INDEX();
-			if (str == "spectrum(1)") color = READ_SPECTRUM1(), r_color = true;
-			else if (str == "spectrum(256)") color = READ_SPECTRUM256(), r_color = true;
-			else if (str == "fuzz") fuzz = READ_FLOAT(), r_fuzz = true;
+			if (str == "spectrum(1)" && !r_color) color = READ_SPECTRUM1(), r_color = true;
+			else if (str == "spectrum(256)" && !r_color) color = READ_SPECTRUM256(), r_color = true;
+			else if (str == "fuzz" && !r_fuzz) fuzz = READ_FLOAT(), r_fuzz = true;
 			else Assert(0);
 		} while (!READ_BRACE_ELEMENT_END());
 		READ_BRACE_END();
@@ -585,7 +593,7 @@ namespace Aya {
 		bool r_texure = false;
 		do {
 			std::string str = READ_INDEX();
-			if (str == "texture") texure = READ_TEXTURE(), r_texure = true;
+			if (str == "texture" && !r_texure) texure = READ_TEXTURE(), r_texure = true;
 			else Assert(0);
 		} while (!READ_BRACE_ELEMENT_END());
 		READ_BRACE_END();
@@ -598,7 +606,7 @@ namespace Aya {
 		bool r_texure = false;
 		do {
 			std::string str = READ_INDEX();
-			if (str == "texture") texure = READ_TEXTURE(), r_texure = true;
+			if (str == "texture" && !r_texure) texure = READ_TEXTURE(), r_texure = true;
 			else Assert(0);
 		} while (!READ_BRACE_ELEMENT_END());
 		READ_BRACE_END();
@@ -611,7 +619,7 @@ namespace Aya {
 		bool r_value = false;
 		do {
 			std::string str = READ_INDEX();
-			if (str == "value") value = READ_FLOAT(), r_value = true;
+			if (str == "value" && !r_value) value = READ_FLOAT(), r_value = true;
 			else Assert(0);
 		} while (!READ_BRACE_ELEMENT_END());
 		READ_BRACE_END();
@@ -644,8 +652,8 @@ namespace Aya {
 		bool r_shape = false, r_mat = false;
 		do {
 			std::string str = READ_INDEX();
-			if (str == "shape") shape_id = READ_INT(), r_shape = true;
-			else if (str == "material") mat_id = READ_INT(), r_mat = true;
+			if (str == "shape" && !r_shape) shape_id = READ_INT(), r_shape = true;
+			else if (str == "material" && !r_mat) mat_id = READ_INT(), r_mat = true;
 			else Assert(0);
 		} while (!READ_BRACE_ELEMENT_END());
 		READ_BRACE_END();
