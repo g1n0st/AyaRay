@@ -1,10 +1,10 @@
 #ifndef AYA_SCENE_H
 #define AYA_SCENE_H
 
-#include "rng.h"
-#include "integrator.h"
 #include "camera.h"
 #include "primitive.h"
+#include "memory.h"
+#include "integrator.h"
 
 #include <fstream>
 

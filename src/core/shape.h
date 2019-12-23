@@ -6,7 +6,6 @@
 #include <vector>
 
 #include "config.h"
-#include "interaction.h"
 #include "material.h"
 #include "memory.h"
 #include "..\math\transform.h"
