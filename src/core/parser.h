@@ -8,7 +8,7 @@
 #include "scene.h"
 
 namespace Aya {
-	class Phaser {
+	class Parser {
 	public:
 		std::string m_str;
 		int m_p;
@@ -23,7 +23,7 @@ namespace Aya {
 
 		bool rd_cam;
 	public:
-		Phaser();
+		Parser();
 		
 		void load(const char *file);
 		//void loadObj(const char *file, int &ts, int &vs, int *vv, Point3 *pp, Normal3 *nn);
