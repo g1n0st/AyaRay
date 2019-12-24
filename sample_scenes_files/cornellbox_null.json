@@ -1,0 +1,142 @@
+{
+    "config" : {
+        "screen_x" : 1000,
+        "screen_y" : 1000,
+        "sample_times": 500
+    },
+    "camera" : {
+        "lookfrom" : {
+            "x" : 278,
+            "y" : 278,
+            "z" : -760
+        },
+        "lookat" : {
+            "x" : 278,
+            "y" : 278,
+            "z" : 0
+        },
+        "lookup" : {
+            "x" : 0,
+            "y" : 1,
+            "z" : 0
+        },
+        "fov" : 40.0,
+        "aspect" : 1,
+        "aperture" : 0.0,
+        "focus_dist" : 100000,
+        "t0" : 0,
+        "t1" : 0
+    },
+    "transforms" :
+    [
+        {
+            "translate" : { "x" : 0,
+            "y" : 277.5,
+            "z" : 277.5}
+        },
+        {
+            "translate" : { "x" : 555,
+            "y" : 277.5,
+            "z" : 277.5}
+        },
+        {
+            "translate" : { "x" : 277.5,
+            "y" : 277.5,
+            "z" : 555}
+        },
+        {
+            "translate" : { "x" : 277.5,
+            "y" : 555,
+            "z" : 277.5}
+        },
+        {
+            "translate" : { "x" : 277.5,
+            "y" : 0,
+            "z" : 277.5}
+        },
+        {
+            "translate" : { "x" : 278,
+            "y" : 553.5,
+            "z" : 279.5}
+        }
+    ],
+    "shapes" :
+    [
+        { "rectangle" : {
+            "transform" : 0,
+            "x" : 1,
+            "y" : 555,
+            "z" : 555
+        }},
+        { "rectangle" : {
+            "transform" : 1,
+            "x" : 1,
+            "y" : 555,
+            "z" : 555
+        }},
+        { "rectangle" : {
+            "transform" : 2,
+            "x" : 555,
+            "y" : 555,
+            "z" : 1
+        }},
+        { "rectangle" : {
+            "transform" : 3,
+            "x" : 555,
+            "y" : 1,
+            "z" : 555
+        }},
+        { "rectangle" : {
+            "transform" : 4,
+            "x" : 555,
+            "y" : 1,
+            "z" : 555
+        }},
+        { "rectangle" : {
+            "transform" : 5,
+            "x" : 130,
+            "y" : 1,
+            "z" : 105
+        }}
+    ],
+    "materials" :
+    [
+        {"mental" : {
+            "spectrum(256)" : {"r" : 191, "g" : 173, "b" : 111},
+            "fuzz" : 0.0
+        }},
+        {"lambertian": {
+            "texture" : { 
+                "constant" : {
+                "spectrum(1)" : {"r" : 0.73, "g" : 0.73, "b" : 0.73}
+            }}
+        }},
+        {"lambertian": {
+            "texture" : { 
+                "constant" : {
+                "spectrum(1)" : {"r" : 0.65, "g" : 0.05, "b" : 0.05}
+            }}
+        }},
+        {"lambertian": {
+            "texture" : { 
+                "constant" : {
+                "spectrum(1)" : {"r" : 0.12, "g" : 0.45, "b" : 0.15}
+            }}
+        }},
+        {"diffuse" : {
+            "texture" : { 
+                "constant" : {
+                "spectrum(1)" : {"r" : 1, "g" : 1, "b" : 1}
+            }}
+        }}
+    ],
+    "primitives" :
+    [
+        {"shape" : 0, "material" : 2},
+        {"shape" : 1, "material" : 3},
+        {"shape" : 2, "material" : 1},
+        {"shape" : 3, "material" : 1},
+        {"shape" : 4, "material" : 1},
+        {"shape" : 5, "material" : 4}
+    ]
+}
