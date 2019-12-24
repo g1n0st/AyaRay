@@ -19,6 +19,7 @@ namespace Aya {
 
 			Transform() {
 				m_mat = m_inv = Matrix3x3().getIdentity();
+				m_trans = Vector3(0, 0, 0);
 			}
 			explicit inline Transform(const Matrix3x3& m, const Vector3 &t) :
 				m_mat(m), m_inv(m.inverse()), m_trans(t) {}
