@@ -6,6 +6,7 @@ namespace Aya {
 			p->fullyRefine(m_prims);
 		}
 		construct(&m_root, 0, m_prims.size() - 1);
+		return;
 	}
 	BBox BVHAccel::worldBound() const {
 		return m_root->m_box;
