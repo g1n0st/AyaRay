@@ -7,6 +7,7 @@
 #include "../math/vector3.h"
 
 namespace Aya {
+	/**@brief The Texture base class specifies the methods that textures must implement */
 	class Texture {
 	public:
 #if defined(AYA_USE_SIMD)
@@ -19,9 +20,11 @@ namespace Aya {
 		}
 #endif
 
+		/**@brief Return the color sampled by UV coordinates and p */
 		virtual Spectrum value(float u, float v, const Point3 &p) const = 0;
 	};
 
+	/**@brief Return the constant color */
 	class ConstantTexture : public Texture {
 	public:
 		Spectrum m_color;
@@ -35,6 +38,7 @@ namespace Aya {
 		}
 	};
 
+	/**@brief Return the cross texture defined by other two textures */
 	class CrossTexture : public Texture {
 	public:
 		Texture *m_t0, *m_t1;
@@ -51,8 +55,10 @@ namespace Aya {
 		}
 	};
 
+	/**@brief Return the perlin noise texture */
 	class NoiseTexture : public Texture {
 	public:
+		/**@brief perlin noise generator */
 		PerlinNoise m_noise;
 		float m_scale;
 
