@@ -29,7 +29,6 @@ namespace Aya {
 				}
 			}
 			else {
-				return Spectrum(0, 0, 0);
 				// sky box
 				Vector3 ud = ray.m_dir;
 				ud.normalize();
