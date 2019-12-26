@@ -8,7 +8,7 @@ namespace Aya {
 	template <typename T>
 	class SharedPtr;
 
-	/** @brief Assist class for Reference */
+	/** @brief Assist class for SharedPtr */
 	template <typename T>
 	class U_Ptr
 	{
@@ -22,19 +22,19 @@ namespace Aya {
 		T *p;
 	};
 
-	/** @brief Auto count references pointer class */
+	/** @brief Auto count references pointer class, copy and release memory automatically */
 	template <typename T>
 	class SharedPtr
 	{
 	public:
 		SharedPtr(T *ptr = NULL) : rp(new U_Ptr<T>(ptr)) {}
 		SharedPtr(const SharedPtr<T> &sp) :rp(sp.rp) {
-			atomicAdd(&rp->cnt, 1);
+			rp->cnt++;
 		}
 
 		SharedPtr & operator = (const SharedPtr<T>& rhs) {
-			atomicAdd(&rhs.rp->cnt, 1);
-			if (!atomicAdd(&rp->cnt, -1)) delete rp;
+			rhs.rp->cnt++;
+			if (!--rp->cnt) delete rp;
 			rp = rhs.rp;
 			return *this;
 		}
@@ -54,7 +54,7 @@ namespace Aya {
 		}
 
 		~SharedPtr() {
-			if (!atomicAdd(&rp->cnt, -1)) delete rp;
+			if (!--rp->cnt) delete rp;
 		}
 	private:
 		U_Ptr<T> *rp;
