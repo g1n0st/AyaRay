@@ -34,7 +34,7 @@ namespace Aya {
 				_mm_free(p);
 			}
 #endif
-
+			/**@brief judge two boxes overlap or not */
 			inline bool overlaps(const BBox &b) const {
 #if defined(AYA_USE_SIMD)
 				bool b1 = (0xf == _mm_movemask_ps((__m128)_mm_cmpeq_ps(
@@ -51,6 +51,7 @@ namespace Aya {
 				return x && y && z;
 #endif
 			}
+			/**@brief judge a point inside a box or not */
 			inline bool inside(const Point3 &p) const {
 #if defined(AYA_USE_SIMD)
 				bool b1 = (0xf == _mm_movemask_ps((__m128)_mm_cmpeq_ps(
@@ -65,6 +66,7 @@ namespace Aya {
 					(p.z() >= m_pmin.z() && p.z() <= m_pmax.z());
 #endif
 			}
+			/**@brief expand the box with a length of d*/
 			inline void expand(const float &d) {
 #if defined(AYA_USE_SIMD)
 				__m128 vd = _mm_load_ss(&d);
@@ -77,37 +79,7 @@ namespace Aya {
 				m_pmin -= Point3(d, d, d);
 #endif
 			}
-			inline float surfaceArea() const {
-				Vector3 d = m_pmax - m_pmin;
-				return 2 * d.length2();
-			}
-			inline float volume() const {
-				Vector3 d = m_pmax - m_pmin;
-				return d.x() * d.y() * d.z();
-			}
-			inline Point3 lerp(const float &tx, const float &ty, const float &tz) const {
-#if defined(AYA_USE_SIMD)
-				Vector3 t(tx, ty, tz), ft(1.f - tx, 1.f - ty, 1.f - tz);
-
-				return Point3(_mm_add_ps(_mm_mul_ps(t.m_val128, m_pmin.m_val128),
-					_mm_mul_ps(ft.m_val128, m_pmax.m_val128)));
-#else
-				return Point3(
-					Lerp(tx, m_pmin.x(), m_pmax.x()),
-					Lerp(ty, m_pmin.y(), m_pmax.y()),
-					Lerp(tz, m_pmin.z(), m_pmax.z())
-				);
-#endif
-			}
-			inline void boundingSphere(Point3 *p, float *rad) const {
-#if defined(AYA_USE_SIMD)
-				p->m_val128 = _mm_mul_ps(v0_5, _mm_add_ps(m_pmax.m_val128, m_pmin.m_val128));
-
-#else
-				*p = .5f * (m_pmin + m_pmax);
-#endif
-				*rad = inside(*p) ? m_pmax.distance(*p) : 0.f;
-			}
+			/**@brief unity the box with a point p */
 			inline BBox unity(const Point3 &p) {
 #if defined(AYA_USE_SIMD)
 				m_pmax.m_val128 = _mm_max_ps(m_pmax.m_val128, p.m_val128);
@@ -124,6 +96,7 @@ namespace Aya {
 
 				return *this;
 			}
+			/**@brief unity the box with another box b */
 			inline BBox unity(const BBox &b) {
 #if defined(AYA_USE_SIMD)
 				m_pmax.m_val128 = _mm_max_ps(m_pmax.m_val128, b.m_pmax.m_val128);
@@ -139,7 +112,7 @@ namespace Aya {
 #endif
 				return *this;
 			}
-
+			/**@brief judge a ray intersect the box or not */
 			inline bool intersect(const Ray &r) const {
 				float t0, t1;
 				float tmin = r.m_mint, tmax = r.m_maxt;
@@ -157,6 +130,7 @@ namespace Aya {
 				return true;
 			}
 
+			/**@brief cout debug function of bbox */
 			friend inline std::ostream &operator<<(std::ostream &os, const BBox &b) {
 				os << "[pmin = " << b.m_pmin << ", pmax = " << b.m_pmax << "]";
 				return os;

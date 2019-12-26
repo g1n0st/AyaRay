@@ -88,7 +88,7 @@ namespace Aya {
 
 				return *this;
 			}
-			/**@brief Set displacement of a vector presented as scalars (x, y, z)*/
+			/**@brief Set scale of a vector presented as scalars (x, y, z)*/
 			inline Transform& setScale(const float &x, const float &y, const float &z) {
 				assert(x != 0 && y != 0 && z != 0);
 				m_mat.setValue(x, 0, 0,
@@ -101,6 +101,7 @@ namespace Aya {
 
 				return *this;
 			}
+			/**@brief Set the rotation of the X-axis with angle */
 			inline Transform& setRotateX(const float &angle) {
 				float sin_t = sinf(Radian(angle));
 				float cos_t = cosf(Radian(angle));
@@ -112,6 +113,7 @@ namespace Aya {
 
 				return *this;
 			}
+			/**@brief Set the rotation of the Y-axis with angle */
 			inline Transform& setRotateY(const float &angle) {
 				float sin_t = sinf(Radian(angle));
 				float cos_t = cosf(Radian(angle));
@@ -123,6 +125,7 @@ namespace Aya {
 
 				return *this;
 			}
+			/**@brief Set the rotation of the Z-axis with angle */
 			inline Transform& setRotateZ(const float &angle) {
 				float sin_t = sinf(Radian(angle));
 				float cos_t = cosf(Radian(angle));
@@ -134,6 +137,7 @@ namespace Aya {
 
 				return *this;
 			}
+			/**@brief Set the rotation of the axis(Vector3) with angle */
 			inline Transform& setRotation(const Vector3 &axis, const float &angle) {
 				Vector3 a = axis;
 				a.normalize();
@@ -151,6 +155,7 @@ namespace Aya {
 
 				return *this;
 			}
+			/**@brief Set the rotation with Quaternion */
 			void setRotation(const Quaternion& q)
 			{
 				float d = q.length2();
@@ -222,6 +227,7 @@ namespace Aya {
 				m_inv = m_mat.transpose();
 				m_trans.setZero();
 			}
+			/**@brief Rotation in Euler angle format(Z, Y, X) */
 			inline Transform& setEulerZYX(const float &e_x, const float &e_y, const float &e_z) {
 				float ci(cosf(e_x));
 				float cj(cosf(e_y));
@@ -242,33 +248,24 @@ namespace Aya {
 
 				return *this;
 			}
+			/**@brief Rotation in Euler angle format(Y, P, R) */
 			inline Transform& setEulerYPR(const float &yaw, const float &pitch, const float &roll) {
 				return setEulerZYX(roll, pitch, yaw);
 			}
-			inline Transform& setLookAt(const Point3 &pos, const Point3 &look, const Vector3 &u) {
-				m_trans = pos;
 
-				Vector3 dir = (look - pos).normalize();
-				Vector3 left = u;
-				left.normalize().cross(dir).normalize();
-				Vector3 up = dir.cross(left);
-
-				Matrix3x3 cam_to_world(left, up, dir);
-				m_mat = cam_to_world.inverse();
-				m_inv = cam_to_world;
-
-				return *this;
-			}
-
+			/**@brief Overload the () operator to apply tranform to Vector3 */
 			inline Vector3 operator() (const Vector3 &v) const {
 				return m_mat * v;
 			}
+			/**@brief Overload the () operator to apply tranform to Point3 */
 			inline Point3 operator() (const Point3 &p) const {
 				return m_mat * p + m_trans;
 			}
+			/**@brief Overload the () operator to apply tranform to Normal3 */
 			inline Normal3 operator() (const Normal3 &n) const {
 				return m_inv.transpose() * n;
 			}
+			/**@brief Overload the () operator to apply tranform to BBox */
 			inline BBox operator() (const BBox &b) const {
 
 				// const Transform &M = *this;
@@ -310,6 +307,7 @@ namespace Aya {
 #endif
 				return ret;
 			}
+			/**@brief Overload the () operator to apply tranform to Ray */
 			inline Ray operator() (const Ray &r) const {
 				Ray ret = r;
 				ret.m_ori = (*this)(ret.m_ori);
@@ -318,6 +316,7 @@ namespace Aya {
 				return ret;
 			}
 
+			/**@brief cout debug function of Transform */
 			friend inline std::ostream &operator<<(std::ostream &os, const Transform &t) {
 				os << t.m_mat << ",\n";
 				os << t.m_inv << ",\n";

@@ -11,10 +11,10 @@
 #endif
 
 namespace Aya {
-	/**@brief The btMatrix3x3 class implements a 3x3 matrix, to perform linear algebra in combination with Quaternion, Transform and BaseVector3.*/
 #if defined(AYA_USE_SIMD)
 	__declspec(align(16))
 #endif
+		/**@brief The Matrix3x3 class implements a 3x3 matrix, to perform linear algebra in combination with Quaternion, Transform and BaseVector3.*/
 		class Matrix3x3 {
 		public:
 			BaseVector3 m_el[3];
@@ -149,6 +149,7 @@ namespace Aya {
 #endif
 			}
 
+			/**@brief + operator */
 			inline Matrix3x3 operator + (const Matrix3x3& m1) const {
 #if defined(AYA_USE_SIMD)
 				return Matrix3x3(_mm_add_ps(m_el[0].m_val128, m1.m_el[0].m_val128),
@@ -170,6 +171,8 @@ namespace Aya {
 				);
 #endif
 			}
+
+			/**@brief += operator */
 			inline Matrix3x3& operator += (const Matrix3x3& m) {
 #if defined(AYA_USE_SIMD)
 				m_el[0].m_val128 = _mm_add_ps(m_el[0].m_val128, m.m_el[0].m_val128);
@@ -190,6 +193,8 @@ namespace Aya {
 #endif
 				return *this;
 			}
+
+			/**@brief - operator */
 			inline Matrix3x3 operator - (const Matrix3x3& m1) const {
 #if defined(AYA_USE_SIMD)
 				return Matrix3x3(_mm_sub_ps(m_el[0].m_val128, m1.m_el[0].m_val128),
@@ -211,6 +216,8 @@ namespace Aya {
 				);
 #endif
 			}
+
+			/**@brief -= operator */
 			inline Matrix3x3& operator -= (const Matrix3x3& m) {
 #if defined(AYA_USE_SIMD)
 				m_el[0].m_val128 = _mm_sub_ps(m_el[0].m_val128, m.m_el[0].m_val128);
@@ -231,6 +238,7 @@ namespace Aya {
 #endif
 				return *this;
 			}
+			/**@brief * operator */
 			inline Matrix3x3 operator * (const float &s) const {
 #if defined(AYA_USE_SIMD)
 				__m128 vk = _mm_splat_ps(_mm_load_ss((float*)&s), 0x80);
@@ -253,6 +261,7 @@ namespace Aya {
 				);
 #endif
 			}
+			/**@brief *= operator */
 			inline Matrix3x3& operator *= (const float &s) {
 #if defined(AYA_USE_SIMD)
 				__m128 vk = _mm_splat_ps(_mm_load_ss((float*)&s), 0x80);
@@ -274,17 +283,21 @@ namespace Aya {
 #endif
 				return *this;
 			}
+			/**@brief * operator with a scale number */
 			inline friend Matrix3x3 operator * (const float &s, const Matrix3x3 &v) {
 				return v * s;
 			}
+			/**@brief / operator with a scale number */
 			inline Matrix3x3 operator / (const float &s) const {
 				assert(s != 0);
 				return (*this) * (1.f / s);
 			}
+			/**@brief /= operator with a scale number */
 			inline Matrix3x3& operator /= (const float &s) {
 				assert(s != 0);
 				return (*this) *= (1.f / s);
 			}
+			/**@brief  * operator with another Matrix3x3 */
 			inline Matrix3x3 operator * (const Matrix3x3 &m) const {
 #if defined(AYA_USE_SIMD)
 				__m128 m10 = m_el[0].m_val128;
@@ -337,6 +350,7 @@ namespace Aya {
 					m.tdotx(m_el[2]), m.tdoty(m_el[2]), m.tdotz(m_el[2]));
 #endif
 			}
+			/**@brief  *= operator with another Matrix3x3 */
 			inline Matrix3x3& operator *= (const Matrix3x3 &m) {
 #if defined(AYA_USE_SIMD)
 				__m128 rv00, rv01, rv02;
@@ -394,6 +408,7 @@ namespace Aya {
 #endif
 				return *this;
 			}
+			/**@brief  * operator with BaseVector3 */
 			inline BaseVector3 operator * (const BaseVector3 &v) const {
 #if defined(AYA_USE_SIMD)
 				return v.dot3(m_el[0], m_el[1], m_el[2]);

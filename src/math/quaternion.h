@@ -14,6 +14,7 @@ namespace Aya {
 #if defined(AYA_USE_SIMD)
 	__declspec(align(16))
 #endif
+		/**@brief The Quaternion class implements a quaternion, to store a rotation.*/
 		class Quaternion {
 #if defined(AYA_USE_SIMD)
 		public:
@@ -283,7 +284,7 @@ namespace Aya {
 					yaw_z = atan2f(2.f * (m_val[0] * m_val[1] + m_val[3] * m_val[2]), squ + sqx - sqy - sqz);
 				}
 			}
-
+			/**@brief + operator */
 			inline Quaternion operator + (const Quaternion &q) const {
 #if defined(AYA_USE_SIMD)
 				return Quaternion(_mm_add_ps(m_val128, q.m_val128));
@@ -294,6 +295,7 @@ namespace Aya {
 					m_val[3] + q.m_val[3]);
 #endif
 			}
+			/**@brief += operator */
 			inline Quaternion & operator += (const Quaternion &q) {
 #if defined(AYA_USE_SIMD)
 				m_val128 = _mm_add_ps(m_val128, q.m_val128);
@@ -306,6 +308,7 @@ namespace Aya {
 				numericValid(1);
 				return *this;
 			}
+			/**@brief - operator */
 			inline Quaternion operator - (const Quaternion &q) const {
 #if defined(AYA_USE_SIMD)
 				return Quaternion(_mm_sub_ps(m_val128, q.m_val128));
@@ -316,6 +319,7 @@ namespace Aya {
 					m_val[3] - q.m_val[3]);
 #endif
 			}
+			/**@brief -= operator */
 			inline Quaternion & operator -= (const Quaternion &q) {
 #if defined(AYA_USE_SIMD)
 				m_val128 = _mm_sub_ps(m_val128, q.m_val128);
@@ -328,6 +332,7 @@ namespace Aya {
 				numericValid(1);
 				return *this;
 			}
+			/**@brief - operator */
 			inline Quaternion operator- () const {
 #if defined(AYA_USE_SIMD)
 				return Quaternion(_mm_xor_ps(m_val128, vMzeroMask));
@@ -335,6 +340,7 @@ namespace Aya {
 				return Quaternion(-m_val[0], -m_val[1], -m_val[2], -m_val[3]);
 #endif
 			}
+			/**@brief * operator with a scale number */
 			inline Quaternion operator * (const float &s) const {
 #if defined(AYA_USE_SIMD)
 				__m128 vs = _mm_load_ss(&s);
@@ -348,9 +354,11 @@ namespace Aya {
 #endif
 
 			}
+			/**@brief * operator with a scale number */
 			inline friend Quaternion operator * (const float &s, const Quaternion &v) {
 				return v * s;
 			}
+			/**@brief *= operator with a scale number */
 			inline Quaternion & operator *= (const float &s) {
 #if defined(AYA_USE_SIMD)
 				__m128 vs = _mm_load_ss(&s);
@@ -365,6 +373,7 @@ namespace Aya {
 				numericValid(1);
 				return *this;
 			}
+			/**@brief * operator with another Quaternion */
 			inline Quaternion operator * (const Quaternion & q) const {
 #if defined(AYA_USE_SIMD)
 				__m128 vQ1 = m_val128;
@@ -404,6 +413,7 @@ namespace Aya {
 					w() * q.w() - x() * q.x() - y() * q.y() - z() * q.z());
 #endif
 			}
+			/**@brief *= operator with another Quaternion */
 			inline Quaternion& operator *= (const Quaternion & q) {
 #if defined(AYA_USE_SIMD)
 				__m128 vQ2 = q.get128();
@@ -439,6 +449,7 @@ namespace Aya {
 #endif
 				return *this;
 			}
+			/**@brief * operator with BaseVector3 class*/
 			inline Quaternion operator * (const BaseVector3 & v) const {
 #if defined(AYA_USE_SIMD)
 				__m128 vQ1 = get128();
@@ -473,6 +484,7 @@ namespace Aya {
 					-x() * v.x() - y() * v.y() - z() * v.z());
 #endif
 			}
+			/**@brief * operator with BaseVector3 class*/
 			friend inline Quaternion operator * (const BaseVector3 &w, const Quaternion& q) {
 #if defined(AYA_USE_SIMD)
 				__m128 vQ1 = w.get128();
@@ -507,12 +519,14 @@ namespace Aya {
 					-w.x() * q.x() - w.y() * q.y() - w.z() * q.z());
 #endif
 			}
+			/**@brief / operator with a scale number */
 			inline Quaternion operator / (const float &s) const {
 				assert(s != 0.f);
 				Quaternion ret;
 				ret = (*this) * (1.f / s);
 				return ret;
 			}
+			/**@brief /= operator with a scale number */
 			inline Quaternion & operator /= (const float &s) {
 				assert(s != 0.f);
 				return *this *= (1.f / s);
