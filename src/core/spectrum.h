@@ -262,6 +262,7 @@ namespace Aya {
 				return *this;
 			}
 
+			/**@brief cout debug function of Spectrum */
 			friend inline std::ostream &operator<<(std::ostream &os, const Spectrum &s) {
 				os << "[ " << AYA_SCALAR_OUTPUT(s.m_val[0])
 					<< ", " << AYA_SCALAR_OUTPUT(s.m_val[1])
