@@ -10,11 +10,18 @@ namespace Aya {
 	class Primitive;
 	class GeometricPrimitive;
 
+	/**@brief SurfaceInteraction class records the details where the surface and the ray intersected */
 	class SurfaceInteraction {
 	public:
-		float t, u, v;
+		/**@brief t is the param of the ray */
+		float t;
+		/**@brief (u,v) coordinates of intersecting surfaces */
+		float u, v;
+		/**@brief the point in the world coordinate where the surface and the ray intersected */
 		Point3 p;
+		/**@brief the normal of the surface */
 		Normal3 n;
+		/**@brief the primitive which own the surface */
 		const GeometricPrimitive *prim;
 
 	public:
