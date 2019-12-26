@@ -6,8 +6,10 @@
 #include "primitive.h"
 
 namespace Aya {
+	/**@brief The Integrator base class specifies the methods that integrators must implement */
 	class Integrator {
 	public:
+		/**@brief Integrate the radiance of a ray */
 		virtual Spectrum li(const Ray &ray, SharedPtr<Accelerator> acclerator, int depth) const = 0;
 	};
 
