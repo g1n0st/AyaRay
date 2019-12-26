@@ -7,6 +7,7 @@
 #include "memory.h"
 
 namespace Aya {
+	/**@brief The Primitive base class specifies the methods that primitive must implement */
 	class Primitive {
 	public:
 		Primitive();
@@ -18,6 +19,7 @@ namespace Aya {
 		virtual void fullyRefine(std::vector<SharedPtr<Primitive> > &refined) const;
 	};
 
+	/**@brief The GeometricPrimitive is for the geometric object instance */
 	class GeometricPrimitive : public Primitive {
 	public:
 		SharedPtr<Shape> m_shape;
@@ -31,6 +33,7 @@ namespace Aya {
 		virtual void refine(std::vector<SharedPtr<Primitive> > &refined) const;
 	};
 
+	/**@brief The GeometricPrimitive is for the acclerator structure */
 	class Accelerator : public Primitive {
 	public:
 		Accelerator() {}
