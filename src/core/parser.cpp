@@ -81,6 +81,7 @@ namespace Aya {
 			Assert(0);
 		}
 		Assert(0);
+		return false;
 	}
 	inline int Parser::READ_INT() {
 		int ret = 0;
@@ -156,7 +157,7 @@ namespace Aya {
 		} while (!READ_BRACE_ELEMENT_END());
 		Assert(r_r && r_g && r_b);
 		READ_BRACE_END();
-		return Spectrum(r / 256.0, g / 256.0, b / 256.0);
+		return Spectrum(r / 256.0f, g / 256.0f, b / 256.0f);
 	}
 
 	inline std::string Parser::READ_INDEX() {
@@ -221,7 +222,7 @@ namespace Aya {
 		return trans;
 	}
 	inline Transform Parser::READ_TRANSLATE() {
-		int x, y, z;
+		float x, y, z;
 		bool r_x = false, r_y = false, r_z = false;
 		READ_BRACE_BEGIN();
 		do {
@@ -236,7 +237,7 @@ namespace Aya {
 		return Transform().setTranslate(x, y, z);
 	}
 	inline Transform Parser::READ_SCALE() {
-		int x, y, z;
+		float x, y, z;
 		bool r_x = false, r_y = false, r_z = false;
 		READ_BRACE_BEGIN();
 		do {
@@ -251,7 +252,7 @@ namespace Aya {
 		return Transform().setScale(x, y, z);
 	}
 	inline Transform Parser::READ_EULER_ZYX() {
-		int x, y, z;
+		float x, y, z;
 		bool r_x = false, r_y = false, r_z = false;
 		READ_BRACE_BEGIN();
 		do {
@@ -266,7 +267,7 @@ namespace Aya {
 		return Transform().setEulerZYX(z, y, x);
 	}
 	inline Transform Parser::READ_EULER_YPR() {
-		int y, p, r;
+		float y, p, r;
 		bool r_y = false, r_p = false, r_r = false;
 		READ_BRACE_BEGIN();
 		do {
@@ -346,7 +347,8 @@ namespace Aya {
 
 	inline void Parser::READ_SPHERE() {
 		READ_BRACE_BEGIN();
-		float radius, trans_id;
+		float radius;
+		int trans_id;
 		bool r_radius = false, r_trans_id = false;
 		do {
 			std::string str = READ_INDEX();
@@ -360,7 +362,8 @@ namespace Aya {
 	}
 	inline void Parser::READ_RECTANGLE() {
 		READ_BRACE_BEGIN();
-		float x, y, z, trans_id;
+		float x, y, z;
+		int trans_id;
 		bool r_x = false, r_y = false, r_z = false, r_trans_id = false;
 		do {
 			std::string str = READ_INDEX();
@@ -378,23 +381,26 @@ namespace Aya {
 		READ_BRACE_BEGIN();
 		std::string file_name;
 		int trans_id;
-		bool normal = false, r_file_name = false, r_trans_id = false;
+		bool normal = false, uv = false, r_file_name = false, r_trans_id = false;
 		do {
 			std::string str = READ_INDEX();
 			if (str == "transform" && !r_trans_id) trans_id = READ_INT(), r_trans_id = true;
 			else if (str == "normal") normal = READ_BOOL();
+			else if (str == "uv") uv = READ_BOOL();
 			else if (str == "file" && !r_file_name) file_name = READ_STRING(), r_file_name = true;
 			else Assert(0);
 		} while (!READ_BRACE_ELEMENT_END());
 		READ_BRACE_END();
 		Assert(r_file_name && r_trans_id && trans_id < m_trans.size());
 		
+		float *uvs = NULL;
 		int *vv = NULL, vs = 0, ts = 0;
 		Point3 *pp = NULL;
 		Normal3 *nn = NULL;
+		if (uv)  loadObjc(file_name.c_str(), ts, vs, &vv, &pp, &nn, &uvs);
 		if (normal) loadObj(file_name.c_str(), ts, vs, &vv, &pp, &nn);
 		else loadObjs(file_name.c_str(), ts, vs, &vv, &pp);
-		m_shapes.push_back(new TriangleMesh(m_trans[trans_id], m_invts[trans_id], ts, vs, vv, pp, nn, NULL));
+		m_shapes.push_back(new TriangleMesh(m_trans[trans_id], m_invts[trans_id], ts, vs, vv, pp, nn, uvs));
 	}
 	inline void Parser::READ_SHAPE() {
 		READ_BRACE_BEGIN();
@@ -442,6 +448,55 @@ namespace Aya {
 		scene->m_acc = new BVHAccel();
 		scene->m_acc->construct(m_prims);
 		READ_BRACE_END();
+	}
+
+	void Parser::loadObjc(const char * file, int & ts, int & vs, int ** vv, Point3 ** pp, Normal3 ** nn, float ** uv) {
+		std::vector <Aya::Point3> P;
+		std::vector <Aya::Normal3> N;
+		std::vector<int> V;
+		std::vector<float> UV;
+
+		vs = ts = 0;
+
+		FILE *fp = fopen(file, "r");
+		Assert(fp != NULL);
+		char str[512];
+		while (fgets(str, 512, fp)) {
+			char type1, type2;
+			float a, b, c;
+			type1 = str[0];
+			type2 = str[1];
+			if (type1 == 'v' && type2 == ' ') {
+				sscanf(str + 2, "%f%f%f", &a, &b, &c);
+				P.push_back(Aya::Point3(a, b, c));
+				vs++;
+			}
+			else if (type1 == 'v' && type2 == 'n') {
+				sscanf(str + 3, "%f%f%f", &a, &b, &c);
+				N.push_back(Aya::Normal3(a, b, c));
+			}
+			else if (type1 == 'v' && type2 == 't') {
+				sscanf(str + 3, "%f%f", &a, &b);
+				UV.push_back(a);
+				UV.push_back(b);
+			}
+			else {
+				int A, B, C;
+				sscanf(str + 2, "%d/%d/%d %d/%d/%d %d/%d/%d", &A, &A, &A, &B, &B, &B, &C, &C, &C);
+				V.push_back(A - 1);
+				V.push_back(B - 1);
+				V.push_back(C - 1);
+				ts++;
+			}
+		}
+		*vv = new int[V.size()];
+		for (int i = 0; i < V.size(); i++) (*vv)[i] = V[i];
+		*nn = new Aya::Normal3[N.size()];
+		for (int i = 0; i < N.size(); i++) (*nn)[i] = N[i];
+		*pp = new Aya::Point3[P.size()];
+		for (int i = 0; i < P.size(); i++) (*pp)[i] = P[i];
+		*uv = new float[UV.size()];
+		for (int i = 0; i < UV.size(); i++) (*uv)[i] = UV[i];
 	}
 
 	void Parser::loadObj(const char *file, int &ts, int &vs, int **vv, Point3 **pp, Normal3 **nn) {
