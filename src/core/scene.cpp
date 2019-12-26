@@ -27,7 +27,7 @@ namespace Aya {
 					//std::cout << r << std::endl;
 					col += m_int->li(r, m_acc, 0);
 				}
-				col /= m_sample_times;
+				col /= (float)m_sample_times;
 				col.sqrt();
 				int ir = (int)(255.99f * col[0]);
 				int ig = (int)(255.99f * col[1]);
