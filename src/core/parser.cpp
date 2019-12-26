@@ -3,6 +3,7 @@
 namespace Aya {
 
 	inline void Assert(bool x) {
+		assert(x);
 		if (!x) exit(1);
 	}
 	Parser::Parser() {
@@ -477,11 +478,11 @@ namespace Aya {
 			}
 		}
 		*vv = new int[V.size()];
-		for (int i = 0; i < V.size(); i++) *vv[i] = V[i];
+		for (int i = 0; i < V.size(); i++) (*vv)[i] = V[i];
 		*nn = new Aya::Normal3[N.size()];
-		for (int i = 0; i < N.size(); i++) *nn[i] = N[i];
+		for (int i = 0; i < N.size(); i++) (*nn)[i] = N[i];
 		*pp = new Aya::Point3[P.size()];
-		for (int i = 0; i < P.size(); i++) *pp[i] = P[i];
+		for (int i = 0; i < P.size(); i++) (*pp)[i] = P[i];
 	}
 
 	void Parser::loadObjs(const char *file, int &ts, int &vs, int **vv, Point3 **pp) {
