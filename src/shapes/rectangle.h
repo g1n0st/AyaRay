@@ -4,8 +4,10 @@
 #include "../core/shape.h"
 
 namespace Aya {
+	/**@brief Rectangle class inherits Shape base class and represents a rectangle*/
 	class Rectangle : public Shape {
 	public:
+		/**@brief the length of three vertical sides */
 		float m_x, m_y, m_z;
 
 	public:
