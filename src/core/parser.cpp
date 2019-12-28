@@ -285,6 +285,7 @@ namespace Aya {
 		Vector3 axis;
 		float angle;
 		bool r_axis = false, r_angle = false;
+		READ_BRACE_BEGIN();
 		do {
 			std::string index = READ_INDEX();
 			if (index == "axis" && !r_axis) axis = READ_VECTOR(), r_axis = true;
@@ -298,6 +299,7 @@ namespace Aya {
 	inline Transform Parser::READ_ROTATEX() {
 		float angle;
 		bool r_angle = false;
+		READ_BRACE_BEGIN();
 		do {
 			std::string index = READ_INDEX();
 			if (index == "angle" && !r_angle) angle = READ_FLOAT(), r_angle = true;
@@ -310,6 +312,7 @@ namespace Aya {
 	inline Transform Parser::READ_ROTATEY() {
 		float angle;
 		bool r_angle = false;
+		READ_BRACE_BEGIN();
 		do {
 			std::string index = READ_INDEX();
 			if (index == "angle" && !r_angle) angle = READ_FLOAT(), r_angle = true;
@@ -322,6 +325,7 @@ namespace Aya {
 	inline Transform Parser::READ_ROTATEZ() {
 		float angle;
 		bool r_angle = false;
+		READ_BRACE_BEGIN();
 		do {
 			std::string index = READ_INDEX();
 			if (index == "angle" && !r_angle) angle = READ_FLOAT(), r_angle = true;
@@ -398,7 +402,7 @@ namespace Aya {
 		Point3 *pp = NULL;
 		Normal3 *nn = NULL;
 		if (uv)  loadObjc(file_name.c_str(), ts, vs, &vv, &pp, &nn, &uvs);
-		if (normal) loadObj(file_name.c_str(), ts, vs, &vv, &pp, &nn);
+		else if (normal) loadObj(file_name.c_str(), ts, vs, &vv, &pp, &nn);
 		else loadObjs(file_name.c_str(), ts, vs, &vv, &pp);
 		m_shapes.push_back(new TriangleMesh(m_trans[trans_id], m_invts[trans_id], ts, vs, vv, pp, nn, uvs));
 	}
@@ -597,6 +601,7 @@ namespace Aya {
 			else if (str == "t2" && !r_t2) t2 = READ_TEXTURE(), r_t2 = true;
 			else Assert(0);
 		} while (!READ_BRACE_ELEMENT_END());
+		READ_BRACE_END();
 		Assert(r_t1 && r_t2);
 		return new CrossTexture(t1, t2);
 	}
@@ -611,7 +616,7 @@ namespace Aya {
 		} while (!READ_BRACE_ELEMENT_END());
 		READ_BRACE_END();
 		Assert(r_scale);
-		return new NoiseTexture(r_scale);
+		return new NoiseTexture(scale);
 	}
 	inline Texture * Parser::READ_TEXTURE() {
 		READ_BRACE_BEGIN();
