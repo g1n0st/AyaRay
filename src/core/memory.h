@@ -2,7 +2,6 @@
 #define AYA_MEMORY_H
 
 #include "config.h"
-#include "parallel.h"
 
 namespace Aya {
 	template <typename T>
@@ -18,7 +17,7 @@ namespace Aya {
 		U_Ptr(T *ptr) : p(ptr), cnt(1) {}
 		~U_Ptr() { delete p; }
 
-		atom32_t cnt;
+		uint32_t cnt;
 		T *p;
 	};
 
