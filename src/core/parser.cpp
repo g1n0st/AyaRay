@@ -364,6 +364,19 @@ namespace Aya {
 		Assert(r_radius && r_trans_id && trans_id < m_trans.size());
 		m_shapes.push_back(new Sphere(m_trans[trans_id], m_invts[trans_id], radius));
 	}
+	inline void Parser::READ_HEART() {
+		READ_BRACE_BEGIN();
+		int trans_id;
+		bool r_trans_id = false;
+		do {
+			std::string str = READ_INDEX();
+			if (str == "transform") trans_id = READ_INT(), r_trans_id = true;
+			else Assert(0);
+		} while (!READ_BRACE_ELEMENT_END());
+		READ_BRACE_END();
+		Assert(r_trans_id && trans_id < m_trans.size());
+		m_shapes.push_back(new Heart(m_trans[trans_id], m_invts[trans_id]));
+	}
 	inline void Parser::READ_RECTANGLE() {
 		READ_BRACE_BEGIN();
 		float x, y, z;
@@ -413,6 +426,7 @@ namespace Aya {
 			if (str == "triangleMesh") READ_TRIANGLE_MESH();
 			else if (str == "sphere") READ_SPHERE();
 			else if (str == "rectangle") READ_RECTANGLE();
+			else if (str == "heart") READ_HEART();
 			else Assert(0);
 		} while (!READ_BRACE_ELEMENT_END());
 		READ_BRACE_END();

@@ -9,6 +9,7 @@
 
 #include "../shapes/rectangle.h"
 #include "../shapes/sphere.h"
+#include "../shapes/heart.h"
 #include "../shapes/triangle.h"
 #include "../accelerators/BVH.h"
 
@@ -94,6 +95,7 @@ namespace Aya {
 		// read shape function group
 		inline void READ_SHAPES();
 		inline void READ_SHAPE();
+		inline void READ_HEART();
 		inline void READ_RECTANGLE();
 		inline void READ_SPHERE();
 		inline void READ_TRIANGLE_MESH();
