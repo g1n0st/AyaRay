@@ -37,7 +37,7 @@ namespace Aya {
 		t_min = INFINITY;
 		t_max = -INFINITY;
 
-		const float m_x = 0.9f, m_y = 1.2f, m_z = 1.4f;
+		const float m_x = 0.72f, m_y = 0.7f, m_z = 1.2f;
 		float t1, t2;
 		Point3 hit;
 
@@ -88,37 +88,42 @@ namespace Aya {
 	Heart::Heart(const Transform *O2W, const Transform *W2O) : Shape(O2W, W2O) {
 	}
 	BBox Heart::objectBound() const {
-		return BBox(Point3(-0.9f, -1.2f, -1.4f),
-			Point3(0.9f, 1.2f, 1.4f)
-			);
+		return BBox(Point3(-0.72f, -0.7f, -1.2f),
+			Point3(0.72f, 0.7f, 1.2f)
+		);
 	}
 
 	bool Heart::intersect(const Ray &ray, float *hit_t, SurfaceInteraction *si) const {
-
 		Ray r = (*w2o)(ray);
 
 		float t_min, t_max, t1 = -1.f;
 		if (!intersectBBox(r, t_min, t_max)) return false;
 		float flip = (t_max - t_min) / (float)AYA_HEART_DIV_ARGU_1;
-		if (flip <= 1e-5) t1 = getT(r, t_min, t_max);
-		else {
-			float iter_s = t_min - flip;
-			int cnt = 0;
-			do {
-				flip /= 2.f;
-				if (cnt > 7) return false;
-				cnt++;
-				for (float t0 = t_min - flip; t0 < t_max + flip; t0 += flip) {
-					float v1 = f(r(t0));
-					float v2 = f(r(t0 + flip));
-					if (v1 >= 0 && v2 <= 0) {
-						t1 = getT(r, t0, t0 + flip); break;
-					}
-					//if (v2 > 0 && v2 < v1) iter_s = t0;
-					//if (v1 > 0 && v1 < v2) break;
+
+		float iter_s = t_min - flip;
+		int cnt = 0;
+
+		do {
+			flip /= 2.f;
+			if (flip <= 1e-5) {
+				if (f(r(t_min)) > 0 && f(r(t_max)) > 0) return false;
+				t1 = getT(r, t_min, t_max);
+				break;
+			}
+			if (cnt > 7) return false;
+			cnt++;
+
+			for (float t0 = t_min - flip; t0 < t_max + flip; t0 += flip) {
+				float v1 = f(r(t0));
+				float v2 = f(r(t0 + flip));
+				if (v1 >= 0 && v2 <= 0) {
+					t1 = getT(r, t0, t0 + flip); break;
 				}
-			} while (t1 < 0);
-		}
+				//if (v2 > 0 && v2 < v1) iter_s = t0;
+				//if (v1 > 0 && v1 < v2) break;
+			}
+		} while (t1 < 0);
+
 		if (t1 >= ray.m_maxt || t1 <= ray.m_mint) return false;
 		*hit_t = t1;
 		si->t = t1;
