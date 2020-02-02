@@ -38,6 +38,7 @@ namespace Aya {
 		}
 		virtual inline bool intersect(const Ray &ray, SurfaceInteraction * si, bool &is_leaf) const {
 			is_leaf = true;
+			if (!m_box.intersect(ray)) return false;
 			return m_prim->intersect(ray, si);
 		}
 	};
