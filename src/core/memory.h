@@ -7,7 +7,6 @@ namespace Aya {
 	template <typename T>
 	class SharedPtr;
 
-	/** @brief Assist class for SharedPtr */
 	template <typename T>
 	class U_Ptr
 	{
@@ -21,7 +20,6 @@ namespace Aya {
 		T *p;
 	};
 
-	/** @brief Auto count references pointer class, copy and release memory automatically */
 	template <typename T>
 	class SharedPtr
 	{

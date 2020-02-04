@@ -14,42 +14,29 @@
 #include "../accelerators/BVH.h"
 
 namespace Aya {
-	/**@brief Parser class loads the JSON format scene description file to a scene class instance */
 	class Parser {
 	public:
-		/**@brief JSON string after removing invalid characters */
 		std::string m_str;
-		/**@brief Pointer to the currently resolved position */
 		int m_p;
 		
-		/**@brief instance cache of Transforms */
 		std::vector<Transform *> m_trans;
 		std::vector<Transform *> m_invts;
-		/**@brief instance cache of Shapes */
 		std::vector<SharedPtr<Shape> > m_shapes;
-		/**@brief instance cache of Materials */
 		std::vector<SharedPtr<Material> > m_materials;
-		/**@brief instance cache of Primitives */
 		std::vector<SharedPtr<Primitive> > m_prims;
-		/**@brief instance cache of Camera */
 		SharedPtr<Camera> m_cam;
-		/**@brief screen_x, screen_y, sample_times loaded from JSON */
+
 		int m_sx, m_sy, m_st;
 
-		/**@brief Judge load the camera or not */
 		bool rd_cam;
 	public:
 		Parser();
 		
-		/**@brief Load JSON from file name */
 		void load(const char *file);
-		/**@brief Parsing JSON to scene */
 		void run(Scene *scene);
 
 	private:
-		/**@brief m_p++ and determine if the end of the string is read */
 		inline void ADD();
-		/**@brief Return the crruent symbol now parsing */
 		inline char CUR();
 
 		// handle format functions
@@ -100,11 +87,8 @@ namespace Aya {
 		inline void READ_SPHERE();
 		inline void READ_TRIANGLE_MESH();
 
-		/**@brief Load TriangleMesh from .obj file with UV data. */
 		void loadObjc(const char *file, int &ts, int &vs, int **vv, Point3 **pp, Normal3 ** nn, float **uv);
-		/**@brief Load TriangleMesh from .obj file. */
 		void loadObj(const char *file, int &ts, int &vs, int **vv, Point3 **pp, Normal3 **nn);
-		/**@brief Load TriangleMesh from .obj file without normal data. */
 		void loadObjs(const char *file, int &ts, int &vs, int **vv, Point3 **pp);
 		
 		// read texture function group

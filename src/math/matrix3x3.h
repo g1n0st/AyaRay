@@ -14,14 +14,11 @@ namespace Aya {
 #if defined(AYA_USE_SIMD)
 	__declspec(align(16))
 #endif
-		/**@brief The Matrix3x3 class implements a 3x3 matrix, to perform linear algebra in combination with Quaternion, Transform and BaseVector3.*/
 		class Matrix3x3 {
 		public:
 			BaseVector3 m_el[3];
 
-			/** @brief No initializaion constructor */
 			Matrix3x3() {}
-			/** @brief Constructor with row major formatting */
 			Matrix3x3(const float &xx, const float &xy, const float &xz,
 				const float &yx, const float &yy, const float &yz,
 				const float &zx, const float &zy, const float &zz) {
@@ -82,41 +79,23 @@ namespace Aya {
 				return *this;
 			}
 #endif
-			/** @brief Get a column of the matrix as a vector
-		*  @param x Column number 0 indexed */
 			inline BaseVector3 getColumn(int x) const {
 				assert(x >= 0 && x < 3);
 				return BaseVector3(m_el[0][x], m_el[1][x], m_el[2][x]);
 			}
-			/** @brief Get a row of the matrix as a vector
-		*  @param x Row number 0 indexed */
 			inline BaseVector3 getRow(int x) const {
 				assert(x >= 0 && x < 3);
 				return m_el[x];
 			}
-			/** @brief Get a mutable reference to a row of the matrix as a vector
-		*  @param x Row number 0 indexed */
 			inline BaseVector3& operator [](int x) {
 				assert(x >= 0 && x < 3);
 				return m_el[x];
 			}
-			/** @brief Get a const reference to a row of the matrix as a vector
-		*  @param x Row number 0 indexed */
 			inline const BaseVector3& operator [](int x) const {
 				assert(x >= 0 && x < 3);
 				return m_el[x];
 			}
 
-			/** @brief Set the values of the matrix explicitly (row major)
-		*  @param xx Top left
-		*  @param xy Top Middle
-		*  @param xz Top Right
-		*  @param yx Middle Left
-		*  @param yy Middle Middle
-		*  @param yz Middle Right
-		*  @param zx Bottom Left
-		*  @param zy Bottom Middle
-		*  @param zz Bottom Right*/
 			void setValue(const float &xx, const float &xy, const float &xz,
 				const float &yx, const float &yy, const float &yz,
 				const float &zx, const float &zy, const float &zz) {
@@ -125,7 +104,6 @@ namespace Aya {
 				m_el[2].setValue(zx, zy, zz);
 			}
 
-			/**@brief Set the matrix to the identity */
 			void setIdentity() {
 #if defined(AYA_USE_SIMD)
 				m_el[0] = v1000;
@@ -138,7 +116,6 @@ namespace Aya {
 #endif
 			}
 
-			/**@brief Get the matrix of the identity */
 			Matrix3x3 getIdentity() {
 #if defined(AYA_USE_SIMD)
 				return Matrix3x3(v1000, v0100, v0010);
@@ -149,7 +126,6 @@ namespace Aya {
 #endif
 			}
 
-			/**@brief + operator */
 			inline Matrix3x3 operator + (const Matrix3x3& m1) const {
 #if defined(AYA_USE_SIMD)
 				return Matrix3x3(_mm_add_ps(m_el[0].m_val128, m1.m_el[0].m_val128),
@@ -171,8 +147,6 @@ namespace Aya {
 				);
 #endif
 			}
-
-			/**@brief += operator */
 			inline Matrix3x3& operator += (const Matrix3x3& m) {
 #if defined(AYA_USE_SIMD)
 				m_el[0].m_val128 = _mm_add_ps(m_el[0].m_val128, m.m_el[0].m_val128);
@@ -193,8 +167,6 @@ namespace Aya {
 #endif
 				return *this;
 			}
-
-			/**@brief - operator */
 			inline Matrix3x3 operator - (const Matrix3x3& m1) const {
 #if defined(AYA_USE_SIMD)
 				return Matrix3x3(_mm_sub_ps(m_el[0].m_val128, m1.m_el[0].m_val128),
@@ -216,8 +188,6 @@ namespace Aya {
 				);
 #endif
 			}
-
-			/**@brief -= operator */
 			inline Matrix3x3& operator -= (const Matrix3x3& m) {
 #if defined(AYA_USE_SIMD)
 				m_el[0].m_val128 = _mm_sub_ps(m_el[0].m_val128, m.m_el[0].m_val128);
@@ -238,7 +208,6 @@ namespace Aya {
 #endif
 				return *this;
 			}
-			/**@brief * operator */
 			inline Matrix3x3 operator * (const float &s) const {
 #if defined(AYA_USE_SIMD)
 				__m128 vk = _mm_splat_ps(_mm_load_ss((float*)&s), 0x80);
@@ -261,7 +230,6 @@ namespace Aya {
 				);
 #endif
 			}
-			/**@brief *= operator */
 			inline Matrix3x3& operator *= (const float &s) {
 #if defined(AYA_USE_SIMD)
 				__m128 vk = _mm_splat_ps(_mm_load_ss((float*)&s), 0x80);
@@ -283,21 +251,17 @@ namespace Aya {
 #endif
 				return *this;
 			}
-			/**@brief * operator with a scale number */
 			inline friend Matrix3x3 operator * (const float &s, const Matrix3x3 &v) {
 				return v * s;
 			}
-			/**@brief / operator with a scale number */
 			inline Matrix3x3 operator / (const float &s) const {
 				assert(s != 0);
 				return (*this) * (1.f / s);
 			}
-			/**@brief /= operator with a scale number */
 			inline Matrix3x3& operator /= (const float &s) {
 				assert(s != 0);
 				return (*this) *= (1.f / s);
 			}
-			/**@brief  * operator with another Matrix3x3 */
 			inline Matrix3x3 operator * (const Matrix3x3 &m) const {
 #if defined(AYA_USE_SIMD)
 				__m128 m10 = m_el[0].m_val128;
@@ -350,7 +314,6 @@ namespace Aya {
 					m.tdotx(m_el[2]), m.tdoty(m_el[2]), m.tdotz(m_el[2]));
 #endif
 			}
-			/**@brief  *= operator with another Matrix3x3 */
 			inline Matrix3x3& operator *= (const Matrix3x3 &m) {
 #if defined(AYA_USE_SIMD)
 				__m128 rv00, rv01, rv02;
@@ -408,7 +371,6 @@ namespace Aya {
 #endif
 				return *this;
 			}
-			/**@brief  * operator with BaseVector3 */
 			inline BaseVector3 operator * (const BaseVector3 &v) const {
 #if defined(AYA_USE_SIMD)
 				return v.dot3(m_el[0], m_el[1], m_el[2]);
@@ -435,7 +397,6 @@ namespace Aya {
 #endif
 			}
 
-			/**@brief Return the transpose of the matrix */
 			inline Matrix3x3 transpose() const {
 #if defined(AYA_USE_SIMD)
 				__m128 v0 = m_el[0].m_val128;
@@ -460,7 +421,6 @@ namespace Aya {
 #endif
 			}
 
-			/**@brief Return the matrix with all values non negative */
 			inline Matrix3x3 absolute() const {
 #if defined(AYA_USE_SIMD)
 				return Matrix3x3(_mm_and_ps(m_el[0].m_val128, vAbsfMask),
@@ -473,13 +433,11 @@ namespace Aya {
 					abs(m_el[2].x()), abs(m_el[2].y()), abs(m_el[2].z()));
 #endif
 			}
-			/**@brief Return the adjoint of the matrix */
 			inline Matrix3x3 adjoin() const {
 				return Matrix3x3(cofac(1, 1, 2, 2), cofac(0, 2, 2, 1), cofac(0, 1, 1, 2),
 					cofac(1, 2, 2, 0), cofac(0, 0, 2, 2), cofac(0, 2, 1, 0),
 					cofac(1, 0, 2, 1), cofac(0, 1, 2, 0), cofac(0, 0, 1, 1));
 			}
-			/**@brief Return the inverse of the matrix */
 			inline Matrix3x3 inverse() const {
 				BaseVector3 co(cofac(1, 1, 2, 2), cofac(1, 2, 2, 0), cofac(1, 0, 2, 1));
 				float det = (*this)[0].dot(co);
@@ -526,7 +484,6 @@ namespace Aya {
 				return m_el[r1][c1] * m_el[r2][c2] - m_el[r1][c2] * m_el[r2][c1];
 			}
 
-			/**@brief cout debug function of Matrix3x3 */
 			friend inline std::ostream &operator<<(std::ostream &os, const Matrix3x3 &v) {
 				os << "[" << v.m_el[0] << ",\n";
 				os << " " << v.m_el[1] << ",\n";

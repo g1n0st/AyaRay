@@ -37,7 +37,7 @@
 #if (defined(_WIN32) && (_MSC_VER) && _MSC_VER >= 1400)
 #if _MSC_VER > 1400
 /**@brief use simd acceleration */
-//#define AYA_USE_SIMD
+#define AYA_USE_SIMD
 #endif
 #endif
 

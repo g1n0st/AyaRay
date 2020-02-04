@@ -7,13 +7,9 @@
 namespace Aya {
 	class Ray {
 	public:
-		/**@brief the origin of the ray */
 		Point3 m_ori;
-		/**@brief the direction of the ray */
 		Vector3 m_dir;
-		/**@brief the min and max interval of the ray */
 		mutable float m_mint, m_maxt;
-		/**@brief the time of the ray (for moving object) */
 		float m_time;
 		int m_depth;
 
@@ -28,12 +24,10 @@ namespace Aya {
 			: m_ori(ori), m_dir(dir), m_mint(start), m_maxt(end),
 			m_time(par.m_time), m_depth(par.m_depth + 1) {}
 
-		/**@brief Return the point with the given param t */
 		inline Point3 operator() (const float &t) const {
 			return m_ori + m_dir * t;
 		}
 
-		/**@brief cout debug function of Ray */
 		friend __forceinline std::ostream &operator<<(std::ostream &os, const Ray &r) {
 			os << "[ ori = " << r.m_ori << ", dir = " << r.m_dir << ", maxt = " << r.m_maxt
 				<< ", time = " << r.m_time << "]";

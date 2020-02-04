@@ -1,7 +1,6 @@
 #include "triangle.h"
 
 namespace Aya {
-	// TriangleMesh class methonds
 	TriangleMesh::TriangleMesh(const Transform *O2W, const Transform *W2O, int tris, int verts,
 		const int *vert, const Point3 *P, const Normal3 *N, const float *UV) 
 			: Shape(O2W, W2O){
@@ -60,7 +59,6 @@ namespace Aya {
 
 	}
 
-	// Triangle class methonds
 	Triangle::Triangle(const Transform *O2W, const Transform *W2O, TriangleMesh * m, int n) :
 		Shape(O2W, W2O){
 		m_mesh = m;

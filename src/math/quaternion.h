@@ -14,7 +14,6 @@ namespace Aya {
 #if defined(AYA_USE_SIMD)
 	__declspec(align(16))
 #endif
-		/**@brief The Quaternion class implements a quaternion, to store a rotation.*/
 		class Quaternion {
 #if defined(AYA_USE_SIMD)
 		public:
@@ -51,7 +50,6 @@ namespace Aya {
 
 		public:
 			Quaternion() {}
-			/**@brief Constructor from scalars */
 			inline Quaternion(const float &x, const float &y, const float &z, const float &w) {
 				m_val[0] = x;
 				m_val[1] = y;
@@ -69,16 +67,9 @@ namespace Aya {
 			}
 #endif
 
-			/**@brief Axis angle Constructor
-		* @param axis The axis which the rotation is around
-		* @param angle The magnitude of the rotation around the angle (Radians) */
 			inline Quaternion(const BaseVector3 &axis, const float &angle) {
 				setRotation(axis, angle);
 			}
-			/**@brief Constructor from Euler angles
-		* @param yaw Angle around Y unless AYA_EULER_DEFAULT_ZYX defined then Z
-		* @param pitch Angle around X unless AYA_EULER_DEFAULT_ZYX defined then Y
-		* @param roll Angle around Z unless AYA_EULER_DEFAULT_ZYX defined then X */
 			inline Quaternion(const float &yaw, const float &pitch, const float &roll) {
 #ifndef AYA_EULER_DEFAULT_ZYX
 				setEuler(yaw, pitch, roll);
@@ -100,12 +91,6 @@ namespace Aya {
 			}
 #endif
 
-			/**@brief Set x,y,z and w
-		* @param x Value of x
-		* @param y Value of y
-		* @param z Value of z
-		* @param w Value of w
-		*/
 			inline void setValue(const float &x, const float &y, const float &z, const float &w) {
 				m_val[0] = x;
 				m_val[1] = y;
@@ -114,29 +99,17 @@ namespace Aya {
 				numericValid(1);
 			}
 
-			/**@brief Set the x value */
 			inline void setX(const float &x) { m_val[0] = x; numericValid(1); }
-			/**@brief Set the y value */
 			inline void setY(const float &y) { m_val[1] = y; numericValid(1); }
-			/**@brief Set the z value */
 			inline void setZ(const float &z) { m_val[2] = z; numericValid(1); }
-			/**@brief Set the w value */
 			inline void setW(const float &w) { m_val[3] = w; numericValid(1); }
-			/**@brief Return the x value */
 			inline const float& getX() const { return m_val[0]; }
-			/**@brief Return the y value */
 			inline const float& getY() const { return m_val[1]; }
-			/**@brief Return the z value */
 			inline const float& getZ() const { return m_val[2]; }
-			/**@brief Return the w value */
 			inline const float& getW() const { return m_val[3]; }
-			/**@brief Return the x value */
 			inline const float& x() const { return m_val[0]; }
-			/**@brief Return the y value */
 			inline const float& y() const { return m_val[1]; }
-			/**@brief Return the z value */
 			inline const float& z() const { return m_val[2]; }
-			/**@brief Return the w value */
 			inline const float& w() const { return m_val[3]; }
 
 			inline bool operator == (const Quaternion &q) const {
@@ -153,9 +126,6 @@ namespace Aya {
 				return !((*this) == q);
 			}
 
-			/**@brief Set each element to the max of the current values and the values of another Quaternion
-		* @param q The other Quaternion to compare with
-		*/
 			inline void setMax(const Quaternion &q) {
 #if defined(AYA_USE_SIMD)
 				m_val128 = _mm_max_ps(m_val128, q.m_val128);
@@ -166,9 +136,6 @@ namespace Aya {
 				SetMax(m_val[3], q.m_val[3]);
 #endif
 			}
-			/**@brief Set each element to the min of the current values and the values of another Quaternion
-		* @param q The other Quaternion to compare with
-		*/
 			inline void setMin(const Quaternion &q) {
 #if defined(AYA_USE_SIMD)
 				m_val128 = _mm_min_ps(m_val128, q.m_val128);
@@ -179,7 +146,6 @@ namespace Aya {
 				SetMin(m_val[3], q.m_val[3]);
 #endif
 			}
-			/**@brief Set each element to the zero*/
 			inline void setZero() {
 #if defined(AYA_USE_SIMD)
 				m_val128 = _mm_xor_ps(m_val128, m_val128);
@@ -191,7 +157,6 @@ namespace Aya {
 #endif
 			}
 
-			/**@brief Judge each element is zero or not*/
 			inline bool isZero() const {
 				return (m_val[0] == 0.f && m_val[1] == 0.f && m_val[2] == 0.f);
 			}
@@ -199,9 +164,6 @@ namespace Aya {
 				return length2() < SIMD_EPSILON * SIMD_EPSILON;
 			}
 
-			/**@brief Set the rotation using axis angle notation
-		* @param axis The axis around which to rotate
-		* @param angle The magnitude of the rotation in Radians */
 			void setRotation(const BaseVector3 &axis, const float &angle)
 			{
 				float d = axis.length();
@@ -209,10 +171,6 @@ namespace Aya {
 				float s = sinf(angle * 0.5f) / d;
 				setValue(axis.x() * s, axis.y() * s, axis.z() * s, cosf(angle * 0.5f));
 			}
-			/**@brief Set the quaternion using Euler angles
-		* @param yaw Angle around Y
-		* @param pitch Angle around X
-		* @param roll Angle around Z */
 			void setEuler(const float& yaw, const float& pitch, const float& roll)
 			{
 				float half_yaw = 0.5f * yaw;
@@ -229,10 +187,6 @@ namespace Aya {
 					sin_roll * cos_pitch * cos_yaw - cos_roll * sin_pitch * sin_yaw,
 					cos_roll * cos_pitch * cos_yaw + sin_roll * sin_pitch * sin_yaw);
 			}
-			/**@brief Set the quaternion using euler angles
-		* @param yaw_z Angle around Z
-		* @param pitch_y Angle around Y
-		* @param roll_x Angle around X */
 			void setEulerZYX(const float& yaw_z, const float& pitch_y, const float& roll_x)
 			{
 				float half_yaw = 0.5f * yaw_z;
@@ -249,10 +203,6 @@ namespace Aya {
 					cos_roll * cos_pitch * sin_yaw - sin_roll * sin_pitch * cos_yaw,   //z
 					cos_roll * cos_pitch * cos_yaw + sin_roll * sin_pitch * sin_yaw);  //formerly yzx
 			}
-			/**@brief Get the euler angles from this quaternion
-		   * @param yaw_z Angle around Z
-		   * @param pitch_y Angle around Y
-		   * @param roll_x Angle around X */
 			void getEulerZYX(float &yaw_z, float &pitch_y, float &roll_x) const
 			{
 				float squ = m_val[0] * m_val[0];
@@ -284,7 +234,6 @@ namespace Aya {
 					yaw_z = atan2f(2.f * (m_val[0] * m_val[1] + m_val[3] * m_val[2]), squ + sqx - sqy - sqz);
 				}
 			}
-			/**@brief + operator */
 			inline Quaternion operator + (const Quaternion &q) const {
 #if defined(AYA_USE_SIMD)
 				return Quaternion(_mm_add_ps(m_val128, q.m_val128));
@@ -295,7 +244,6 @@ namespace Aya {
 					m_val[3] + q.m_val[3]);
 #endif
 			}
-			/**@brief += operator */
 			inline Quaternion & operator += (const Quaternion &q) {
 #if defined(AYA_USE_SIMD)
 				m_val128 = _mm_add_ps(m_val128, q.m_val128);
@@ -308,7 +256,6 @@ namespace Aya {
 				numericValid(1);
 				return *this;
 			}
-			/**@brief - operator */
 			inline Quaternion operator - (const Quaternion &q) const {
 #if defined(AYA_USE_SIMD)
 				return Quaternion(_mm_sub_ps(m_val128, q.m_val128));
@@ -319,7 +266,6 @@ namespace Aya {
 					m_val[3] - q.m_val[3]);
 #endif
 			}
-			/**@brief -= operator */
 			inline Quaternion & operator -= (const Quaternion &q) {
 #if defined(AYA_USE_SIMD)
 				m_val128 = _mm_sub_ps(m_val128, q.m_val128);
@@ -332,7 +278,6 @@ namespace Aya {
 				numericValid(1);
 				return *this;
 			}
-			/**@brief - operator */
 			inline Quaternion operator- () const {
 #if defined(AYA_USE_SIMD)
 				return Quaternion(_mm_xor_ps(m_val128, vMzeroMask));
@@ -340,7 +285,6 @@ namespace Aya {
 				return Quaternion(-m_val[0], -m_val[1], -m_val[2], -m_val[3]);
 #endif
 			}
-			/**@brief * operator with a scale number */
 			inline Quaternion operator * (const float &s) const {
 #if defined(AYA_USE_SIMD)
 				__m128 vs = _mm_load_ss(&s);
@@ -354,11 +298,9 @@ namespace Aya {
 #endif
 
 			}
-			/**@brief * operator with a scale number */
 			inline friend Quaternion operator * (const float &s, const Quaternion &v) {
 				return v * s;
 			}
-			/**@brief *= operator with a scale number */
 			inline Quaternion & operator *= (const float &s) {
 #if defined(AYA_USE_SIMD)
 				__m128 vs = _mm_load_ss(&s);
@@ -373,7 +315,6 @@ namespace Aya {
 				numericValid(1);
 				return *this;
 			}
-			/**@brief * operator with another Quaternion */
 			inline Quaternion operator * (const Quaternion & q) const {
 #if defined(AYA_USE_SIMD)
 				__m128 vQ1 = m_val128;
@@ -413,7 +354,6 @@ namespace Aya {
 					w() * q.w() - x() * q.x() - y() * q.y() - z() * q.z());
 #endif
 			}
-			/**@brief *= operator with another Quaternion */
 			inline Quaternion& operator *= (const Quaternion & q) {
 #if defined(AYA_USE_SIMD)
 				__m128 vQ2 = q.get128();
@@ -449,7 +389,6 @@ namespace Aya {
 #endif
 				return *this;
 			}
-			/**@brief * operator with BaseVector3 class*/
 			inline Quaternion operator * (const BaseVector3 & v) const {
 #if defined(AYA_USE_SIMD)
 				__m128 vQ1 = get128();
@@ -484,7 +423,6 @@ namespace Aya {
 					-x() * v.x() - y() * v.y() - z() * v.z());
 #endif
 			}
-			/**@brief * operator with BaseVector3 class*/
 			friend inline Quaternion operator * (const BaseVector3 &w, const Quaternion& q) {
 #if defined(AYA_USE_SIMD)
 				__m128 vQ1 = w.get128();
@@ -519,14 +457,12 @@ namespace Aya {
 					-w.x() * q.x() - w.y() * q.y() - w.z() * q.z());
 #endif
 			}
-			/**@brief / operator with a scale number */
 			inline Quaternion operator / (const float &s) const {
 				assert(s != 0.f);
 				Quaternion ret;
 				ret = (*this) * (1.f / s);
 				return ret;
 			}
-			/**@brief /= operator with a scale number */
 			inline Quaternion & operator /= (const float &s) {
 				assert(s != 0.f);
 				return *this *= (1.f / s);
@@ -541,8 +477,6 @@ namespace Aya {
 				return m_val[p];
 			}
 
-			/**@brief Return the dot product between this quaternion and another
-		* @param q The other quaternion */
 			inline float dot(const Quaternion &q) const {
 #if defined(AYA_USE_SIMD)
 				__m128 vd = _mm_mul_ps(m_val128, q.m_val128);
@@ -561,11 +495,9 @@ namespace Aya {
 #endif
 			}
 
-			/**@brief Return the length squared of the quaternion */
 			inline float length2() const {
 				return dot(*this);
 			}
-			/**@brief Return the length of the quaternion */
 			inline float length() const {
 				return Sqrt(length2());
 			}
@@ -575,8 +507,6 @@ namespace Aya {
 				return 0.f;
 			}
 
-			/**@brief Normalize the quaternion
-		* Such that x^2 + y^2 + z^2 +w^2 = 1 */
 			inline Quaternion& normalize() {
 #if defined(AYA_USE_SIMD)
 				__m128 vd = _mm_mul_ps(m_val128, m_val128);
@@ -607,11 +537,9 @@ namespace Aya {
 				return *this;
 			}
 
-			/**@brief Return the angle [0, 2Pi] of rotation represented by this quaternion */
 			inline float getAngle() const {
 				return 2.f * acosf(m_val[3]);
 			}
-			/**@brief Return the axis of the rotation represented by this quaternion */
 			inline BaseVector3 getAxis() const {
 				float s_squared = 1.f - m_val[3] * m_val[3];
 				if (s_squared < 10.f * SIMD_EPSILON) //Check for divide by zero
@@ -619,7 +547,6 @@ namespace Aya {
 				float s = 1.f / Sqrt(s_squared);
 				return BaseVector3(m_val[0] * s, m_val[1] * s, m_val[2] * s);
 			}
-			/**@brief Return the inverse of this quaternion */
 			inline Quaternion inverse() const {
 #if defined(AYA_USE_SIMD)
 				return Quaternion(_mm_xor_ps(m_val128, vQInv));
@@ -628,10 +555,6 @@ namespace Aya {
 #endif
 			}
 
-			/**@brief Return the quaternion which is the result of Spherical Linear Interpolation between this and the other quaternion
-		* @param q The other quaternion to interpolate with
-		* @param t The ratio between this and q to interpolate.  If t = 0 the result is this, if t=1 the result is q.
-		* Slerp interpolates assuming constant velocity.  */
 			Quaternion slerp(const Quaternion &q, const float &t) const
 			{
 				const float magnitude = Sqrt(length2() * q.length2());
@@ -661,7 +584,6 @@ namespace Aya {
 				}
 			}
 
-			/**@brief cout debug function of Quaternion */
 			friend inline std::ostream &operator<<(std::ostream &os, const Quaternion &q) {
 				os << "[ " << AYA_SCALAR_OUTPUT(q.m_val[0])
 					<< ", " << AYA_SCALAR_OUTPUT(q.m_val[1])

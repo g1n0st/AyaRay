@@ -7,7 +7,6 @@
 #include "interaction.h"
 
 namespace Aya {
-	/**@brief The Material base class specifies the methods that materials must implement */
 	class Material {
 	public:
 #if defined(AYA_USE_SIMD)
@@ -20,15 +19,12 @@ namespace Aya {
 		}
 #endif
 
-		/**@brief Return the scattered ray, attenuation spectrum, and SurfaceInteraction */
 		virtual bool scatter(const Ray &r_in, const SurfaceInteraction &si, Spectrum &attenuation, Ray &scattered) const = 0;
-		/**@brief Return the emitted spectrum */
 		virtual Spectrum emitted(float u, float v, const Vector3 &p) const {
 			return Spectrum(0.f, 0.f, 0.f);
 		}
 	};
 
-	/**@brief only emit diffuse light to all directions. */
 	class DiffuseLight : public Material {
 	public:
 		Texture *m_light;
@@ -43,7 +39,6 @@ namespace Aya {
 		}
 	};
 
-	/**@brief Isotropic material */
 	class IsotropicMaterial : public Material {
 	public:
 		Texture *m_albedo;
@@ -60,7 +55,6 @@ namespace Aya {
 		}
 	};
 
-	/**@brief Lambertian material */
 	class LambertianMaterial : public Material {
 	public:
 		Texture *m_albedo;
@@ -79,7 +73,6 @@ namespace Aya {
 		}
 	};
 
-	/**@brief Mental material */
 	class MentalMaterial : public Material {
 	public:
 		Spectrum m_albedo;
@@ -107,7 +100,6 @@ namespace Aya {
 		}
 	};
 
-	/**@brief Dielectric material */
 	class DielectricMaterial : public Material {
 	public:
 		float m_refractive_idx;

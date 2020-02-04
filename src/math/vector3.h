@@ -35,7 +35,6 @@ namespace Aya {
 #if defined(AYA_USE_SIMD)
 	__declspec(align(16))
 #endif
-		/**@brief The BaseVector3 class stores a three-dimensional vector to represent vectors, points, normals.*/
 		class BaseVector3 {
 #if defined(AYA_USE_SIMD)
 		public:
@@ -169,7 +168,6 @@ namespace Aya {
 				return length2() < SIMD_EPSILON * SIMD_EPSILON;
 			}
 
-			/**@brief + operator */
 			inline BaseVector3 operator + (const BaseVector3 &v) const {
 #if defined(AYA_USE_SIMD)
 				return BaseVector3(_mm_add_ps(m_val128, v.m_val128));
@@ -179,7 +177,6 @@ namespace Aya {
 					m_val[2] + v.m_val[2]);
 #endif
 			}
-			/**@brief += operator */
 			inline BaseVector3 & operator += (const BaseVector3 &v) {
 #if defined(AYA_USE_SIMD)
 				m_val128 = _mm_add_ps(m_val128, v.m_val128);
@@ -191,7 +188,6 @@ namespace Aya {
 				numericValid(1);
 				return *this;
 			}
-			/**@brief - operator */
 			inline BaseVector3 operator - (const BaseVector3 &v) const {
 #if defined(AYA_USE_SIMD)
 				return BaseVector3(_mm_sub_ps(m_val128, v.m_val128));
@@ -201,7 +197,6 @@ namespace Aya {
 					m_val[2] - v.m_val[2]);
 #endif
 			}
-			/**@brief -= operator */
 			inline BaseVector3 & operator -= (const BaseVector3 &v) {
 #if defined(AYA_USE_SIMD)
 				m_val128 = _mm_sub_ps(m_val128, v.m_val128);
@@ -213,7 +208,6 @@ namespace Aya {
 				numericValid(1);
 				return *this;
 			}
-			/**@brief - operator */
 			inline BaseVector3 operator- () const {
 #if defined(AYA_USE_SIMD)
 				__m128 r = _mm_xor_ps(m_val128, vMzeroMask);
@@ -222,7 +216,6 @@ namespace Aya {
 				return BaseVector3(-m_val[0], -m_val[1], -m_val[2]);
 #endif
 			}
-			/**@brief * operator with a scale number*/
 			inline BaseVector3 operator * (const float &s) const {
 #if defined(AYA_USE_SIMD)
 				__m128 vs = _mm_load_ss(&s);
@@ -235,11 +228,9 @@ namespace Aya {
 #endif
 
 			}
-			/**@brief * operator with a scale number*/
 			inline friend BaseVector3 operator * (const float &s, const BaseVector3 &v) {
 				return v * s;
 			}
-			/**@brief *= operator with a scale number*/
 			inline BaseVector3 & operator *= (const float &s) {
 #if defined(AYA_USE_SIMD)
 				__m128 vs = _mm_load_ss(&s);
@@ -253,14 +244,12 @@ namespace Aya {
 				numericValid(1);
 				return *this;
 			}
-			/**@brief / operator with a scale number*/
 			inline BaseVector3 operator / (const float &s) const {
 				assert(s != 0.f);
 				BaseVector3 ret;
 				ret = (*this) * (1.f / s);
 				return ret;
 			}
-			/**@brief /= operator with a scale number*/
 			inline BaseVector3 & operator /= (const float &s) {
 				assert(s != 0.f);
 				return *this *= (1.f / s);
@@ -275,7 +264,6 @@ namespace Aya {
 				return m_val[p];
 			}
 
-			/**@brief Calculate the inner product */
 			inline float dot(const BaseVector3 &v) const {
 #if defined(AYA_USE_SIMD)
 				__m128 vd = _mm_mul_ps(m_val128, v.m_val128);
@@ -292,11 +280,9 @@ namespace Aya {
 #endif
 			}
 
-			/**@brief Calculate the length^2 */
 			inline float length2() const {
 				return dot(*this);
 			}
-			/**@brief Calculate the length */
 			inline float length() const {
 				return Sqrt(length2());
 			}
@@ -305,16 +291,13 @@ namespace Aya {
 				if (d > SIMD_EPSILON) return Sqrt(d);
 				return 0.f;
 			}
-			/**@brief Calculate the distance^2 with another vector */
 			inline float distance2(const BaseVector3 &p) const {
 				return (p - (*this)).length2();
 			}
-			/**@brief Calculate the distance with another vector */
 			inline float distance(const BaseVector3 &p) const {
 				return (p - (*this)).length();
 			}
 
-			/**@brief normalize the vector (make sure the length is 1) */
 			inline BaseVector3& normalize() {
 #if defined(AYA_USE_SIMD)
 				__m128 vd = _mm_mul_ps(m_val128, m_val128);
@@ -350,7 +333,6 @@ namespace Aya {
 				return *this;
 			}
 
-			/**@brief Calculate the cross product */
 			inline BaseVector3 cross(const BaseVector3 &v) const {
 #if defined(AYA_USE_SIMD)
 				__m128 T, V;
@@ -372,7 +354,6 @@ namespace Aya {
 #endif
 			}
 
-			/**@brief Calculate the Determinant */
 			inline BaseVector3 dot3(const BaseVector3 &v0, const BaseVector3 &v1, const BaseVector3 &v2) const {
 #if defined(AYA_USE_SIMD)
 				__m128 a0 = _mm_mul_ps(v0.m_val128, m_val128);
@@ -390,7 +371,6 @@ namespace Aya {
 #endif
 			}
 
-			/**@brief cout debug function of BaseVector3 */
 			friend inline std::ostream &operator<<(std::ostream &os, const BaseVector3 &v) {
 				os << "[ " << AYA_SCALAR_OUTPUT(v.m_val[0])
 					<< ", " << AYA_SCALAR_OUTPUT(v.m_val[1])
@@ -403,7 +383,6 @@ namespace Aya {
 #if defined(AYA_USE_SIMD)
 	__declspec(align(16))
 #endif
-		/**@brief The Vector3 class stores a three-dimensional vector.*/
 		class Vector3 : public BaseVector3 {
 		public:
 			Vector3() {}
@@ -452,7 +431,6 @@ namespace Aya {
 #if defined(AYA_USE_SIMD)
 	__declspec(align(16))
 #endif
-		/**@brief The Point3 class stores a three-dimensional point.*/
 		class Point3 : public BaseVector3 {
 		public:
 			Point3() {}
@@ -501,7 +479,6 @@ namespace Aya {
 #if defined(AYA_USE_SIMD)
 	__declspec(align(16))
 #endif
-		/**@brief The Normal3 class stores a three-dimensional normal.*/
 		class Normal3 : public BaseVector3 {
 		public:
 			Normal3() {}
