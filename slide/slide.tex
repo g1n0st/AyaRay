@@ -10,10 +10,14 @@
 \begin{document}
 
 \title[\sc Ray-Traing based Renderer]{\sc 基于光线追踪(Ray-Tracing) \\ 原理的物理渲染器实现}
+<<<<<<< Updated upstream
 \author{ \normalsize 余畅(94) \quad \tiny (2019091621002) \\
  \normalsize 张清安(92) \qquad \tiny (2019091621014) \\
  \normalsize 伍桐雨(92) \quad \tiny (2019091619028) \\
  \normalsize 肖荣博(92) \quad \tiny (2019091621017)}
+=======
+\author{ \normalsize 余畅 \quad \tiny (2019091621002)\\ \normalsize g1n0st @live.com}
+>>>>>>> Stashed changes
 \date{\today}
 \institute[UESTC]{Software Engeering, UESTC}
 \frame{\titlepage}
@@ -57,7 +61,7 @@
 \end{frame}
 
 \section{Linear algebra library}
-\begin{frame} {模块 1:　底层线性代数数学库 (张清安，肖荣博) }
+\begin{frame} {模块 1:　底层线性代数数学库}
 \begin{block}{主要功能}
     提供常用线性代数中 \\ 数学量(点，向量，法线，矩阵) 的结构体和 \\ 运算方法 (线性运算，数乘，内外积，\\ 矩阵的转置，求逆，乘法等）的函数
   \end{block}
@@ -152,7 +156,7 @@
 \end{frame}
 
 \section{Ray-Tracing implement}
-\begin{frame} {模块 2:　光追渲染器组件实现 (余畅) }
+\begin{frame} {模块 2:　光追渲染器组件实现}
 \begin{block}{主要功能}
     定义场景中的物体，材质，纹理相机等参数，\\ 并实现光线传播（漫反射，镜面反射，折射，相交）的相应计算
   \end{block}
@@ -371,7 +375,7 @@
 \end{frame}
 
 \section{Parser}
-\begin{frame} {/core/parser.h (梧桐雨)}
+\begin{frame} {/core/parser.h}
 \begin{itemize}
 \item 实现了parser类，用以将描述场景的JSON文件和 \\ 描述模型的OBJ文件解析入Scene结构体的内存中
 \end{itemize}
@@ -474,7 +478,7 @@
 \end{itemize}
 \end{frame}
 
-\begin{frame} {Others (余畅)}
+\begin{frame} {Others}
 \begin{itemize}
 
 \item ./core/config.h 控制项目的编译选项开关
