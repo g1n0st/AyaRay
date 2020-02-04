@@ -19,7 +19,6 @@
 #define MT19937_BUFF_LENGTH 624
 
 namespace Aya {
-	/**@brief rng class uses to generate random number */
 	class  rng {
 	public:
 		rng() {}
@@ -27,16 +26,12 @@ namespace Aya {
 			srand(index);
 		}
 
-		/* Init the rng with a seed provided */
 		virtual inline void srand(const uint64_t &index) = 0;
-		/* Return a random unsigned number */
 		virtual inline uint32_t rand32() = 0;
-		/* Return a random number range in [0,1) */
 		virtual inline float drand48() = 0 {
 			return Min(FLOAT_ONE_MINUS_EPSILON, rand32() * 2.3283064365386963e-10f);
 		}
 
-		/* Return a random point in a disk */
 		Point3 randomInUnitDisk() {
 			Point3 p;
 			do {
@@ -44,7 +39,6 @@ namespace Aya {
 			} while (p.length2() >= 1.f);
 			return p;
 		}
-		/* Return a random point in a sphere */
 		Point3 randomInUnitSphere() {
 			Point3 p;
 			do {
@@ -159,10 +153,8 @@ namespace Aya {
 	};
 
 	// https://www.cnblogs.com/leoin2012/p/7218033.html
-	/**@brief PerlinNoise class uses to generate Perlin noise in 3d space */
 	class PerlinNoise {
 	public:
-		/**@brief the range when the nosie repeat */
 		float m_repeat;
 
 	private:
@@ -201,7 +193,6 @@ namespace Aya {
 		PerlinNoise() { m_repeat = 0; }
 		PerlinNoise(const float &rep) : m_repeat(rep) {}
 
-		/**@brief Return the noise value with the given point */
 		virtual float turb(const Point3 &p) const {
 			float x = p.m_val[0];
 			float y = p.m_val[1];
