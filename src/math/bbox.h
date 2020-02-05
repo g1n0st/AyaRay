@@ -109,7 +109,7 @@ namespace Aya {
 			}
 			inline bool intersect(const Ray &r) const {
 				float t0, t1;
-				float tmin = r.m_mint, tmax = r.m_maxt;
+				float tmin = 0.f, tmax = r.m_maxt;
 				for (int a = 0; a < 3; a++) {
 					t0 = Min((m_pmin[a] - r.m_ori[a]) / r.m_dir[a],
 						(m_pmax[a] - r.m_ori[a]) / r.m_dir[a]);

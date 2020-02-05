@@ -299,6 +299,17 @@ namespace Aya {
 
 				return ret;
 			}
+			inline RayDifferential operator() (const RayDifferential &r) const {
+				RayDifferential ret = r;
+				ret.m_ori = (*this)(ret.m_ori);
+				ret.m_dir = (*this)(ret.m_dir);
+				ret.m_rx_ori = (*this)(ret.m_rx_ori);
+				ret.m_ry_ori = (*this)(ret.m_ry_ori);
+				ret.m_rx_dir = (*this)(ret.m_rx_dir);
+				ret.m_ry_dir = (*this)(ret.m_ry_dir);
+
+				return ret;
+			}
 
 			friend inline std::ostream &operator<<(std::ostream &os, const Transform &t) {
 				os << t.m_mat << ",\n";

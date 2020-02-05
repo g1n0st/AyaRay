@@ -124,7 +124,7 @@ namespace Aya {
 			}
 		} while (t1 < 0);
 
-		if (t1 >= ray.m_maxt || t1 <= ray.m_mint) return false;
+		if (t1 >= ray.m_maxt || t1 <= 0.f) return false;
 		*hit_t = t1;
 		si->t = t1;
 		si->u = si->v = 0;

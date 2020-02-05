@@ -120,7 +120,7 @@ namespace Aya {
 		}
 
 		float t = e2.dot(s2) * inv_div;
-		if (t >= ray.m_maxt || t <= ray.m_mint) {
+		if (t >= ray.m_maxt || t <= 0.f) {
 			return false;
 		}
 

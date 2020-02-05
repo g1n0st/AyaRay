@@ -30,7 +30,7 @@ namespace Aya {
 		// intersect
 		if (delta > 0) {
 			float t = (-b - Sqrt(delta)) / a; // x1
-			if (t < ray.m_maxt && t > ray.m_mint) {
+			if (t < ray.m_maxt && t > 0.f) {
 				(*hit_t) = t;
 				si->t = t;
 				si->p = r(t);
@@ -45,7 +45,7 @@ namespace Aya {
 			}
 
 			t = (-b + Sqrt(delta)) / a; // x2
-			if (t < ray.m_maxt && t > ray.m_mint) {
+			if (t < ray.m_maxt && t > 0.f) {
 				(*hit_t) = t;
 				si->t = t;
 				si->p = r(t);
