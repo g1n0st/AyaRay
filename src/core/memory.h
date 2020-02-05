@@ -4,12 +4,12 @@
 #include "config.h"
 
 namespace Aya {
+	// std::shared_ptr implement
 	template <typename T>
 	class SharedPtr;
 
 	template <typename T>
-	class U_Ptr
-	{
+	class U_Ptr {
 	public:
 		friend class SharedPtr<T>;
 
@@ -21,8 +21,7 @@ namespace Aya {
 	};
 
 	template <typename T>
-	class SharedPtr
-	{
+	class SharedPtr {
 	public:
 		SharedPtr(T *ptr = NULL) : rp(new U_Ptr<T>(ptr)) {}
 		SharedPtr(const SharedPtr<T> &sp) :rp(sp.rp) {
@@ -41,6 +40,7 @@ namespace Aya {
 		}
 
 		T & operator * () {
+			assert(*this);
 			return *(rp->p);
 		}
 		T * operator -> () {
@@ -55,6 +55,71 @@ namespace Aya {
 		}
 	private:
 		U_Ptr<T> *rp;
+	};
+	
+	// std::unique_ptr implement
+	template<typename T>
+	struct DefaultDeleter {
+		void operator() (T *p) {
+			if (p) {
+				delete p;
+				p = NULL;
+			}
+		}
+	};
+
+	template<typename T, typename Deleter = DefaultDeleter<T>>
+	class UniquePtr {
+	public:
+		UniquePtr(T *ptr = NULL) : rp(ptr) {}
+		~UniquePtr() {
+			del();
+		}
+
+	private:
+		//not allow copyable
+		UniquePtr(const UniquePtr &);
+		UniquePtr & operator = (const UniquePtr &);
+
+	public:
+		void reset(T *p) {
+			del();
+			rp = p;
+		}
+		T * release() {
+			T *p = rp;
+			rp = NULL;
+			return p;
+		}
+		T * get() {
+			return rp;
+		}
+
+	public:
+		operator bool() const {
+			return NULL != rp;
+		}
+		T & operator * () {
+			assert(*this);
+			return *rp;
+		}
+		T * operator -> () {
+			return &*(*this);
+		}
+		const T *operator -> () const {
+			return rp->p;
+		}
+
+	private:
+		T *rp;
+		Deleter m_deleter;
+
+		void del() {
+			if (*this) {
+				m_deleter(rp);
+				rp = NULL;
+			}
+		}
 	};
 }
 
