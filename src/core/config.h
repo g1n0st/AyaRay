@@ -47,13 +47,7 @@
 /**@brief use debug output scalar approximation*/
 #define AYA_SCALAR_OUTPUT_APPROXIMATION
 
-// kit/parallel
-#ifndef AYA_POINTER_SIZE
-#if defined(__amd64__) || defined(_M_X64)
-#define AYA_POINTER_SIZE 8
-#elif defined(__i386__) || defined(_M_IX86)
-#define AYA_POINTER_SIZE 4
-#endif
-#endif
+// core/spectrum
+#define AYA_SAMPLED_SPECTRUM
 
 #endif

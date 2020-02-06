@@ -59,11 +59,28 @@ namespace Aya {
 	inline T Lerp(const T &t, const T &a, const T &b) {
 		return a + t * (b - a);
 	}
+
 	template<class T>
 	inline T Clamp(const T &t, const T  &low, const T &high) {
 		if (t < low) return low;
 		if (t > high) return high;
 		return t;
+	}
+
+	template <typename T>
+	int FindInterval(int size, const T &pred) {
+		int first = 0, len = size;
+		while (len > 0) {
+			int half = len >> 1, middle = first + half;
+			// Bisect range based on value of _pred_ at _middle_
+			if (pred(middle)) {
+				first = middle + 1;
+				len -= half + 1;
+			}
+			else
+				len = half;
+		}
+		return Clamp(first - 1, 0, size - 2);
 	}
 
 	inline float RSqrt(const float &x)

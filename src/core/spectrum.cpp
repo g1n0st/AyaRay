@@ -1,6 +1,155 @@
 #include "spectrum.h"
 
 namespace Aya {
+
+	bool SpectrumSamplesSorted(const float *lambda, const float *vals, int n) {
+		for (int i = 0; i < n - 1; i++)
+			if (lambda[i] > lambda[i + 1]) return false;
+		return true;
+	}
+	void SortSpectrumSamples(float *lambda, float *vals, int n) {
+		std::vector<std::pair<float, float> > sort_vec;
+		sort_vec.reserve(n);
+		for (int i = 0; i < n; i++) {
+			sort_vec.emplace_back(lambda[i], vals[i]);
+		}
+		std::sort(sort_vec.begin(), sort_vec.end());
+		for (int i = 0; i < n; i++) {
+			lambda[i] = sort_vec[i].first;
+			vals[i] = sort_vec[i].second;
+		}
+	}
+	float InterpolateSpectrumSamples(const float *lambda, const float *vals, int n, float l) {
+		if (l <= lambda[0]) return vals[0];
+		if (l >= lambda[n - 1]) return vals[n - 1];
+		int offset = FindInterval(n, [&](int index) { return lambda[index] <= l; });
+		float t = (l - lambda[offset]) / (lambda[offset + 1] - lambda[offset]);
+		return Lerp(t, vals[offset], vals[offset + 1]);
+	}
+	// calc the average of piecewise linear functions
+	float AverageSpectrumSamples(const float *lambda, const float *vals,
+		int n, float lambda_start, float lambda_end) {
+		if (lambda_end <= lambda[0]) return vals[0];
+		if (lambda_start >= lambda[n - 1]) return vals[n - 1];
+		if (n == 1) return vals[0];
+
+		float sum = 0.f;
+		if (lambda_start < lambda[0]) sum += vals[0] * (lambda[0] - lambda_start);
+		if (lambda_end > lambda[n - 1]) sum += vals[n - 1] * (lambda_end - lambda[n - 1]);
+
+		int i = 0;
+		while (lambda_start > lambda[i + 1]) ++i;
+
+		auto interp = [lambda, vals](float w, int i) {
+			return Lerp((w - lambda[i]) / (lambda[i + 1] - lambda[i]), vals[i], vals[i + 1]);
+		};
+
+		for (; i + 1 < n && lambda_end >= lambda[i]; i++) {
+			float seg_start = Max(lambda_start, lambda[i]);
+			float seg_end = Min(lambda_end, lambda[i + 1]);
+			sum += 0.5f * (seg_end - seg_start) * (
+				interp(seg_start, i) +
+				interp(seg_end, i)
+				);
+		}
+		return sum / (lambda_end - lambda_start);
+	}
+
+	RGBSpectrum SampledSpectrum::toRGBSpectrum() const {
+		float rgb[3];
+		toRGB(rgb);
+		return RGBSpectrum::fromRGB(rgb);
+	}
+	SampledSpectrum SampledSpectrum::fromRGB(const float rgb[3], SpectrumType type) {
+		SampledSpectrum r;
+		if (type == SpectrumType::Reflectance) {
+			// Convert reflectance spectrum to RGB
+			if (rgb[0] <= rgb[1] && rgb[0] <= rgb[2]) {
+				// Compute reflectance _SampledSpectrum_ with _rgb[0]_ as minimum
+				r += rgb[0] * rgb_refl_2spect_white;
+				if (rgb[1] <= rgb[2]) {
+					r += (rgb[1] - rgb[0]) * rgb_refl_2spect_cyan;
+					r += (rgb[2] - rgb[1]) * rgb_refl_2spect_blue;
+				}
+				else {
+					r += (rgb[2] - rgb[0]) * rgb_refl_2spect_cyan;
+					r += (rgb[1] - rgb[2]) * rgb_refl_2spect_green;
+				}
+			}
+			else if (rgb[1] <= rgb[0] && rgb[1] <= rgb[2]) {
+				// Compute reflectance _SampledSpectrum_ with _rgb[1]_ as minimum
+				r += rgb[1] * rgb_refl_2spect_white;
+				if (rgb[0] <= rgb[2]) {
+					r += (rgb[0] - rgb[1]) * rgb_refl_2spect_magenta;
+					r += (rgb[2] - rgb[0]) * rgb_refl_2spect_blue;
+				}
+				else {
+					r += (rgb[2] - rgb[1]) * rgb_refl_2spect_magenta;
+					r += (rgb[0] - rgb[2]) * rgb_refl_2spect_red;
+				}
+			}
+			else {
+				// Compute reflectance _SampledSpectrum_ with _rgb[2]_ as minimum
+				r += rgb[2] * rgb_refl_2spect_white;
+				if (rgb[0] <= rgb[1]) {
+					r += (rgb[0] - rgb[2]) * rgb_refl_2spect_yellow;
+					r += (rgb[1] - rgb[0]) * rgb_refl_2spect_green;
+				}
+				else {
+					r += (rgb[1] - rgb[2]) * rgb_refl_2spect_yellow;
+					r += (rgb[0] - rgb[1]) * rgb_refl_2spect_red;
+				}
+			}
+			r *= .94f;
+		}
+		else {
+			// Convert illuminant spectrum to RGB
+			if (rgb[0] <= rgb[1] && rgb[0] <= rgb[2]) {
+				// Compute illuminant _SampledSpectrum_ with _rgb[0]_ as minimum
+				r += rgb[0] * rgb_illum_2spect_white;
+				if (rgb[1] <= rgb[2]) {
+					r += (rgb[1] - rgb[0]) * rgb_illum_2spect_cyan;
+					r += (rgb[2] - rgb[1]) * rgb_illum_2spect_blue;
+				}
+				else {
+					r += (rgb[2] - rgb[0]) * rgb_illum_2spect_cyan;
+					r += (rgb[1] - rgb[2]) * rgb_illum_2spect_green;
+				}
+			}
+			else if (rgb[1] <= rgb[0] && rgb[1] <= rgb[2]) {
+				// Compute illuminant _SampledSpectrum_ with _rgb[1]_ as minimum
+				r += rgb[1] * rgb_illum_2spect_white;
+				if (rgb[0] <= rgb[2]) {
+					r += (rgb[0] - rgb[1]) * rgb_illum_2spect_magenta;
+					r += (rgb[2] - rgb[0]) * rgb_illum_2spect_blue;
+				}
+				else {
+					r += (rgb[2] - rgb[1]) * rgb_illum_2spect_magenta;
+					r += (rgb[0] - rgb[2]) * rgb_illum_2spect_red;
+				}
+			}
+			else {
+				// Compute illuminant _SampledSpectrum_ with _rgb[2]_ as minimum
+				r += rgb[2] * rgb_illum_2spect_white;
+				if (rgb[0] <= rgb[1]) {
+					r += (rgb[0] - rgb[2]) * rgb_illum_2spect_yellow;
+					r += (rgb[1] - rgb[0]) * rgb_illum_2spect_green;
+				}
+				else {
+					r += (rgb[1] - rgb[2]) * rgb_illum_2spect_yellow;
+					r += (rgb[0] - rgb[1]) * rgb_illum_2spect_red;
+				}
+			}
+			r *= .86445f;
+		}
+		return r.clamp();
+	}
+	SampledSpectrum::SampledSpectrum(const RGBSpectrum &r, SpectrumType type) {
+		float rgb[3];
+		r.toRGB(rgb);
+		*this = SampledSpectrum::fromRGB(rgb, type);
+	}
+
 	const float CIE_X[n_CIE_samples] = {
 		// CIE X function values
 		0.0001299000f,   0.0001458470f,   0.0001638021f,   0.0001840037f,
@@ -751,7 +900,26 @@ namespace Aya {
 		810, 811, 812, 813, 814, 815, 816, 817, 818, 819, 820, 821, 822, 823, 824,
 		825, 826, 827, 828, 829, 830 };
 
-	const float RGB_2spect_Lambda[n_RGB_2spect_samples] = {
+	// Spectral Data Definitions
+	SampledSpectrum SampledSpectrum::X;
+	SampledSpectrum SampledSpectrum::Y;
+	SampledSpectrum SampledSpectrum::Z;
+	SampledSpectrum SampledSpectrum::rgb_refl_2spect_white;
+	SampledSpectrum SampledSpectrum::rgb_refl_2spect_cyan;
+	SampledSpectrum SampledSpectrum::rgb_refl_2spect_magenta;
+	SampledSpectrum SampledSpectrum::rgb_refl_2spect_yellow;
+	SampledSpectrum SampledSpectrum::rgb_refl_2spect_red;
+	SampledSpectrum SampledSpectrum::rgb_refl_2spect_green;
+	SampledSpectrum SampledSpectrum::rgb_refl_2spect_blue;
+	SampledSpectrum SampledSpectrum::rgb_illum_2spect_white;
+	SampledSpectrum SampledSpectrum::rgb_illum_2spect_cyan;
+	SampledSpectrum SampledSpectrum::rgb_illum_2spect_magenta;
+	SampledSpectrum SampledSpectrum::rgb_illum_2spect_yellow;
+	SampledSpectrum SampledSpectrum::rgb_illum_2spect_red;
+	SampledSpectrum SampledSpectrum::rgb_illum_2spect_green;
+	SampledSpectrum SampledSpectrum::rgb_illum_2spect_blue;
+
+	const float RGB_2spect_lambda[n_RGB_2spect_samples] = {
 	380.000000f, 390.967743f, 401.935486f, 412.903229f, 423.870972f, 434.838715f,
 	445.806458f, 456.774200f, 467.741943f, 478.709686f, 489.677429f, 500.645172f,
 	511.612915f, 522.580627f, 533.548340f, 544.516052f, 555.483765f, 566.451477f,
