@@ -34,7 +34,10 @@ namespace Aya {
 				ud.normalize();
 
 				float t = .5f * (ud.y() + 1.f);
-				return ((1.f - t) * Spectrum(.15f, .15f, .15f) + t * Spectrum(.5f, .7f, 1.f)).clamp(0.0f, 1.0f);
+				float rgb1[3] = { .85f, .85f, .85f };
+				float rgb2[3] = { .7f, .7f, .7f };
+				return (std::pow(1.f - t, 10) * Spectrum::fromRGB(rgb1) + 
+					t * Spectrum::fromRGB(rgb2));
 			}
 		}
 	};

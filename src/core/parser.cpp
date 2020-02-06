@@ -132,32 +132,40 @@ namespace Aya {
 	inline Spectrum Parser::READ_SPECTRUM1() {
 		float r = 0, g = 0, b = 0;
 		bool r_r = false, r_g = false, r_b = false;
+		bool reflect = true;
 		READ_BRACE_BEGIN();
 		do {
 			std::string index = READ_INDEX();
 			if (index == "r" && !r_r) r = READ_FLOAT(), r_r = true;
 			else if (index == "g" && !r_g) g = READ_FLOAT(), r_g = true;
 			else if (index == "b" && !r_b) b = READ_FLOAT(), r_b = true;
+			else if (index == "Illuminant") reflect = !READ_BOOL();
 			else Assert(0);
 		} while (!READ_BRACE_ELEMENT_END());
 		Assert(r_r && r_g && r_b);
 		READ_BRACE_END();
-		return Spectrum(r, g, b);
+		float rgb[3] = { r, g, b };
+		if (reflect) return Spectrum::fromRGB(rgb, SpectrumType::Reflectance);
+		else return Spectrum::fromRGB(rgb, SpectrumType::Illuminant);
 	}
 	inline Spectrum Parser::READ_SPECTRUM256() {
 		float r = 0, g = 0, b = 0;
 		bool r_r = false, r_g = false, r_b = false;
+		bool reflect;
 		READ_BRACE_BEGIN();
 		do {
 			std::string index = READ_INDEX();
 			if (index == "r" && !r_r) r = READ_FLOAT(), r_r = true;
 			else if (index == "g" && !r_g) g = READ_FLOAT(), r_g = true;
 			else if (index == "b" && !r_b) b = READ_FLOAT(), r_b = true;
+			else if (index == "Illuminant") reflect = !READ_BOOL();
 			else Assert(0);
 		} while (!READ_BRACE_ELEMENT_END());
 		Assert(r_r && r_g && r_b);
 		READ_BRACE_END();
-		return Spectrum(r / 256.0f, g / 256.0f, b / 256.0f);
+		float rgb[3] = { r / 256.0f, g / 256.0f, b / 256.0f };
+		if (reflect) return Spectrum::fromRGB(rgb, SpectrumType::Reflectance);
+		else return Spectrum::fromRGB(rgb, SpectrumType::Illuminant);
 	}
 
 	inline std::string Parser::READ_INDEX() {

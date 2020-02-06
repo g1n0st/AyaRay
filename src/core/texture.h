@@ -60,7 +60,8 @@ namespace Aya {
 		NoiseTexture(const float sc) : m_scale(sc) {}
 
 		virtual Spectrum value(float u, float v, const Point3 &p) const {
-			return Spectrum(.5f, .5f, .5f) * (1 + sinf(m_scale * p.x() + 5 * m_noise.turb(m_scale * p)));
+			float rgb[3] = { .5f, .5f, .5f };
+			return Spectrum::fromRGB(rgb) * (1 + sinf(m_scale * p.x() + 5 * m_noise.turb(m_scale * p)));
 		}
 	};
 }

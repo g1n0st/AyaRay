@@ -18,7 +18,7 @@ namespace Aya {
 		for (int j = m_screen_y - 1; j >= 0; j--) {
 			for (int i = 0; i < m_screen_x; i++) {
 
-				Spectrum col(0, 0, 0);
+				Spectrum col;
 				for (int s = 0; s < m_sample_times; s++) {
 					float u = float(i + rng.drand48()) / float(m_screen_x);
 					float v = float(j + rng.drand48()) / float(m_screen_y);
@@ -27,10 +27,11 @@ namespace Aya {
 					col += m_int->li(r, m_acc, 0);
 				}
 				col /= (float)m_sample_times;
-				//col.sqrt();
-				int ir = (int)(255.99f * col[0]);
-				int ig = (int)(255.99f * col[1]);
-				int ib = (int)(255.99f * col[2]);
+				float rgb[3];
+				col.toRGB(rgb);
+				int ir = (int)(255.99f * rgb[0]);
+				int ig = (int)(255.99f * rgb[1]);
+				int ib = (int)(255.99f * rgb[2]);
 				fout << ir << ' ' << ig << ' ' << ib << std::endl;
 			}
 			loading++;

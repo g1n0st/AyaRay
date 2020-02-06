@@ -21,7 +21,7 @@ namespace Aya {
 
 		virtual bool scatter(const Ray &r_in, const SurfaceInteraction &si, Spectrum &attenuation, Ray &scattered) const = 0;
 		virtual Spectrum emitted(float u, float v, const Vector3 &p) const {
-			return Spectrum(0.f, 0.f, 0.f);
+			return Spectrum();
 		}
 	};
 
@@ -121,7 +121,8 @@ namespace Aya {
 			float cosine;
 			Vector3 refracted;
 
-			attenuation = Spectrum(1.f, 1.f, 1.f);
+			float rgb[3] = { 1.f, 1.f, 1.f };
+			attenuation = Spectrum::fromRGB(rgb);
 
 			// in to out
 			if (r_in.m_dir.dot(si.n) > 0) {
