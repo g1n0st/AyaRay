@@ -13,6 +13,8 @@
 #define _mm_splat_ps(_a, _i) _mm_pshufd_ps((_a), __MM_SHUFFLE(_i, _i, _i, _i))
 #define _mm_splat3_ps(_a, _i) _mm_pshufd_ps((_a), __MM_SHUFFLE(_i, _i, _i, 3))
 
+#define vFFFFMask (_mm_set_epi32(0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF))
+#define vFFFFfMask _mm_castsi128_ps(vFFFFMask)
 #define vFFF0Mask (_mm_set_epi32(0x00000000, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF))
 #define vFFF0fMask _mm_castsi128_ps(vFFF0Mask)
 #define vFF0FMask (_mm_set_epi32(0xFFFFFFFF, 0x00000000, 0xFFFFFFFF, 0xFFFFFFFF))

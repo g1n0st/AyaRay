@@ -5,270 +5,324 @@
 #include "../math/vector3.h"
 
 namespace Aya {
-	__declspec(align(16))
-		class Spectrum {
+	template<int nSamples>
+	class CoefficientSpectrum {
 #if defined(AYA_USE_SIMD)
-		public:
-			union {
-				float m_val[4];
-				__m128 m_val128;
-			};
-
-			inline __m128 get128() const {
-				return m_val128;
-			}
-			inline void set128(const __m128 &v128) {
-				m_val128 = v128;
-			}
-#else
-		public:
-
+	public:
+		const static int nChips = (nSamples + 3) / 4;
+		union Chip {
 			float m_val[4];
+			__m128 m_val128;
+		} c[nChips];
 
-			inline const __m128& get128() const {
-				return *((const __m128*)&m_val[0]);
-			}
-#endif
-
-#if defined(AYA_DEBUG)
-		private:
-			inline void numericValid(int x) {
-				assert(!isnan(m_val[0]) && !isnan(m_val[1]) && !isnan(m_val[2]));
-			}
+		inline __m128 get128(const int &p) const {
+			return c[p].m_val128;
+		}
+		inline void set128(const __m128 &v128, const int &p) {
+			c[p].m_val128 = v128;
+		}
 #else
-#define numericValid
-#endif
-
-		public:
-			Spectrum() {}
-			inline Spectrum(const float &r, const float &g, const float &b) {
-				m_val[0] = r;
-				m_val[1] = g;
-				m_val[2] = b;
-				m_val[3] = .0f;
-				numericValid(1);
-			}
-#if defined(AYA_USE_SIMD)
-			inline void  *operator new(size_t i) {
-				return _mm_malloc(i, 16);
-			}
-
-			inline void operator delete(void *p) {
-				_mm_free(p);
-			}
+	public:
+		float c[nSamples];
 #endif
 
+	public:
+		CoefficientSpectrum() {
 #if defined(AYA_USE_SIMD)
-			inline Spectrum(const __m128 &v128) {
-				m_val128 = v128;
+			for (int i = 0; i < nChips; i++) {
+				__m128 &cc = c[i].m_val128;
+				cc = _mm_xor_ps(cc, cc);
 			}
-			inline Spectrum(const Spectrum &rhs) {
-				m_val128 = rhs.m_val128;
-			}
-			inline Spectrum& operator =(const Spectrum &rhs) {
-				m_val128 = rhs.m_val128;
-				return *this;
+#else
+			for (int i = 0; i < nSamples; i++) {
+				c[i] = 0;
 			}
 #endif
-			inline void setValue(const float &r, const float &g, const float &b) {
-				m_val[0] = r;
-				m_val[1] = g;
-				m_val[2] = b;
-				m_val[3] = .0f;
-				numericValid(1);
-			}
-			inline void setR(const float &r) { m_val[0] = r; numericValid(1); }
-			inline void setG(const float &g) { m_val[1] = g; numericValid(1); }
-			inline void setB(const float &b) { m_val[2] = b; numericValid(1); }
-			inline const float& getR() const { return m_val[0]; }
-			inline const float& getG() const { return m_val[1]; }
-			inline const float& getB() const { return m_val[2]; }
-			inline const float& r() const { return m_val[0]; }
-			inline const float& g() const { return m_val[1]; }
-			inline const float& b() const { return m_val[2]; }
+		}
 
-			inline bool operator == (const Spectrum &s) const {
+		inline float & operator[](const int &i) {
+			assert(i >= 0 && i < nSamples);
 #if defined(AYA_USE_SIMD)
-				return (0xf == _mm_movemask_ps((__m128)_mm_cmpeq_ps(m_val128, s.m_val128)));
+			return c[i >> 2].m_val[i & 3];
 #else
-				return ((m_val[0] == s.m_val[0]) &&
-					(m_val[1] == s.m_val[1]) &&
-					(m_val[2] == s.m_val[2]) &&
-					(m_val[3] == s.m_val[3]));
+			return c[i];
 #endif
-			}
-			inline bool operator != (const Spectrum &s) const {
-				return !((*this) == s);
-			}
+		}
+		inline float operator[](const int &i) const {
+			assert(i >= 0 && i < nSamples);
+#if defined(AYA_USE_SIMD)
+			return c[i >> 2].m_val[i & 3];
+#else
+			return c[i];
+#endif
+		}
 
-			inline void setMax(const Spectrum &s) {
+		CoefficientSpectrum operator + (const CoefficientSpectrum &s) const {
+			CoefficientSpectrum ret = *this;
 #if defined(AYA_USE_SIMD)
-				m_val128 = _mm_max_ps(m_val128, s.m_val128);
-#else
-				SetMax(m_val[0], s.m_val[0]);
-				SetMax(m_val[1], s.m_val[1]);
-				SetMax(m_val[2], s.m_val[2]);
-#endif
+			for (int i = 0; i < nChips; i++) {
+				ret.c[i].m_val128 = _mm_add_ps(ret.c[i].m_val128, s.c[i].m_val128);
 			}
-			inline void setMin(const Spectrum &s) {
+#else
+			for (int i = 0; i < nSamples; i++) {
+				ret.c[i] += s.c[i];
+			}
+#endif
+			return ret;
+		}
+		CoefficientSpectrum &operator += (const CoefficientSpectrum &s) {
+			CoefficientSpectrum ret = *this;
 #if defined(AYA_USE_SIMD)
-				m_val128 = _mm_min_ps(m_val128, s.m_val128);
-#else
-				SetMin(m_val[0], s.m_val[0]);
-				SetMin(m_val[1], s.m_val[1]);
-				SetMin(m_val[2], s.m_val[2]);
-#endif
+			for (int i = 0; i < nChips; i++) {
+				c[i].m_val128 = _mm_add_ps(c[i].m_val128, s.c[i].m_val128);
 			}
-			inline void setZero() {
+#else
+			for (int i = 0; i < nSamples; i++) {
+				c[i] += s.c[i];
+			}
+#endif
+			return *this;
+		}
+		CoefficientSpectrum operator - (const CoefficientSpectrum &s) const {
+			CoefficientSpectrum ret = *this;
 #if defined(AYA_USE_SIMD)
-				m_val128 = _mm_xor_ps(m_val128, m_val128);
-#else
-				m_val[0] = 0.f;
-				m_val[1] = 0.f;
-				m_val[2] = 0.f;
-				m_val[3] = 0.f;
-#endif
+			for (int i = 0; i < nChips; i++) {
+				ret.c[i].m_val128 = _mm_sub_ps(ret.c[i].m_val128, s.c[i].m_val128);
 			}
+#else
+			for (int i = 0; i < nSamples; i++) {
+				ret.c[i] -= s.c[i];
+			}
+#endif
+			return ret;
+		}
+		CoefficientSpectrum &operator -= (const CoefficientSpectrum &s) {
+			CoefficientSpectrum ret = *this;
+#if defined(AYA_USE_SIMD)
+			for (int i = 0; i < nChips; i++) {
+				c[i].m_val128 = _mm_sub_ps(c[i].m_val128, s.c[i].m_val128);
+			}
+#else
+			for (int i = 0; i < nSamples; i++) {
+				c[i] -= s.c[i];
+			}
+#endif
+			return *this;
+		}
+		inline CoefficientSpectrum operator- () const {
+			CoefficientSpectrum ret;
+#if defined(AYA_USE_SIMD)
+			for (int i = 0; i < nChips; i++) {
+				__m128 r = _mm_xor_ps(c[i].m_val128, vMzeroMask);
+				ret.c[i].m_val128 = _mm_and_ps(r, vFFFFfMask);
+			}
+#else
+			for (int i = 0; i < nSamples; i++) {
+				ret.c[i] = -c[i];
+			}
+#endif
+			return ret;
+		}
+		CoefficientSpectrum operator * (const CoefficientSpectrum &s) const {
+			CoefficientSpectrum ret = *this;
+#if defined(AYA_USE_SIMD)
+			for (int i = 0; i < nChips; i++) {
+				ret.c[i].m_val128 = _mm_mul_ps(ret.c[i].m_val128, s.c[i].m_val128);
+			}
+#else
+			for (int i = 0; i < nSamples; i++) {
+				ret.c[i] *= s.c[i];
+			}
+#endif
+			return ret;
+		}
+		CoefficientSpectrum &operator *= (const CoefficientSpectrum &s) {
+			CoefficientSpectrum ret = *this;
+#if defined(AYA_USE_SIMD)
+			for (int i = 0; i < nChips; i++) {
+				c[i].m_val128 = _mm_mul_ps(c[i].m_val128, s.c[i].m_val128);
+			}
+#else
+			for (int i = 0; i < nSamples; i++) {
+				c[i] *= s.c[i];
+			}
+#endif
+			return *this;
+		}
+		CoefficientSpectrum operator / (const CoefficientSpectrum &s) const {
+			CoefficientSpectrum ret = *this;
+#if defined(AYA_USE_SIMD)
+			for (int i = 0; i < nChips; i++) {
+				ret.c[i].m_val128 = _mm_div_ps(ret.c[i].m_val128, s.c[i].m_val128);
+			}
+#else
+			for (int i = 0; i < nSamples; i++) {
+				ret.c[i] /= s.c[i];
+			}
+#endif
+			return ret;
+		}
+		CoefficientSpectrum &operator /= (const CoefficientSpectrum &s) {
+			CoefficientSpectrum ret = *this;
+#if defined(AYA_USE_SIMD)
+			for (int i = 0; i < nChips; i++) {
+				c[i].m_val128 = _mm_div_ps(c[i].m_val128, s.c[i].m_val128);
+			}
+#else
+			for (int i = 0; i < nSamples; i++) {
+				c[i] /= s.c[i];
+			}
+#endif
+			return *this;
+		}
+		CoefficientSpectrum operator * (const float &s) const {
+			CoefficientSpectrum ret = *this;
+#if defined(AYA_USE_SIMD)
+			__m128 vs = _mm_load1_ps(&s);
 
-			inline bool isZero() const {
-				return (m_val[0] == 0.f && m_val[1] == 0.f && m_val[2] == 0.f);
+			for (int i = 0; i < nChips; i++) {
+				ret.c[i].m_val128 = _mm_mul_ps(ret.c[i].m_val128, vs);
 			}
+#else
+			for (int i = 0; i < nSamples; i++) {
+				ret.c[i] *= s;
+			}
+#endif
+			return ret;
+		}
+		CoefficientSpectrum &operator *= (const float &s) {
+			CoefficientSpectrum ret = *this;
+#if defined(AYA_USE_SIMD)
+			__m128 vs = _mm_load1_ps(&s);
 
-			inline Spectrum operator + (const Spectrum &s) const {
-#if defined(AYA_USE_SIMD)
-				return Spectrum(_mm_add_ps(m_val128, s.m_val128));
+			for (int i = 0; i < nChips; i++) {
+				c[i].m_val128 = _mm_mul_ps(c[i].m_val128, vs);
+			}
 #else
-				return Spectrum(m_val[0] + s.m_val[0],
-					m_val[1] + s.m_val[1],
-					m_val[2] + s.m_val[2]);
+			for (int i = 0; i < nSamples; i++) {
+				c[i] *= s;
+			}
 #endif
-			}
-			inline Spectrum & operator += (const Spectrum &s) {
-#if defined(AYA_USE_SIMD)
-				m_val128 = _mm_add_ps(m_val128, s.m_val128);
-#else
-				m_val[0] += s.m_val[0];
-				m_val[1] += s.m_val[1];
-				m_val[2] += s.m_val[2];
-#endif
-				numericValid(1);
-				return *this;
-			}
-			inline Spectrum operator - (const Spectrum &s) const {
-#if defined(AYA_USE_SIMD)
-				return Spectrum(_mm_sub_ps(m_val128, s.m_val128));
-#else
-				return Spectrum(m_val[0] - s.m_val[0],
-					m_val[1] - s.m_val[1],
-					m_val[2] - s.m_val[2]);
-#endif
-			}
-			inline Spectrum & operator -= (const Spectrum &s) {
-#if defined(AYA_USE_SIMD)
-				m_val128 = _mm_sub_ps(m_val128, s.m_val128);
-#else
-				m_val[0] -= s.m_val[0];
-				m_val[1] -= s.m_val[1];
-				m_val[2] -= s.m_val[2];
-#endif
-				numericValid(1);
-				return *this;
-			}
-			inline Spectrum operator- () const {
-#if defined(AYA_USE_SIMD)
-				__m128 r = _mm_xor_ps(m_val128, vMzeroMask);
-				return Spectrum(_mm_and_ps(r, vFFF0fMask));
-#else
-				return Spectrum(-m_val[0], -m_val[1], -m_val[2]);
-#endif
-			}
-			inline Spectrum operator * (const Spectrum &s) const {
-#if defined(AYA_USE_SIMD)
-				return Spectrum(_mm_mul_ps(m_val128, s.m_val128));
-#else
-				return Spectrum(m_val[0] * s.m_val[0],
-					m_val[1] * s.m_val[1],
-					m_val[2] * s.m_val[2]);
-#endif
-			}
-			inline Spectrum & operator *= (const Spectrum &s) {
-#if defined(AYA_USE_SIMD)
-				m_val128 = _mm_mul_ps(m_val128, s.m_val128);
-#else
-				m_val[0] *= s.m_val[0];
-				m_val[1] *= s.m_val[1];
-				m_val[2] *= s.m_val[2];
-#endif
-				numericValid(1);
-				return *this;
-			}
-			inline Spectrum operator * (const float &s) const {
-#if defined(AYA_USE_SIMD)
-				__m128 vs = _mm_load_ss(&s);
-				vs = _mm_pshufd_ps(vs, 0x80);
-				return Spectrum(_mm_mul_ps(m_val128, vs));
-#else
-				return Spectrum(m_val[0] * s,
-					m_val[1] * s,
-					m_val[2] * s);
-#endif
-			}
-			inline friend Spectrum operator * (const float &v, const Spectrum &s) {
-				return s * v;
-			}
-			inline Spectrum & operator *= (const float &s) {
-#if defined(AYA_USE_SIMD)
-				__m128 vs = _mm_load_ss(&s);
-				vs = _mm_pshufd_ps(vs, 0x80);
-				m_val128 = _mm_mul_ps(m_val128, vs);
-#else
-				m_val[0] *= s;
-				m_val[1] *= s;
-				m_val[2] *= s;
-#endif
-				numericValid(1);
-				return *this;
-			}
-			inline Spectrum operator / (const float &s) const {
-				assert(s != 0.f);
-				Spectrum ret;
-				ret = (*this) * (1.f / s);
-				return ret;
-			}
-			inline Spectrum & operator /= (const float &s) {
-				assert(s != 0.f);
-				return *this *= (1.f / s);
-			}
+			return *this;
+		}
+		friend inline CoefficientSpectrum operator * (const float &a, const CoefficientSpectrum &s) {
+			return s * a;
+		}
+		CoefficientSpectrum operator / (const float &s) const {
+			assert(s != 0.f);
+			return (*this) * (1.f / s);
+		}
+		CoefficientSpectrum &operator /= (const float &s) {
+			assert(s != 0.f);
+			return (*this) *= (1.f / s);
+		}
 
-			float operator [](const int &p) const {
-				assert(p >= 0 && p <= 2);
-				return m_val[p];
+		bool operator == (const CoefficientSpectrum &s) const {
+#if defined(AYA_USE_SIMD)
+			for (int i = 0; i < nChips; i++) {
+				if (0xf != _mm_movemask_ps((__m128)_mm_cmpeq_ps(c[i].m_val128, s.c[i].m_val128))) return false;
 			}
-			float &operator [](const int &p) {
-				assert(p >= 0 && p <= 2);
-				return m_val[p];
+			return true;
+#else
+			for (int i = 0; i < nSamples; i++) {
+				if (c[i] != s.c[i]) return false;
 			}
+			return true;
+#endif
+		}
+		bool operator != (const CoefficientSpectrum &s) const {
+			return !(*this == s);
+		}
+		bool isBlack() const {
+#if defined(AYA_USE_SIMD)
+			__m128 v0 = _mm_set_ps(0.f, 0.f, 0.f, 0.f);
+			for (int i = 0; i < nChips; i++) {
+				if (0xf != _mm_movemask_ps((__m128)_mm_cmpeq_ps(c[i].m_val128, v0))) return false;
+			}
+#else
+			for (int i = 0; i < nSamples; i++) {
+				if (c[i] != 0.f) return false;
+			}
+#endif
+			return true;
+		}
+		CoefficientSpectrum sqrt() const{
+			CoefficientSpectrum ret;
 
-			inline Spectrum & sqrt() {
-				m_val[0] = Sqrt(m_val[0]);
-				m_val[1] = Sqrt(m_val[1]);
-				m_val[2] = Sqrt(m_val[2]);
-				return *this;
+#if defined(AYA_USE_SIMD)
+			for (int i = 0; i < nChips; i++) {
+				const __m128 a = c[i].m_val128;
+				const __m128 r = _mm_rsqrt_ps(a);
+				const __m128 v = _mm_add_ps(_mm_mul_ps(v1_5, r),
+					_mm_mul_ps(_mm_mul_ps(_mm_mul_ps(a, v_0_5), r), _mm_mul_ps(r, r)));
+				ret.c[i].m_val128 = _mm_div_ps(v1_0, v);
 			}
-			inline Spectrum & clamp(const float &low, const float &high) {
-				m_val[0] = Clamp(m_val[0], low, high);
-				m_val[1] = Clamp(m_val[1], low, high);
-				m_val[2] = Clamp(m_val[2], low, high);
-				return *this;
+#else
+			for (int i = 0; i < nSamples; i++) {
+				ret.c[i] = std::sqrt(c[i]);
 			}
+#endif
+			return ret;
+		}
+		CoefficientSpectrum exp() const {
+			CoefficientSpectrum ret;
+			for (int i = 0; i < nSamples; i++) {
+				ret[i] = std::exp((*this)[i]);
+			}
+			return ret;
+		}
+		CoefficientSpectrum clamp(const float &low, const float &high) const {
+			CoefficientSpectrum ret;
+			for (int i = 0; i < nSamples; i++) {
+				ret[i] = Clamp((*this)[i], low, high);
+			}
+			return ret;
+		}
+		float maxValue() const {
+#if defined(AYA_USE_SIMD)
+			Chip mx = c[0];
+			for (int i = 1; i < nChips; i++) {
+				mx.m_val128 = _mm_max_ps(mx.m_val128, c[i].m_val128);
+			}
+			return Max(
+				Max(mx.m_val[0], mx.m_val[1]),
+				Max(mx.m_val[2], mx.m_val[3])
+			);
+#else
+			float mx = c[0];
+			for (int i = 1; i < nSamples; i++) {
+				SetMax(mx, c[i]);
+			}
+			return mx;
+#endif
+		}
+		float minValue() const {
+#if defined(AYA_USE_SIMD)
+			Chip mn = c[0];
+			for (int i = 1; i < nChips; i++) {
+				mn.m_val128 = _mm_min_ps(mn.m_val128, c[i].m_val128);
+			}
+			return Min(
+				Min(mn.m_val[0], mn.m_val[1]),
+				Min(mn.m_val[2], mn.m_val[3])
+			);
+#else
+			float mn = c[0];
+			for (int i = 1; i < nSamples; i++) {
+				SetMin(mn, c[i]);
+			}
+			return mn;
+#endif
+		}
 
-			friend inline std::ostream &operator<<(std::ostream &os, const Spectrum &s) {
-				os << "[ " << AYA_SCALAR_OUTPUT(s.m_val[0])
-					<< ", " << AYA_SCALAR_OUTPUT(s.m_val[1])
-					<< ", " << AYA_SCALAR_OUTPUT(s.m_val[2])
-					<< " ]";
-				return os;
+		template<int n>
+		friend inline std::ostream &operator<<(std::ostream &os, const CoefficientSpectrum<n> &s) {
+			os << "(" << n << ")[ ";
+			for (int i = 0; i < n; i++) {
+				os << AYA_SCALAR_OUTPUT(s[i]) << (i < n - 1 ? ", " : " ]");
 			}
+			return os;
+		}
 	};
 }
 

@@ -25,7 +25,7 @@
 #define AYA_SCALAR_OUTPUT(x) (x)
 #endif
 
-
+#define v1_0 (_mm_set_ps(1.0f, 1.0f, 1.0f, 1.0f))
 #define v1_5 (_mm_set_ps(1.5f, 1.5f, 1.5f, 1.5f))
 #define v_0_5 (_mm_set_ps(-0.5f, -0.5f, -0.5f, -0.5f))
 #define v0_5 (_mm_set_ps(0.5f, 0.5f, 0.5f, 0.5f))
