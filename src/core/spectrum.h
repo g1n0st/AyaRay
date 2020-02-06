@@ -5,6 +5,51 @@
 #include "../math/vector3.h"
 
 namespace Aya {
+	
+	// Spectrum Utility Declarations
+	static const int sampled_lambda_start = 400;
+	static const int sampled_lambda_end = 700;
+	static const int n_spectral_samples = 60;
+
+	inline void XYZToRGB(const float xyz[3], float rgb[3]) {
+		rgb[0] = 3.240479f * xyz[0] - 1.537150f * xyz[1] - 0.498535f * xyz[2];
+		rgb[1] = -0.969256f * xyz[0] + 1.875991f * xyz[1] + 0.041556f * xyz[2];
+		rgb[2] = 0.055648f * xyz[0] - 0.204043f * xyz[1] + 1.057311f * xyz[2];
+	}
+
+	inline void RGBToXYZ(const float rgb[3], float xyz[3]) {
+		xyz[0] = 0.412453f * rgb[0] + 0.357580f * rgb[1] + 0.180423f * rgb[2];
+		xyz[1] = 0.212671f * rgb[0] + 0.715160f * rgb[1] + 0.072169f * rgb[2];
+		xyz[2] = 0.019334f * rgb[0] + 0.119193f * rgb[1] + 0.950227f * rgb[2];
+	}
+
+	// Spectral Data Declarations
+	static const int n_CIE_samples = 471;
+	extern const float CIE_X[n_CIE_samples];
+	extern const float CIE_Y[n_CIE_samples];
+	extern const float CIE_Z[n_CIE_samples];
+	extern const float CIE_lambda[n_CIE_samples];
+	static const float CIE_Y_integral = 106.856895f;
+
+	static const int n_RGB_2spect_samples = 32;
+	extern const float RGB_2spect_lambda[n_RGB_2spect_samples];
+
+	extern const float RGB_refl_2spect_white[n_RGB_2spect_samples];
+	extern const float RGB_refl_2spect_cyan[n_RGB_2spect_samples];
+	extern const float RGB_refl_2spect_magenta[n_RGB_2spect_samples];
+	extern const float RGB_refl_2spect_yellow[n_RGB_2spect_samples];
+	extern const float RGB_refl_2spect_red[n_RGB_2spect_samples];
+	extern const float RGB_refl_2spect_green[n_RGB_2spect_samples];
+	extern const float RGB_refl_2spect_blue[n_RGB_2spect_samples];
+
+	extern const float RGB_illum_2spect_white[n_RGB_2spect_samples];
+	extern const float RGB_illum_2spect_cyan[n_RGB_2spect_samples];
+	extern const float RGB_illum_2spect_magenta[n_RGB_2spect_samples];
+	extern const float RGB_illum_2spect_yellow[n_RGB_2spect_samples];
+	extern const float RGB_illum_2spect_red[n_RGB_2spect_samples];
+	extern const float RGB_illum_2spect_green[n_RGB_2spect_samples];
+	extern const float RGB_illum_2spect_blue[n_RGB_2spect_samples];
+
 	template<int nSamples>
 	class CoefficientSpectrum {
 #if defined(AYA_USE_SIMD)
