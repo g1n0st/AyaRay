@@ -327,6 +327,13 @@ namespace Aya {
 			}
 			return ret;
 		}
+		CoefficientSpectrum pow(float p) const {
+			CoefficientSpectrum ret;
+			for (int i = 0; i < nSamples; i++) {
+				ret[i] = std::pow((*this)[i], p);
+			}
+			return ret;
+		}
 		CoefficientSpectrum clamp(float low = 0, float high = INFINITY) const {
 			CoefficientSpectrum ret;
 			for (int i = 0; i < nSamples; i++) {

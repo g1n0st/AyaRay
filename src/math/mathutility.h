@@ -17,10 +17,10 @@
 #include <intrin.h>
 #endif
 
-#define SIMD_EPSILON FLT_EPSILON
+#define AYA_EPSILON FLT_EPSILON
 
 #if defined(AYA_SCALAR_OUTPUT_APPROXIMATION)
-#define AYA_SCALAR_OUTPUT(x) (abs(x) < SIMD_EPSILON ? 0 : (x))
+#define AYA_SCALAR_OUTPUT(x) (abs(x) < AYA_EPSILON ? 0 : (x))
 #else
 #define AYA_SCALAR_OUTPUT(x) (x)
 #endif

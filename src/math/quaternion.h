@@ -161,7 +161,7 @@ namespace Aya {
 				return (m_val[0] == 0.f && m_val[1] == 0.f && m_val[2] == 0.f);
 			}
 			__forceinline bool fuzzyZero() const {
-				return length2() < SIMD_EPSILON * SIMD_EPSILON;
+				return length2() < AYA_EPSILON * AYA_EPSILON;
 			}
 
 			void setRotation(const BaseVector3 &axis, const float &angle)
@@ -503,7 +503,7 @@ namespace Aya {
 			}
 			__forceinline float safeLength() const {
 				float d = length2();
-				if (d > SIMD_EPSILON) return Sqrt(d);
+				if (d > AYA_EPSILON) return Sqrt(d);
 				return 0.f;
 			}
 
@@ -528,7 +528,7 @@ namespace Aya {
 			}
 			__forceinline Quaternion& safeNormalize() {
 				float l2 = safeLength();
-				if (l2 >= SIMD_EPSILON) {
+				if (l2 >= AYA_EPSILON) {
 					return *this /= l2;
 				}
 				else {
@@ -542,7 +542,7 @@ namespace Aya {
 			}
 			__forceinline BaseVector3 getAxis() const {
 				float s_squared = 1.f - m_val[3] * m_val[3];
-				if (s_squared < 10.f * SIMD_EPSILON) //Check for divide by zero
+				if (s_squared < 10.f * AYA_EPSILON) //Check for divide by zero
 					return BaseVector3(1.0, 0.0, 0.0);           // Arbitrary
 				float s = 1.f / Sqrt(s_squared);
 				return BaseVector3(m_val[0] * s, m_val[1] * s, m_val[2] * s);
@@ -563,7 +563,7 @@ namespace Aya {
 				const float product = dot(q) / magnitude;
 				const float absproduct = fabsf(product);
 
-				if (absproduct < 1.0f - SIMD_EPSILON) {
+				if (absproduct < 1.0f - AYA_EPSILON) {
 					// Take care of long angle case see http://en.wikipedia.org/wiki/Slerp
 					const float theta = cosf(absproduct);
 					const float d = sinf(theta);

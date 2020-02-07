@@ -41,7 +41,7 @@ namespace Aya {
 		float t1, t2;
 		Point3 hit;
 
-		if (abs(r.m_dir.x()) > SIMD_EPSILON) {
+		if (abs(r.m_dir.x()) > AYA_EPSILON) {
 			t1 = (m_x - r.m_ori.x()) / r.m_dir.x();
 			t2 = (-m_x - r.m_ori.x()) / r.m_dir.x();
 			if (t1 > 0) {
@@ -51,7 +51,7 @@ namespace Aya {
 				SetMin(t_min, t2); SetMax(t_max, t2);
 			}
 		}
-		if (abs(r.m_dir.y()) > SIMD_EPSILON) {
+		if (abs(r.m_dir.y()) > AYA_EPSILON) {
 			t1 = (m_y - r.m_ori.y()) / r.m_dir.y();
 			t2 = (-m_y - r.m_ori.y()) / r.m_dir.y();
 			if (t1 > 0) {
@@ -61,7 +61,7 @@ namespace Aya {
 				SetMin(t_min, t2); SetMax(t_max, t2);
 			}
 		}
-		if (abs(r.m_dir.z()) > SIMD_EPSILON) {
+		if (abs(r.m_dir.z()) > AYA_EPSILON) {
 			t1 = (m_z - r.m_ori.z()) / r.m_dir.z();
 			t2 = (-m_z - r.m_ori.z()) / r.m_dir.z();
 			if (t1 > 0) {
@@ -78,7 +78,7 @@ namespace Aya {
 		float mid;
 		for (int i = 0; i < AYA_HEART_DIV_ARGU_2; i++) {
 			mid = (t_min + t_max) / 2.f;
-			if (std::abs(f(r(mid))) < SIMD_EPSILON) return mid;
+			if (std::abs(f(r(mid))) < AYA_EPSILON) return mid;
 			if (f(r(mid)) > 0) t_min = mid;
 			else t_max = mid;
 		}

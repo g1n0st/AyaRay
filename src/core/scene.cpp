@@ -12,32 +12,36 @@ namespace Aya {
 
 		fout << "P3\n" << m_screen_x << " " << m_screen_y << "\n255\n";
 
+		MitchellNetravaliFilter *filter = new MitchellNetravaliFilter();
+		//BoxFilter *filter = new BoxFilter();
+		Film film(m_screen_x, m_screen_y, filter);
+		
 		int st_time = clock();
+		
+		int total = m_sample_times, loading = 0;
+		for (int s = 0; s < m_sample_times; s++) {
+			for (int j = m_screen_y - 1; j >= 0; j--) {
+				for (int i = 0; i < m_screen_x; i++) {
+					Spectrum col;
+					float u = float(i + rng.drand48());
+					float v = float(j + rng.drand48());
 
-		int total = m_screen_y, loading = 0;
-		for (int j = m_screen_y - 1; j >= 0; j--) {
-			for (int i = 0; i < m_screen_x; i++) {
-
-				Spectrum col;
-				for (int s = 0; s < m_sample_times; s++) {
-					float u = float(i + rng.drand48()) / float(m_screen_x);
-					float v = float(j + rng.drand48()) / float(m_screen_y);
-
-					Ray r = m_cam->getRay(u, v);
-					col += m_int->li(r, m_acc, 0);
+					Ray r = m_cam->getRay(u / m_screen_x, v / m_screen_y);
+					film.addSample(u, v, m_int->li(r, m_acc, 0));
 				}
-				col /= (float)m_sample_times;
-				float rgb[3];
-				col.toRGB(rgb);
-				int ir = (int)(255.99f * rgb[0]);
-				int ig = (int)(255.99f * rgb[1]);
-				int ib = (int)(255.99f * rgb[2]);
-				fout << ir << ' ' << ig << ' ' << ib << std::endl;
 			}
 			loading++;
 			std::cout << loading << " / " << total << "(" << (float)loading / (float)total << ")\n";
+			film.addSampleCount();
 		}
-
+		film.updateDisplay();
+		const RGBSpectrum * offset = film.getPixelBuffer();
+		int cnt = 0;
+		for (int j = 0; j < m_screen_y; j++)
+			for (int i = 0; i < m_screen_x; i++) {
+				fout << int((*(offset + cnt))[0] * 255.99f) << ' ' << int((*(offset + cnt))[1] * 255.99f) << ' ' << int((*(offset + cnt))[2] * 255.99f) << std::endl;
+				cnt++;
+			}
 		int ed_time = clock();
 		std::cout << "used " << (float)(ed_time - st_time) / 1000.0f << " sec.\n";
 	}

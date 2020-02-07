@@ -102,7 +102,7 @@ namespace Aya {
 		Vector3 s1 = ray.m_dir.cross(e2);
 		float divisor = s1.dot(e1);
 
-		if (std::abs(divisor) < SIMD_EPSILON) {
+		if (std::abs(divisor) < AYA_EPSILON) {
 			return false;
 		}
 		float inv_div = 1.f / divisor;
@@ -130,7 +130,7 @@ namespace Aya {
 
 		(*hit_t) = t;
 		si->t = t;
-		si->p = ray(t - SIMD_EPSILON);
+		si->p = ray(t - AYA_EPSILON);
 		//si->p = b0 * p1 + b1 * p2 + b2 * p3;
 		if (m_mesh->m_n != NULL) {
 			si->n = (*o2w)((Normal3)(b0 * m_mesh->m_n[m_v[0]]

@@ -5,7 +5,9 @@
 #include "primitive.h"
 #include "memory.h"
 #include "integrator.h"
+#include "film.h"
 
+#include <ppl.h>
 #include <fstream>
 
 namespace Aya {

@@ -167,7 +167,7 @@ namespace Aya {
 				return (m_val[0] == 0.f && m_val[1] == 0.f && m_val[2] == 0.f);
 			}
 			__forceinline bool fuzzyZero() const {
-				return length2() < SIMD_EPSILON * SIMD_EPSILON;
+				return length2() < AYA_EPSILON * AYA_EPSILON;
 			}
 
 			__forceinline BaseVector3 operator + (const BaseVector3 &v) const {
@@ -290,7 +290,7 @@ namespace Aya {
 			}
 			__forceinline float safeLength() const {
 				float d = length2();
-				if (d > SIMD_EPSILON) return Sqrt(d);
+				if (d > AYA_EPSILON) return Sqrt(d);
 				return 0.f;
 			}
 			__forceinline float distance2(const BaseVector3 &p) const {
@@ -326,7 +326,7 @@ namespace Aya {
 			}
 			__forceinline BaseVector3& safeNormalize() {
 				float l2 = safeLength();
-				if (l2 >= SIMD_EPSILON) {
+				if (l2 >= AYA_EPSILON) {
 					return *this /= l2;
 				}
 				else {
