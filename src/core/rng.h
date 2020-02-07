@@ -35,14 +35,14 @@ namespace Aya {
 		Point3 randomInUnitDisk() {
 			Point3 p;
 			do {
-				p = (2 * Point3(drand48(), drand48(), 0.f) - Point3(1.f, 1.f, 0.f));
+				p = (Point3(drand48(), drand48(), 0.f) * 2 - Point3(1.f, 1.f, 0.f));
 			} while (p.length2() >= 1.f);
 			return p;
 		}
 		Point3 randomInUnitSphere() {
 			Point3 p;
 			do {
-				p = 2 * Point3(drand48(), drand48(), drand48()) - Point3(1.f, 1.f, 1.f);
+				p = (Point3(drand48(), drand48(), drand48()) * 2 - Point3(1.f, 1.f, 1.f));
 			} while (p.length2() >= 1.f);
 			return p;
 		}
