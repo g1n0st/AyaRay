@@ -79,7 +79,7 @@ namespace Aya {
 		}
 #else
 	protected:
-		float c[nSamples];
+		float c[nChips * 4];
 #endif
 
 	public:
@@ -528,10 +528,14 @@ namespace Aya {
 		}
 	};
 
-	class RGBSpectrum : public CoefficientSpectrum<3> {
+	class RGBSpectrum : public CoefficientSpectrum<4> {
 	public:
-		RGBSpectrum() : CoefficientSpectrum<3>() {}
-		RGBSpectrum(const CoefficientSpectrum<3> &s) : CoefficientSpectrum<3>(s) {}
+		RGBSpectrum() : CoefficientSpectrum<4>() {
+			(*this)[3] = 1.f;
+		}
+		RGBSpectrum(const CoefficientSpectrum<4> &s) : CoefficientSpectrum<4>(s) {
+			(*this)[3] = 1.f;
+		}
 		RGBSpectrum(const RGBSpectrum &s, SpectrumType type = SpectrumType::Reflectance) {
 			*this = s;
 		}
