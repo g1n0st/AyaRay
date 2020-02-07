@@ -48,6 +48,8 @@
 #define AYA_SCALAR_OUTPUT_APPROXIMATION
 
 // core/spectrum
-#define AYA_SAMPLED_SPECTRUM
+//#define AYA_SAMPLED_SPECTRUM
 
+// core/memory
+#define AYA_L1_CACHE_LINE_SIZE 64
 #endif

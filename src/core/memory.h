@@ -3,6 +3,8 @@
 
 #include "config.h"
 
+#include <atomic>
+
 namespace Aya {
 	// std::shared_ptr implement
 	template <typename T>
@@ -16,7 +18,7 @@ namespace Aya {
 		U_Ptr(T *ptr) : p(ptr), cnt(1) {}
 		~U_Ptr() { delete p; }
 
-		uint32_t cnt;
+		std::atomic<uint32_t> cnt;
 		T *p;
 	};
 
@@ -119,6 +121,45 @@ namespace Aya {
 				m_deleter(rp);
 				rp = NULL;
 			}
+		}
+	};
+
+	template<typename T> __forceinline T *AllocAligned(uint32_t count) {
+		return (T *)_aligned_malloc(count * sizeof(T), AYA_L1_CACHE_LINE_SIZE);
+	}
+	void FreeAligned(void *ptr);
+
+	template <typename T> class BlockedArray {
+	public:
+		T *m_data;
+		uint32_t u_res, v_res;
+
+	public:
+		BlockedArray(uint32_t nu, uint32_t nv) {
+			u_res = nu;
+			v_res = nv;
+			auto roundUp = [this](const uint32_t x) {
+				return (x + 3) & ~(3);
+			};
+			uint32_t n_alloc = roundUp(u_res) * roundUp(v_res);
+			m_data = AllocAligned<T>(n_alloc);
+			for (uint32_t i = 0; i < n_alloc; ++i)
+				new (&m_data[i]) T();
+		}
+		~BlockedArray() {
+			for (uint32_t i = 0; i < u_res * v_res; ++i)
+				m_data[i].~T();
+			FreeAligned(m_data);
+		}
+
+		__forceinline T &operator()(uint32_t u, uint32_t v) {
+			return m_data[u * v_res + v];
+		}
+		__forceinline const T &operator()(uint32_t u, uint32_t v) const {
+			return m_data[u * v_res + v];
+		}
+		__forceinline const T* data() const {
+			return m_data;
 		}
 	};
 }

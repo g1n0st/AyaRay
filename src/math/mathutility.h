@@ -32,36 +32,36 @@
 
 namespace Aya {
 	template<class T>
-	inline T Min(const T &a, const T &b) {
+	__forceinline T Min(const T &a, const T &b) {
 		return a < b ? a : b;
 	}
 	template<class T>
-	inline T Max(const T &a, const T &b) {
+	__forceinline T Max(const T &a, const T &b) {
 		return a > b ? a : b;
 	}
 	template<class T>
-	inline void SetMax(T &a, const T &b) {
+	__forceinline void SetMax(T &a, const T &b) {
 		if (b > a) a = b;
 	}
 	template<class T>
-	inline void SetMin(T &a, const T &b) {
+	__forceinline void SetMin(T &a, const T &b) {
 		if (b < a) a = b;
 	}
 
-	inline float Radian(const float &deg) {
+	__forceinline float Radian(const float &deg) {
 		return (float)(M_PI / 180.f) * deg;
 	}
-	inline float Degree(const float &rad) {
+	__forceinline float Degree(const float &rad) {
 		return (float)(180.f / M_PI) * rad;
 	}
 
 	template<class T>
-	inline T Lerp(const T &t, const T &a, const T &b) {
+	__forceinline T Lerp(const T &t, const T &a, const T &b) {
 		return a + t * (b - a);
 	}
 
 	template<class T>
-	inline T Clamp(const T &t, const T  &low, const T &high) {
+	__forceinline T Clamp(const T &t, const T  &low, const T &high) {
 		if (t < low) return low;
 		if (t > high) return high;
 		return t;
@@ -83,7 +83,7 @@ namespace Aya {
 		return Clamp(first - 1, 0, size - 2);
 	}
 
-	inline float RSqrt(const float &x)
+	__forceinline float RSqrt(const float &x)
 	{
 #if defined(AYA_USE_SIMD) && defined(AYA_USE_SQRT_APPROXIMATION)
 		const __m128 a = _mm_set_ss(x);
@@ -95,7 +95,7 @@ namespace Aya {
 		return 1.f / sqrtf(x);
 #endif
 	}
-	inline float Sqrt(const float &x) {
+	__forceinline float Sqrt(const float &x) {
 #if defined(AYA_USE_SIMD) && defined(AYA_USE_SQRT_APPROXIMATION)
 		return 1.f / RSqrt(x);
 #else

@@ -23,10 +23,10 @@ namespace Aya {
 				__m128 m_val128;
 			};
 
-			inline __m128 get128() const {
+			__forceinline __m128 get128() const {
 				return m_val128;
 			}
-			inline void set128(const __m128 &v128) {
+			__forceinline void set128(const __m128 &v128) {
 				m_val128 = v128;
 			}
 #else
@@ -34,14 +34,14 @@ namespace Aya {
 
 			float m_val[4];
 
-			inline const __m128& get128() const {
+			__forceinline const __m128& get128() const {
 				return *((const __m128*)&m_val[0]);
 			}
 #endif
 
 #if defined(AYA_DEBUG)
 		private:
-			inline void numericValid(int x) {
+			__forceinline void numericValid(int x) {
 				assert(!isnan(m_val[0]) && !isnan(m_val[1]) && !isnan(m_val[2]) && !isnan(m_val[3]));
 			}
 #else
@@ -50,7 +50,7 @@ namespace Aya {
 
 		public:
 			Quaternion() {}
-			inline Quaternion(const float &x, const float &y, const float &z, const float &w) {
+			__forceinline Quaternion(const float &x, const float &y, const float &z, const float &w) {
 				m_val[0] = x;
 				m_val[1] = y;
 				m_val[2] = z;
@@ -58,19 +58,19 @@ namespace Aya {
 				numericValid(1);
 			}
 #if defined(AYA_USE_SIMD)
-			inline void  *operator new(size_t i) {
+			__forceinline void  *operator new(size_t i) {
 				return _mm_malloc(i, 16);
 			}
 
-			inline void operator delete(void *p) {
+			__forceinline void operator delete(void *p) {
 				_mm_free(p);
 			}
 #endif
 
-			inline Quaternion(const BaseVector3 &axis, const float &angle) {
+			__forceinline Quaternion(const BaseVector3 &axis, const float &angle) {
 				setRotation(axis, angle);
 			}
-			inline Quaternion(const float &yaw, const float &pitch, const float &roll) {
+			__forceinline Quaternion(const float &yaw, const float &pitch, const float &roll) {
 #ifndef AYA_EULER_DEFAULT_ZYX
 				setEuler(yaw, pitch, roll);
 #else
@@ -79,19 +79,19 @@ namespace Aya {
 			}
 
 #if defined(AYA_USE_SIMD)
-			inline Quaternion(const __m128 &v128) {
+			__forceinline Quaternion(const __m128 &v128) {
 				m_val128 = v128;
 			}
-			inline Quaternion(const Quaternion &rhs) {
+			__forceinline Quaternion(const Quaternion &rhs) {
 				m_val128 = rhs.m_val128;
 			}
-			inline Quaternion& operator = (const Quaternion &rhs) {
+			__forceinline Quaternion& operator = (const Quaternion &rhs) {
 				m_val128 = rhs.m_val128;
 				return *this;
 			}
 #endif
 
-			inline void setValue(const float &x, const float &y, const float &z, const float &w) {
+			__forceinline void setValue(const float &x, const float &y, const float &z, const float &w) {
 				m_val[0] = x;
 				m_val[1] = y;
 				m_val[2] = z;
@@ -99,20 +99,20 @@ namespace Aya {
 				numericValid(1);
 			}
 
-			inline void setX(const float &x) { m_val[0] = x; numericValid(1); }
-			inline void setY(const float &y) { m_val[1] = y; numericValid(1); }
-			inline void setZ(const float &z) { m_val[2] = z; numericValid(1); }
-			inline void setW(const float &w) { m_val[3] = w; numericValid(1); }
-			inline const float& getX() const { return m_val[0]; }
-			inline const float& getY() const { return m_val[1]; }
-			inline const float& getZ() const { return m_val[2]; }
-			inline const float& getW() const { return m_val[3]; }
-			inline const float& x() const { return m_val[0]; }
-			inline const float& y() const { return m_val[1]; }
-			inline const float& z() const { return m_val[2]; }
-			inline const float& w() const { return m_val[3]; }
+			__forceinline void setX(const float &x) { m_val[0] = x; numericValid(1); }
+			__forceinline void setY(const float &y) { m_val[1] = y; numericValid(1); }
+			__forceinline void setZ(const float &z) { m_val[2] = z; numericValid(1); }
+			__forceinline void setW(const float &w) { m_val[3] = w; numericValid(1); }
+			__forceinline const float& getX() const { return m_val[0]; }
+			__forceinline const float& getY() const { return m_val[1]; }
+			__forceinline const float& getZ() const { return m_val[2]; }
+			__forceinline const float& getW() const { return m_val[3]; }
+			__forceinline const float& x() const { return m_val[0]; }
+			__forceinline const float& y() const { return m_val[1]; }
+			__forceinline const float& z() const { return m_val[2]; }
+			__forceinline const float& w() const { return m_val[3]; }
 
-			inline bool operator == (const Quaternion &q) const {
+			__forceinline bool operator == (const Quaternion &q) const {
 #if defined(AYA_USE_SIMD)
 				return (0xf == _mm_movemask_ps((__m128)_mm_cmpeq_ps(m_val128, q.m_val128)));
 #else
@@ -122,11 +122,11 @@ namespace Aya {
 					(m_val[3] == q.m_val[3]));
 #endif
 			}
-			inline bool operator != (const Quaternion &q) const {
+			__forceinline bool operator != (const Quaternion &q) const {
 				return !((*this) == q);
 			}
 
-			inline void setMax(const Quaternion &q) {
+			__forceinline void setMax(const Quaternion &q) {
 #if defined(AYA_USE_SIMD)
 				m_val128 = _mm_max_ps(m_val128, q.m_val128);
 #else
@@ -136,7 +136,7 @@ namespace Aya {
 				SetMax(m_val[3], q.m_val[3]);
 #endif
 			}
-			inline void setMin(const Quaternion &q) {
+			__forceinline void setMin(const Quaternion &q) {
 #if defined(AYA_USE_SIMD)
 				m_val128 = _mm_min_ps(m_val128, q.m_val128);
 #else
@@ -146,7 +146,7 @@ namespace Aya {
 				SetMin(m_val[3], q.m_val[3]);
 #endif
 			}
-			inline void setZero() {
+			__forceinline void setZero() {
 #if defined(AYA_USE_SIMD)
 				m_val128 = _mm_xor_ps(m_val128, m_val128);
 #else
@@ -157,10 +157,10 @@ namespace Aya {
 #endif
 			}
 
-			inline bool isZero() const {
+			__forceinline bool isZero() const {
 				return (m_val[0] == 0.f && m_val[1] == 0.f && m_val[2] == 0.f);
 			}
-			inline bool fuzzyZero() const {
+			__forceinline bool fuzzyZero() const {
 				return length2() < SIMD_EPSILON * SIMD_EPSILON;
 			}
 
@@ -234,7 +234,7 @@ namespace Aya {
 					yaw_z = atan2f(2.f * (m_val[0] * m_val[1] + m_val[3] * m_val[2]), squ + sqx - sqy - sqz);
 				}
 			}
-			inline Quaternion operator + (const Quaternion &q) const {
+			__forceinline Quaternion operator + (const Quaternion &q) const {
 #if defined(AYA_USE_SIMD)
 				return Quaternion(_mm_add_ps(m_val128, q.m_val128));
 #else
@@ -244,7 +244,7 @@ namespace Aya {
 					m_val[3] + q.m_val[3]);
 #endif
 			}
-			inline Quaternion & operator += (const Quaternion &q) {
+			__forceinline Quaternion & operator += (const Quaternion &q) {
 #if defined(AYA_USE_SIMD)
 				m_val128 = _mm_add_ps(m_val128, q.m_val128);
 #else
@@ -256,7 +256,7 @@ namespace Aya {
 				numericValid(1);
 				return *this;
 			}
-			inline Quaternion operator - (const Quaternion &q) const {
+			__forceinline Quaternion operator - (const Quaternion &q) const {
 #if defined(AYA_USE_SIMD)
 				return Quaternion(_mm_sub_ps(m_val128, q.m_val128));
 #else
@@ -266,7 +266,7 @@ namespace Aya {
 					m_val[3] - q.m_val[3]);
 #endif
 			}
-			inline Quaternion & operator -= (const Quaternion &q) {
+			__forceinline Quaternion & operator -= (const Quaternion &q) {
 #if defined(AYA_USE_SIMD)
 				m_val128 = _mm_sub_ps(m_val128, q.m_val128);
 #else
@@ -278,14 +278,14 @@ namespace Aya {
 				numericValid(1);
 				return *this;
 			}
-			inline Quaternion operator- () const {
+			__forceinline Quaternion operator- () const {
 #if defined(AYA_USE_SIMD)
 				return Quaternion(_mm_xor_ps(m_val128, vMzeroMask));
 #else
 				return Quaternion(-m_val[0], -m_val[1], -m_val[2], -m_val[3]);
 #endif
 			}
-			inline Quaternion operator * (const float &s) const {
+			__forceinline Quaternion operator * (const float &s) const {
 #if defined(AYA_USE_SIMD)
 				__m128 vs = _mm_load_ss(&s);
 				vs = _mm_pshufd_ps(vs, 0x00);
@@ -298,10 +298,10 @@ namespace Aya {
 #endif
 
 			}
-			inline friend Quaternion operator * (const float &s, const Quaternion &v) {
+			__forceinline friend Quaternion operator * (const float &s, const Quaternion &v) {
 				return v * s;
 			}
-			inline Quaternion & operator *= (const float &s) {
+			__forceinline Quaternion & operator *= (const float &s) {
 #if defined(AYA_USE_SIMD)
 				__m128 vs = _mm_load_ss(&s);
 				vs = _mm_pshufd_ps(vs, 0x00);
@@ -315,7 +315,7 @@ namespace Aya {
 				numericValid(1);
 				return *this;
 			}
-			inline Quaternion operator * (const Quaternion & q) const {
+			__forceinline Quaternion operator * (const Quaternion & q) const {
 #if defined(AYA_USE_SIMD)
 				__m128 vQ1 = m_val128;
 				__m128 vQ2 = q.m_val128;
@@ -354,7 +354,7 @@ namespace Aya {
 					w() * q.w() - x() * q.x() - y() * q.y() - z() * q.z());
 #endif
 			}
-			inline Quaternion& operator *= (const Quaternion & q) {
+			__forceinline Quaternion& operator *= (const Quaternion & q) {
 #if defined(AYA_USE_SIMD)
 				__m128 vQ2 = q.get128();
 
@@ -389,7 +389,7 @@ namespace Aya {
 #endif
 				return *this;
 			}
-			inline Quaternion operator * (const BaseVector3 & v) const {
+			__forceinline Quaternion operator * (const BaseVector3 & v) const {
 #if defined(AYA_USE_SIMD)
 				__m128 vQ1 = get128();
 				__m128 vQ2 = v.get128();
@@ -423,7 +423,7 @@ namespace Aya {
 					-x() * v.x() - y() * v.y() - z() * v.z());
 #endif
 			}
-			friend inline Quaternion operator * (const BaseVector3 &w, const Quaternion& q) {
+			friend __forceinline Quaternion operator * (const BaseVector3 &w, const Quaternion& q) {
 #if defined(AYA_USE_SIMD)
 				__m128 vQ1 = w.get128();
 				__m128 vQ2 = q.get128();
@@ -457,13 +457,13 @@ namespace Aya {
 					-w.x() * q.x() - w.y() * q.y() - w.z() * q.z());
 #endif
 			}
-			inline Quaternion operator / (const float &s) const {
+			__forceinline Quaternion operator / (const float &s) const {
 				assert(s != 0.f);
 				Quaternion ret;
 				ret = (*this) * (1.f / s);
 				return ret;
 			}
-			inline Quaternion & operator /= (const float &s) {
+			__forceinline Quaternion & operator /= (const float &s) {
 				assert(s != 0.f);
 				return *this *= (1.f / s);
 			}
@@ -477,7 +477,7 @@ namespace Aya {
 				return m_val[p];
 			}
 
-			inline float dot(const Quaternion &q) const {
+			__forceinline float dot(const Quaternion &q) const {
 #if defined(AYA_USE_SIMD)
 				__m128 vd = _mm_mul_ps(m_val128, q.m_val128);
 
@@ -495,19 +495,19 @@ namespace Aya {
 #endif
 			}
 
-			inline float length2() const {
+			__forceinline float length2() const {
 				return dot(*this);
 			}
-			inline float length() const {
+			__forceinline float length() const {
 				return Sqrt(length2());
 			}
-			inline float safeLength() const {
+			__forceinline float safeLength() const {
 				float d = length2();
 				if (d > SIMD_EPSILON) return Sqrt(d);
 				return 0.f;
 			}
 
-			inline Quaternion& normalize() {
+			__forceinline Quaternion& normalize() {
 #if defined(AYA_USE_SIMD)
 				__m128 vd = _mm_mul_ps(m_val128, m_val128);
 
@@ -526,7 +526,7 @@ namespace Aya {
 				return *this /= length();
 #endif
 			}
-			inline Quaternion& safeNormalize() {
+			__forceinline Quaternion& safeNormalize() {
 				float l2 = safeLength();
 				if (l2 >= SIMD_EPSILON) {
 					return *this /= l2;
@@ -537,17 +537,17 @@ namespace Aya {
 				return *this;
 			}
 
-			inline float getAngle() const {
+			__forceinline float getAngle() const {
 				return 2.f * acosf(m_val[3]);
 			}
-			inline BaseVector3 getAxis() const {
+			__forceinline BaseVector3 getAxis() const {
 				float s_squared = 1.f - m_val[3] * m_val[3];
 				if (s_squared < 10.f * SIMD_EPSILON) //Check for divide by zero
 					return BaseVector3(1.0, 0.0, 0.0);           // Arbitrary
 				float s = 1.f / Sqrt(s_squared);
 				return BaseVector3(m_val[0] * s, m_val[1] * s, m_val[2] * s);
 			}
-			inline Quaternion inverse() const {
+			__forceinline Quaternion inverse() const {
 #if defined(AYA_USE_SIMD)
 				return Quaternion(_mm_xor_ps(m_val128, vQInv));
 #else
@@ -584,7 +584,7 @@ namespace Aya {
 				}
 			}
 
-			friend inline std::ostream &operator<<(std::ostream &os, const Quaternion &q) {
+			friend __forceinline std::ostream &operator<<(std::ostream &os, const Quaternion &q) {
 				os << "[ " << AYA_SCALAR_OUTPUT(q.m_val[0])
 					<< ", " << AYA_SCALAR_OUTPUT(q.m_val[1])
 					<< ", " << AYA_SCALAR_OUTPUT(q.m_val[2])
