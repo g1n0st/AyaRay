@@ -8,7 +8,8 @@ namespace Aya {
 
 	void Film::init(int width, int height, Filter *filter) {
 		resize(width, height);
-		m_filter.reset(filter);
+		m_filter.reset();
+		m_filter = UniquePtr<Filter>(filter);
 	}
 	void Film::resize(int width, int height) {
 		m_width = width;

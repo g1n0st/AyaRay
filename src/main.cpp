@@ -1,5 +1,7 @@
-#include "Scene.h"
-#include "Parser.h"
+#include "Core/Scene.h"
+#include "Core/Parser.h"
+
+#include "Samplers\SobolSampler.h"
 
 void ayaInit() {
 	Aya::SampledSpectrum::init();
@@ -7,7 +9,7 @@ void ayaInit() {
 void ayaCleanUp() {
 
 }
-int main(int argc, char **argv) {
+void ayaMain(int argc, char **argv) {
 	if (argc != 3) {
 		printf("the argv is error.\n");
 		exit(1);
@@ -22,7 +24,9 @@ int main(int argc, char **argv) {
 	scene->render(argv[2]);
 
 	ayaCleanUp();
-
+}
+int main(int argc, char **argv) {
+	ayaMain(argc, argv);
 	system("PAUSE");
 	return 0;
 }

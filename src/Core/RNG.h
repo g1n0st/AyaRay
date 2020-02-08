@@ -57,25 +57,25 @@ namespace Aya {
 		uint64_t state, inc;
 
 	public:
-		inline PbrtRNG() : state(PCG32_DEFAULT_STATE), inc(PCG32_DEFAULT_STREAM) {
-			srand(0x777FFF);
+		inline PbrtRNG(const uint64_t &seed = 0x777FFF) : state(PCG32_DEFAULT_STATE), inc(PCG32_DEFAULT_STREAM) {
+			srand(seed);
 		}
 
-		inline void srand(const uint64_t &index) {
+		inline void srand(const uint64_t &index) override {
 			state = 0u;
 			inc = (index << 1u) | 1u;
 			rand32();
 			state += PCG32_DEFAULT_STATE;
 			rand32();
 		}
-		inline uint32_t rand32() {
+		inline uint32_t rand32() override  {
 			uint64_t o = state;
 			state = o * PCG32_MULT + inc;
 			uint32_t x_s = (uint32_t)(((o >> 18u) ^ o) >> 27u);
 			uint32_t rot = (uint32_t)(o >> 59u);
 			return (x_s >> rot) | (x_s << ((~rot + 1u) & 31));
 		}
-		inline float drand48() {
+		inline float drand48() override {
 			return Min(FLOAT_ONE_MINUS_EPSILON, rand32() * 2.3283064365386963e-10f);
 		}
 	};
@@ -102,17 +102,17 @@ namespace Aya {
 		}
 
 	public:
-		inline MT19937RNG() : idx(0) {
-			srand(0x777FFF);
+		inline MT19937RNG(const uint64_t &seed = 0x777FFF) : idx(0) {
+			srand(seed);
 		}
-		inline void srand(const uint64_t &seed) {
+		inline void srand(const uint64_t &seed) override {
 			MT[0] = (uint32_t)seed;
 			idx = 0;
 			for (uint32_t i = 1; i < MT19937_BUFF_LENGTH; i++) {
 				MT[i] = 1812433253u * (MT[i - 1] ^ (MT[i - 1] >> 30)) + i;	// 1812433253 == 0x6c078965
 			}
 		}
-		inline uint32_t rand32() {
+		inline uint32_t rand32() override {
 			if (!idx) {
 				generateNumber();
 			}
@@ -127,7 +127,7 @@ namespace Aya {
 
 			return y;
 		}
-		inline float drand48() {
+		inline float drand48() override {
 			return Min(FLOAT_ONE_MINUS_EPSILON, rand32() * 2.3283064365386963e-10f * 2.f);
 		}
 	};

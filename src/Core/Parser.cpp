@@ -151,7 +151,7 @@ namespace Aya {
 	inline Spectrum Parser::READ_SPECTRUM256() {
 		float r = 0, g = 0, b = 0;
 		bool r_r = false, r_g = false, r_b = false;
-		bool reflect;
+		bool reflect = true;
 		READ_BRACE_BEGIN();
 		do {
 			std::string index = READ_INDEX();
