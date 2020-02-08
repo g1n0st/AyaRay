@@ -6,7 +6,8 @@
 #include <atomic>
 
 namespace Aya {
-	// std::shared_ptr implement
+	
+	// https://lokiastari.com/blog/2015/01/15/c-plus-plus-by-example-smart-pointer-part-ii/
 	template <typename T>
 	class SharedPtr;
 
@@ -25,7 +26,7 @@ namespace Aya {
 	template <typename T>
 	class SharedPtr {
 	public:
-		SharedPtr(T *ptr = NULL) : rp(new U_Ptr<T>(ptr)) {}
+		SharedPtr(T *ptr = nullptr) : rp(new U_Ptr<T>(ptr)) {}
 		SharedPtr(const SharedPtr<T> &sp) :rp(sp.rp) {
 			rp->cnt++;
 		}
@@ -58,48 +59,69 @@ namespace Aya {
 	private:
 		U_Ptr<T> *rp;
 	};
-	
-	// std::unique_ptr implement
+
+	// https://lokiastari.com/blog/2015/01/23/c-plus-plus-by-example-smart-pointer-part-iii/
 	template<typename T>
-	struct DefaultDeleter {
-		void operator() (T *p) {
-			if (p) {
-				delete p;
-				p = NULL;
-			}
-		}
-	};
-
-	template<typename T, typename Deleter = DefaultDeleter<T>>
 	class UniquePtr {
-	public:
-		UniquePtr(T *ptr = NULL) : rp(ptr) {}
-		~UniquePtr() {
-			del();
-		}
-
 	private:
-		//not allow copyable
-		UniquePtr(const UniquePtr &);
-		UniquePtr & operator = (const UniquePtr &);
+		T *rp;
 
 	public:
-		void reset(T *p) {
-			del();
-			rp = p;
+		UniquePtr() : rp(nullptr) {}
+		explicit UniquePtr(T *ptr) : rp(ptr) {}
+		~UniquePtr() {
+			delete rp;
 		}
-		T * release() {
-			T *p = rp;
-			rp = NULL;
-			return p;
+
+		UniquePtr(std::nullptr_t) : rp(nullptr) {}
+		UniquePtr& operator = (std::nullptr_t) {
+			reset();
+			return *this;
+		}
+
+		UniquePtr(UniquePtr&& moving) noexcept {
+			moving.swap(*this);
+		}
+		UniquePtr& operator = (UniquePtr&& moving) noexcept {
+			moving.swap(*this);
+			return *this;
+		}
+
+		// constructor/assignment for use with types derived from T
+		template<typename U>
+		UniquePtr(UniquePtr<U>&& moving) {
+			UniquePtr<T> tmp(moving.release());
+			tmp.swap(*this);
+ 		}
+		template<typename U>
+		UniquePtr& operator = (UniquePtr<U>&& moving) {
+			UniquePtr<T> tmp(moving.release());
+			tmp.swap(*this);
+			return *this;
+		}
+
+		// remove compiler generated copy semantics
+		UniquePtr(UniquePtr const&) = delete;
+		UniquePtr& operator = (UniquePtr const&) = delete;
+
+		void reset() {
+			T* tmp = release();
+			delete tmp;
+		}
+		T * release() noexcept {
+			T* result = nullptr;
+			std::swap(result, rp);
+			return result;
 		}
 		T * get() {
 			return rp;
 		}
+		void swap(UniquePtr& src) noexcept {
+			std::swap(rp, src.rp);
+		}
 
-	public:
-		operator bool() const {
-			return NULL != rp;
+		explicit operator bool() const {
+			return rp;
 		}
 		T & operator * () {
 			assert(*this);
@@ -111,18 +133,18 @@ namespace Aya {
 		const T *operator -> () const {
 			return rp->p;
 		}
-
-	private:
-		T *rp;
-		Deleter m_deleter;
-
-		void del() {
-			if (*this) {
-				m_deleter(rp);
-				rp = NULL;
-			}
-		}
 	};
+
+	template <typename T, typename... TArgs>
+	__forceinline SharedPtr<T> MakeShared(TArgs&&... Args)
+	{
+		return SharedPtr<T>(new T(std::forward<TArgs>(Args)...));
+	}
+	template <typename T, typename... TArgs>
+	__forceinline UniquePtr<T> MakeUnique(TArgs&&... Args)
+	{
+		return UniquePtr<T>(new T(std::forward<TArgs>(Args)...));
+	}
 
 	template<typename T> __forceinline T *AllocAligned(uint32_t count) {
 		return (T *)_aligned_malloc(count * sizeof(T), AYA_L1_CACHE_LINE_SIZE);
