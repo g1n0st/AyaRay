@@ -102,6 +102,21 @@ namespace Aya {
 		return sqrtf(x);
 #endif
 	}
+
+	__forceinline uint32_t roundUpToPowerOfTwo(uint32_t val) {
+		--val;
+		val |= val >> 1;
+		val |= val >> 2;
+		val |= val >> 4;
+		val |= val >> 8;
+		val |= val >> 16;
+		return val + 1;
+	}
+	__forceinline uint32_t floorLog2(uint32_t value) {
+		unsigned long log2;
+		if (_BitScanReverse(&log2, value)) return log2;
+		return 0;
+	}
 }
 
 #endif
