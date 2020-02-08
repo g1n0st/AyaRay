@@ -15,7 +15,7 @@ namespace Aya {
 		m_height = height;
 
 		m_pixel_buffer.free();
-		m_pixel_buffer.init(width, height);
+		m_pixel_buffer.init(height, width);
 		m_accumulate_buffer.free();
 		m_accumulate_buffer.init(width, height);
 		m_sample_count = 0;
@@ -60,7 +60,7 @@ namespace Aya {
 			for (int x = 0; x < m_width; x++) {
 				Pixel pixel = m_accumulate_buffer(x, y);
 				pixel.color.clamp();
-				m_pixel_buffer(x, y) =
+				m_pixel_buffer(y, x) =
 					((Spectrum)(
 						pixel.color / (pixel.weight + float(AYA_EPSILON)) + pixel.splat / splat_scale
 						).pow(INV_GAMMA)).toRGBSpectrum();
