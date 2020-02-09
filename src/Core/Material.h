@@ -3,7 +3,7 @@
 
 #include "Ray.h"
 #include "Config.h"
-#include "Texture.h"
+#include "Texture_.h"
 #include "Interaction.h"
 
 namespace Aya {

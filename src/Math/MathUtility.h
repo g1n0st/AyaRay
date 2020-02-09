@@ -112,10 +112,27 @@ namespace Aya {
 		val |= val >> 16;
 		return val + 1;
 	}
+	__forceinline uint32_t countLeadingZeros(uint32_t value) {
+		unsigned long log2;
+		if (_BitScanReverse(&log2, value)) return 31 - log2;
+		return 32;
+	}
+	__forceinline uint32_t countTrailingZeros(uint32_t value) {
+		if (value == 0) {
+			return 32;
+		}
+		uint32_t bitidx; // 0-based, where the LSB is 0 and MSB is 31
+		_BitScanForward((unsigned long *)&bitidx, value);
+		return bitidx;
+	}
 	__forceinline uint32_t floorLog2(uint32_t value) {
 		unsigned long log2;
 		if (_BitScanReverse(&log2, value)) return log2;
 		return 0;
+	}
+	__forceinline uint32_t ceilLog2(uint32_t value) {
+		int bitmask = ((int)(countLeadingZeros(value) << 26)) >> 31;
+		return (32 - countLeadingZeros(value - 1)) & (~bitmask);
 	}
 }
 

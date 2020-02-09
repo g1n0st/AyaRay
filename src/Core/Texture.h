@@ -1,70 +1,143 @@
 #ifndef AYA_CORE_TEXTURE_H
 #define AYA_CORE_TEXTURE_H
 
-#include "Config.h"
-#include "Rng.h"
-#include "Spectrum.h"
-
-#include "../Math/Vector3.h"
+#include "../Core/Spectrum.h"
+#include "../Image/Bitmap.h"
+#include "../Math/Vector2.h"
 
 namespace Aya {
-	class Texture {
-	public:
-#if defined(AYA_USE_SIMD)
-		inline void  *operator new(size_t i) {
-			return _mm_malloc(i, 16);
-		}
-
-		inline void operator delete(void *p) {
-			_mm_free(p);
-		}
-#endif
-		virtual Spectrum value(float u, float v, const Point3 &p) const = 0;
+	enum class TextureFilter {
+		Nearest = 0,
+		Linear = 1,
+		TriLinear = 2,
+		Anisotropic4x = 3,
+		Anisotropic8x = 4,
+		Anisotropic16x = 5
+	};
+	enum class TextureWrapMode {
+		Clamp,
+		Repeat,
+		Mirror
 	};
 
-	class ConstantTexture : public Texture {
+	template<class T>
+	class Texture2D {
 	public:
-		Spectrum m_color;
+		virtual ~Texture2D() {}
+		virtual T sample(const Vector2f &coord, const Vector2f diffs[2]) const = 0;
+		virtual T sample(const Vector2f &coord, const Vector2f diffs[2], TextureFilter filter) const = 0;
+		virtual bool hasAlpha() const {
+			return false;
+		}
+		virtual bool isConstant() const {
+			return false;
+		}
+		virtual int width() const {
+			return 0;
+		}
+		virtual int height() const {
+			return 0;
+		}
+		virtual void setFilter(const TextureFilter filter) {}
+		virtual T getValue() const {
+			return T();
+		}
+		virtual void setValue(const T &value) {}
+	};
+
+	template<class T>
+	class ConstantTexture2D : public Texture2D<T> {
+	private:
+		T m_val;
 
 	public:
-		ConstantTexture() {}
-		ConstantTexture(const Spectrum &color) : m_color(color) {}
-
-		virtual Spectrum value(float u, float v, const Point3 &p) const {
-			return m_color;
+		ConstantTexture2D(const T &val) : m_val(val) {}
+		__forceinline T sample(const Vector2f &coord, const Vector2f diffs[2]) const {
+			return m_val;
+		}
+		__forceinline T sample(const Vector2f &coord, const Vector2f diffs[2], TextureFilter filter) const {
+			return m_val;
+		}
+		bool isConstant() const {
+			return true;
+		}
+		T getValue() const {
+			return m_val;
+		}
+		void setValue(const T &value) const {
+			this->m_val = value;
 		}
 	};
 
-	class CrossTexture : public Texture {
-	public:
-		Texture *m_t0, *m_t1;
+	template<class T>
+	class Mipmap2D {
+	private:
+		Vector2i m_offset_table[4];
+		Vector2i m_tex_dims;
+		int m_levels;
 
 	public:
-		CrossTexture() {}
-		CrossTexture(Texture *t0, Texture *t1) : m_t0(t0), m_t1(t1) {}
+		BlockedArray<T>* m_leveled_texels;
+		Mipmap2D() {
+			for (int i = 0; i < 4; i++)
+				for (int d = 0; d < 2; d++) {
+					m_offset_table[i][d] = (i & (1 << d)) != 0;
+				}
+		}
+		~Mipmap2D() {
+			delete[] m_leveled_texels;
+		}
 
-		virtual Spectrum value(float u, float v, const Point3 &p) const {
-			float sines = sinf(0.1f * p.x()) *
-				sinf(0.1f * p.y()) *
-				sinf(0.1f * p.z());
-			return sines < 0 ? m_t0->value(u, v, p) : m_t1->value(u, v, p);
+		void generate(const Vector2i &dims, const T* raw_tex);
+
+		T linearSample(const Vector2f& coord, const Vector2f diffs[2]) const;
+		T triLinearSample(const Vector2f& coord, const Vector2f diffs[2]) const;
+		T levelLinearSample(const Vector2f& coord, const int level) const;
+		T nearestSample(const Vector2f& coord) const;
+
+		const T* getLevelData(const int level = 0) const {
+			assert(level < m_levels);
+			return m_leveled_texels[level].data();
+		}
+		const int getLevels() const {
+			return m_levels;
 		}
 	};
 
-	class NoiseTexture : public Texture {
-	public:
-		PerlinNoise m_noise;
-		float m_scale;
+	template<class TRet, class TMem>
+	class ImageTexture2D : public Texture2D<TRet> {
+	private:
+		int m_width;
+		int m_height;
+		float m_width_inv, m_height_inv;
+		bool m_has_alpha;
+		TextureFilter m_filter;
+		Mipmap2D<TMem> m_texels;
 
 	public:
-		NoiseTexture() {}
-		NoiseTexture(const float sc) : m_scale(sc) {}
+		ImageTexture2D(const char* file_name, const float gamma = 2.2f);
+		ImageTexture2D(const TMem* pixels, const int width, const int height);
+		~ImageTexture2D() {}
 
-		virtual Spectrum value(float u, float v, const Point3 &p) const {
-			float rgb[3] = { .5f, .5f, .5f };
-			return Spectrum::fromRGB(rgb) * (1 + sinf(m_scale * p.x() + 5 * m_noise.turb(m_scale * p)));
+		TRet sample(const Vector2f &coord, const Vector2f diffs[2]) const;
+		TRet sample(const Vector2f &coord, const Vector2f diffs[2], TextureFilter filter) const;
+		TRet anisotropicSample(const Vector2f &coord, const Vector2f diffs[2], const int max_rate) const;
+
+		__forceinline void setFilter(const TextureFilter filter) {
+			m_filter = filter;
+		}
+		__forceinline int width() const {
+			return m_width;
+		}
+		__forceinline int height() const {
+			return m_height;
+		}
+		__forceinline bool has_alpha() const {
+			return m_has_alpha;
+		}
+		const TMem* getLevelData(const int level = 0) const {
+			return m_texels.getLevelData(level);
 		}
 	};
 }
-
 #endif
