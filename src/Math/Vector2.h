@@ -77,12 +77,32 @@ namespace Aya {
 			y /= s;
 			return *this;
 		}
+		__forceinline Vector2 operator << (const uint32_t &v) const {
+			return Vector2(x << v.x, y << v.y);
+		}
+		__forceinline Vector2 & operator <<= (const uint32_t &v) {
+			x <<= v.x;
+			y <<= v.y;
+			return *this;
+		}
+		__forceinline Vector2 operator >> (const uint32_t &v) const {
+			return Vector2(x >> v.x, y >> v.y);
+		}
+		__forceinline Vector2 & operator >>= (const uint32_t &v) {
+			x >>= v.x;
+			y >>= v.y;
+			return *this;
+		}
 
 		friend __forceinline std::ostream &operator<<(std::ostream &os, const Vector2 &v) {
 			os << "[ " << v.x
 				<< ", " << v.y
 				<< " ]";
 			return os;
+		}
+
+		__forceinline float length() const {
+			return Sqrt(float(x) * float(x) + float(y) * float(y));
 		}
 	};
 
