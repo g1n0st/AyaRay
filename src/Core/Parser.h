@@ -95,6 +95,7 @@ namespace Aya {
 		inline Texture * READ_CONSTANT_TEXTURE();
 		inline Texture * READ_CROSS_TEXTURE();
 		inline Texture * READ_NOISE_TEXTURE();
+		inline Texture * READ_IMAGE_TEXTURE();
 		inline Texture * READ_TEXTURE();
 
 		// read material function group
