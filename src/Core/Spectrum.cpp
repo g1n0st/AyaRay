@@ -1107,4 +1107,26 @@ namespace Aya {
 		8.8773879881746481e-02f,  1.3873621740236541e-01f,  1.5535067531939065e-01f,
 		1.4878477178237029e-01f,  1.6624255403475907e-01f,  1.6997613960634927e-01f,
 		1.5769743995852967e-01f,  1.9069090525482305e-01f };
+
+	SampledSpectrum::SampledSpectrum(const byteSpectrum &bs) noexcept {
+		float rgb[3] = { float(bs.r / 255.f), float(bs.g / 255.f), float(bs.b / 255.f) };
+		(*this) = fromRGB(rgb);
+	}
+	__forceinline SampledSpectrum& SampledSpectrum::operator = (const byteSpectrum &c) noexcept {
+		float rgb[3] = { float(c.r / 255.f), float(c.g / 255.f), float(c.b / 255.f) };
+		(*this) = fromRGB(rgb);
+		return *this;
+	}
+
+	RGBSpectrum::RGBSpectrum(const byteSpectrum &bs) noexcept {
+		(*this)[0] = float(bs.r / 255.f);
+		(*this)[1] = float(bs.g / 255.f);
+		(*this)[2] = float(bs.b / 255.f);
+	}
+	__forceinline RGBSpectrum& RGBSpectrum::operator = (const byteSpectrum &c) noexcept {
+		(*this)[0] = float(c.r / 255.f);
+		(*this)[1] = float(c.g / 255.f);
+		(*this)[2] = float(c.b / 255.f);
+		return *this;
+	}
 }
