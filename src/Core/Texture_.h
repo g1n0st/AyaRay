@@ -4,6 +4,7 @@
 #include "Config.h"
 #include "Rng.h"
 #include "Spectrum.h"
+#include "Texture.h"
 
 #include "../Math/Vector3.h"
 
@@ -32,6 +33,20 @@ namespace Aya {
 
 		virtual Spectrum value(float u, float v, const Point3 &p) const {
 			return m_color;
+		}
+	};
+
+	class ImageTexture : public Texture {
+	public:
+		ImageTexture2D<Spectrum, byteSpectrum> image;
+		Vector2f diffs[2];
+	public:
+		ImageTexture(const char *file_name, const float gamma = 0.454545f) : image(file_name, gamma) {
+			diffs[0] = diffs[1] = Vector2f();
+		}
+
+		virtual Spectrum value(float u, float v, const Point3 &p) const {
+			return image.sample(Vector2f(u, v), diffs, TextureFilter::TriLinear);
 		}
 	};
 
