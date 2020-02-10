@@ -32,6 +32,10 @@
 
 namespace Aya {
 	template<class T>
+	__forceinline T Abs(const T &a) {
+		return a < 0 ? -a : a;
+	}
+	template<class T>
 	__forceinline T Min(const T &a, const T &b) {
 		return a < b ? a : b;
 	}
@@ -56,7 +60,7 @@ namespace Aya {
 	}
 
 	template<class T>
-	__forceinline T Lerp(const T &t, const T &a, const T &b) {
+	__forceinline T Lerp(const float &t, const T &a, const T &b) {
 		return a + t * (b - a);
 	}
 
@@ -133,6 +137,20 @@ namespace Aya {
 	__forceinline uint32_t ceilLog2(uint32_t value) {
 		int bitmask = ((int)(countLeadingZeros(value) << 26)) >> 31;
 		return (32 - countLeadingZeros(value - 1)) & (~bitmask);
+	}
+
+	__forceinline int truncToInt(float val) {
+		return _mm_cvtt_ss2si(_mm_set_ss(val));
+	}
+
+	__forceinline int floorToInt(const float val) {
+		return _mm_cvt_ss2si(_mm_set_ss(val + val - .5f)) >> 1;
+	}
+	__forceinline int ceilToInt(const float val) {
+		return -(_mm_cvt_ss2si(_mm_set_ss(-0.5f - (val + val))) >> 1);
+	}
+	__forceinline int roundToInt(const float val) {
+		return _mm_cvt_ss2si(_mm_set_ss(val + val + .5f)) >> 1;
 	}
 }
 
