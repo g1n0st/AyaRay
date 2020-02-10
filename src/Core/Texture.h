@@ -4,6 +4,7 @@
 #include "../Core/Spectrum.h"
 #include "../Image/Bitmap.h"
 #include "../Math/Vector2.h"
+#include "../Core/Memory.h"
 
 namespace Aya {
 	enum class TextureFilter {
@@ -72,18 +73,12 @@ namespace Aya {
 	template<class T>
 	class Mipmap2D {
 	private:
-		Vector2i m_offset_table[4];
 		Vector2i m_tex_dims;
 		int m_levels;
 
 	public:
 		BlockedArray<T>* m_leveled_texels;
-		Mipmap2D() {
-			for (int i = 0; i < 4; i++)
-				for (int d = 0; d < 2; d++) {
-					m_offset_table[i][d] = (i & (1 << d)) != 0;
-				}
-		}
+		Mipmap2D() {}
 		~Mipmap2D() {
 			delete[] m_leveled_texels;
 		}
@@ -115,7 +110,7 @@ namespace Aya {
 		Mipmap2D<TMem> m_texels;
 
 	public:
-		ImageTexture2D(const char* file_name, const float gamma = 2.2f);
+		ImageTexture2D(const char* file_name, const float gamma);
 		ImageTexture2D(const TMem* pixels, const int width, const int height);
 		~ImageTexture2D() {}
 
@@ -137,6 +132,19 @@ namespace Aya {
 		}
 		const TMem* getLevelData(const int level = 0) const {
 			return m_texels.getLevelData(level);
+		}
+
+		static RGBSpectrum gammaCorrect(RGBSpectrum s, const float gamma) {
+			return s.pow(gamma);
+		}
+		static SampledSpectrum gammaCorrect(SampledSpectrum s, const float gamma) {
+			return s.pow(gamma);
+		}
+		static byteSpectrum gammaCorrect(byteSpectrum s, const float gamma) {
+			return (Spectrum)Spectrum(s).pow(gamma);
+		}
+		static float gammaCorrect(float s, const float gamma) {
+			return std::pow(s, gamma);
 		}
 	};
 }
