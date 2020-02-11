@@ -1,7 +1,7 @@
 #include "Core/Scene.h"
 #include "Core/Parser.h"
 
-#include "Samplers\SobolSampler.h"
+#include "Core\Texture.h"
 
 void ayaInit() {
 	Aya::SampledSpectrum::init();
@@ -9,6 +9,7 @@ void ayaInit() {
 void ayaCleanUp() {
 
 }
+
 void ayaMain(int argc, char **argv) {
 	if (argc != 3) {
 		printf("the argv is error.\n");
@@ -25,8 +26,11 @@ void ayaMain(int argc, char **argv) {
 
 	ayaCleanUp();
 }
+
+using namespace Aya;
 int main(int argc, char **argv) {
 	ayaMain(argc, argv);
+
 	system("PAUSE");
 	return 0;
 }

@@ -16,6 +16,8 @@ namespace Aya {
 		//BoxFilter *filter = new BoxFilter();
 		Film film(m_screen_x, m_screen_y, filter);
 		
+		ImageTexture img("cnm.bmp");
+		Point3 pp;
 		int st_time = clock();
 		
 		int total = m_sample_times, loading = 0;
@@ -26,8 +28,10 @@ namespace Aya {
 					float u = float(i + rng.drand48());
 					float v = float(j + rng.drand48());
 
-					Ray r = m_cam->getRay(u / m_screen_x, v / m_screen_y);
-					film.addSample(u, v, m_int->li(r, m_acc, 0));
+					//Ray r = m_cam->getRay(u / m_screen_x, v / m_screen_y);
+					//film.addSample(u, v, m_int->li(r, m_acc, 0));
+					//std::cout << img.value(u / m_screen_x, v / m_screen_y, Point3()) << std::endl;
+					film.addSample(u, v, img.value(u / m_screen_x, v / m_screen_y, Point3()));
 				}
 			}
 			loading++;
