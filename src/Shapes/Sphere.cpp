@@ -11,11 +11,12 @@ namespace Aya {
 			Point3(m_radius, m_radius, m_radius));
 	}
 	void Sphere::getUV(const Point3 &p, float *u, float *v) const {
-		float phi = atan2f(p.z(), p.x());
-		float theta = asinf(p.y());
+		float phi = atan2f(p.x(), p.z());
+		float theta = acosf(p.y());
 
-		(*u) = (float)(1 - (phi + M_PI) / (2 * M_PI));
-		(*v) = (float)((theta + M_PI_2) / M_PI);
+		if (phi < 0.0f) phi += M_PI * 2;
+		(*u) = phi * M_2_PI;
+		(*v) = 1.f - theta * M_1_PI;
 	}
 
 	bool Sphere::intersect(const Ray &ray, float *hit_t, SurfaceInteraction *si) const {

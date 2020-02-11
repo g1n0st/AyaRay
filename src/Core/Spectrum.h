@@ -83,11 +83,12 @@ namespace Aya {
 #endif
 
 	public:
-		CoefficientSpectrum() {
+		CoefficientSpectrum(const float val = 0.f) {
 #if defined(AYA_USE_SIMD)
+			__m128 v0 = _mm_set_ps(val, val, val, val);
 			for (int i = 0; i < nChips; i++) {
 				__m128 &cc = c[i].m_val128;
-				cc = _mm_xor_ps(cc, cc);
+				cc = v0;
 			}
 #else
 			for (int i = 0; i < nSamples; i++) {
@@ -379,6 +380,7 @@ namespace Aya {
 		}
 	};
 
+	class byteSpectrum;
 	class RGBSpectrum;
 	class SampledSpectrum;
 
@@ -395,9 +397,12 @@ namespace Aya {
 		static SampledSpectrum rgb_refl_2spect_green, rgb_illum_2spect_green;
 
 	public:
-		SampledSpectrum() : CoefficientSpectrum() {}
-		SampledSpectrum(const CoefficientSpectrum<n_spectral_samples> &s) :
+		SampledSpectrum(const float val = 0.f) noexcept : CoefficientSpectrum(val) {}
+		SampledSpectrum(const CoefficientSpectrum<n_spectral_samples> &s) noexcept :
 			CoefficientSpectrum<n_spectral_samples>(s) {}
+
+		__forceinline SampledSpectrum(const byteSpectrum &bs) noexcept;
+		__forceinline SampledSpectrum& operator = (const byteSpectrum &c) noexcept;
 
 		static SampledSpectrum fromSampled(const float *lambda, const float *v, int n) {
 			if (!SpectrumSamplesSorted(lambda, v, n)) {
@@ -518,6 +523,9 @@ namespace Aya {
 		}
 
 		RGBSpectrum toRGBSpectrum() const;
+		const SampledSpectrum & toSampledSpectrum() const {
+			return *this;
+		}
 		static SampledSpectrum fromRGB(const float rgb[3], SpectrumType type = SpectrumType::Illuminant);
 		static SampledSpectrum fromXYZ(const float xyz[3], SpectrumType type = SpectrumType::Reflectance) {
 			float rgb[3];
@@ -537,15 +545,18 @@ namespace Aya {
 
 	class RGBSpectrum : public CoefficientSpectrum<4> {
 	public:
-		RGBSpectrum() : CoefficientSpectrum<4>() {
+		RGBSpectrum(const float val = 0.f) noexcept : CoefficientSpectrum<4>(val) {
 			(*this)[3] = 1.f;
 		}
-		RGBSpectrum(const CoefficientSpectrum<4> &s) : CoefficientSpectrum<4>(s) {
+		RGBSpectrum(const CoefficientSpectrum<4> &s) noexcept : CoefficientSpectrum<4>(s) {
 			(*this)[3] = 1.f;
 		}
-		RGBSpectrum(const RGBSpectrum &s, SpectrumType type = SpectrumType::Reflectance) {
+		RGBSpectrum(const RGBSpectrum &s, SpectrumType type = SpectrumType::Reflectance) noexcept {
 			*this = s;
 		}
+
+		RGBSpectrum(const byteSpectrum &bs) noexcept;
+		__forceinline RGBSpectrum& operator = (const byteSpectrum &c) noexcept;
 
 		static RGBSpectrum fromRGB(const float rgb[3], SpectrumType type = SpectrumType::Reflectance) {
 			RGBSpectrum s;
@@ -595,6 +606,11 @@ namespace Aya {
 		const RGBSpectrum & toRGBSpectrum() const {
 			return *this;
 		}
+		SampledSpectrum toSampledSpectrum() const {
+			float rgb[3];
+			toRGB(rgb);
+			return SampledSpectrum::fromRGB(rgb);
+		}
 		float y() {
 			const float yy[3] = { 0.212671f, 0.715160f, 0.072169f };
 			return yy[0] * (*this)[0] + yy[1] * (*this)[1] + yy[2] * (*this)[2];
@@ -608,9 +624,87 @@ namespace Aya {
 
 #ifdef AYA_SAMPLED_SPECTRUM
 	typedef SampledSpectrum Spectrum;
+#define toSpectrum toSampledSpectrum
 #else
 	typedef RGBSpectrum Spectrum;
+#define toSpectrum toRGBSpectrum
 #endif
-}
 
+	typedef unsigned int Byte;
+	class byteSpectrum {
+	public:
+		Byte r, g, b, a;
+
+		byteSpectrum() : r(0), g(0), b(0), a(255) {}
+		byteSpectrum(Byte R, Byte G, Byte B, Byte A = 255) : r(R), g(G), b(G), a(A) {}
+		byteSpectrum(Byte val) : r(val), g(val), b(val), a(255) {}
+		byteSpectrum(const RGBSpectrum &c) noexcept{
+			float rgb[3];
+			c.toRGB(rgb);
+			r = Clamp((int)(rgb[0] * 255), 0, 255);
+			g = Clamp((int)(rgb[1] * 255), 0, 255);
+			b = Clamp((int)(rgb[2] * 255), 0, 255);
+			a = 255;
+		}
+		byteSpectrum(const SampledSpectrum &c) noexcept {
+			float rgb[3];
+			c.toRGB(rgb);
+			r = Clamp((int)(rgb[0] * 255), 0, 255);
+			g = Clamp((int)(rgb[1] * 255), 0, 255);
+			b = Clamp((int)(rgb[2] * 255), 0, 255);
+			a = 255;
+		}
+		__forceinline byteSpectrum& operator = (const RGBSpectrum &c) noexcept {
+			float rgb[3];
+			c.toRGB(rgb);
+			r = Clamp((int)(rgb[0] * 255), 0, 255);
+			g = Clamp((int)(rgb[1] * 255), 0, 255);
+			b = Clamp((int)(rgb[2] * 255), 0, 255);
+			a = 255;
+			return *this;
+		}
+		__forceinline byteSpectrum& operator = (const SampledSpectrum &c) noexcept {
+			float rgb[3];
+			c.toRGB(rgb);
+			r = Clamp((int)(rgb[0] * 255), 0, 255);
+			g = Clamp((int)(rgb[1] * 255), 0, 255);
+			b = Clamp((int)(rgb[2] * 255), 0, 255);
+			a = 255;
+			return *this;
+		}
+
+		__forceinline byteSpectrum operator * (float val) const {
+			return byteSpectrum(Byte(val * r), Byte(val * g), Byte(val * b));
+		}
+		__forceinline friend byteSpectrum operator * (float val, const byteSpectrum &s) {
+			return s * val;
+		}
+		__forceinline byteSpectrum operator / (float val) const {
+			assert(val);
+			float inv = 1.f / val;
+			return byteSpectrum(Byte(inv * r), Byte(inv * g), Byte(inv * b));
+		}
+		__forceinline byteSpectrum operator >> (const int shift) const {
+			return byteSpectrum(r >> shift, g >> shift, b >> shift);
+		}
+		__forceinline byteSpectrum operator + (const byteSpectrum &c) const {
+			return byteSpectrum(c.r + r, c.g + g, c.b + b);
+		}
+		__forceinline byteSpectrum& operator += (const byteSpectrum &c) {
+			r += c.r;
+			b += c.b;
+			g += c.g;
+			return *this;
+		}
+		__forceinline byteSpectrum operator - (const byteSpectrum &c) const {
+			return byteSpectrum(c.r - r, c.g - g, c.b - b);
+		}
+		__forceinline byteSpectrum& operator -= (const byteSpectrum &c) {
+			r -= c.r;
+			b -= c.b;
+			g -= c.g;
+			return *this;
+		}
+	};
+}
 #endif

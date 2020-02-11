@@ -43,9 +43,11 @@ namespace Aya {
 		int cnt = 0;
 		for (int j = 0; j < m_screen_y; j++)
 			for (int i = 0; i < m_screen_x; i++) {
-				fout << int((*(offset + cnt))[0] * 255.99f) << ' ' << int((*(offset + cnt))[1] * 255.99f) << ' ' << int((*(offset + cnt))[2] * 255.99f) << std::endl;
+				byteSpectrum b = offset[cnt];
+				fout << b.r << ' ' << b.g << ' ' << b.b << std::endl;
 				cnt++;
 			}
+		Bitmap::save("output.bmp", (float*)film.getPixelBuffer(), m_screen_x, m_screen_y, RGBA_32);
 		int ed_time = clock();
 		std::cout << "used " << (float)(ed_time - st_time) / 1000.0f << " sec.\n";
 	}

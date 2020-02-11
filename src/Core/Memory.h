@@ -152,7 +152,7 @@ namespace Aya {
 	void FreeAligned(void *ptr);
 
 	template <typename T> class BlockedArray {
-	public:
+	private:
 		T *m_data;
 		uint32_t u_res, v_res;
 
@@ -167,7 +167,7 @@ namespace Aya {
 			free();
 		}
 
-		void init(uint32_t nu, uint32_t nv) {
+		void init(uint32_t nu, uint32_t nv, const T* data = nullptr) {
 			u_res = nu;
 			v_res = nv;
 			auto roundUp = [this](const uint32_t x) {
@@ -177,6 +177,11 @@ namespace Aya {
 			m_data = AllocAligned<T>(n_alloc);
 			for (uint32_t i = 0; i < n_alloc; ++i)
 				new (&m_data[i]) T();
+
+			if (data) {
+				for (uint32_t i = 0; i < u_res * v_res; i++)
+					m_data[i] = data[i];
+			}
 		}
 		void free() {
 			for (uint32_t i = 0; i < u_res * v_res; ++i)
@@ -194,6 +199,18 @@ namespace Aya {
 		}
 		__forceinline const T* data() const {
 			return m_data;
+		}
+		__forceinline int x() const {
+			return u_res;
+		}
+		__forceinline int y() const {
+			return v_res;
+		}
+		__forceinline int u() const {
+			return u_res;
+		}
+		__forceinline int v() const {
+			return v_res;
 		}
 	};
 }

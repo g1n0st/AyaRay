@@ -57,7 +57,7 @@ namespace Aya {
 		uint64_t state, inc;
 
 	public:
-		inline PbrtRNG(const uint64_t &seed = 0x777FFF) : state(PCG32_DEFAULT_STATE), inc(PCG32_DEFAULT_STREAM) {
+		inline PbrtRNG(const uint64_t &seed = 0x7F7F7F) : state(PCG32_DEFAULT_STATE), inc(PCG32_DEFAULT_STREAM) {
 			srand(seed);
 		}
 

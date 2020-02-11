@@ -640,6 +640,21 @@ namespace Aya {
 		Assert(r_scale);
 		return new NoiseTexture(scale);
 	}
+	inline Texture * Parser::READ_IMAGE_TEXTURE() {
+		READ_BRACE_BEGIN();
+		std::string file_name;
+		bool r_file_name = false;
+		float gamma = 0.454545f;
+		do {
+			std::string str = READ_INDEX();
+			if (str == "file" && !r_file_name) file_name = READ_STRING(), r_file_name = true;
+			else if (str == "gamma") gamma = READ_FLOAT();
+			else Assert(0);
+		} while (!READ_BRACE_ELEMENT_END());
+		READ_BRACE_END();
+		Assert(r_file_name);
+		return new ImageTexture(file_name.c_str(), gamma);
+	}
 	inline Texture * Parser::READ_TEXTURE() {
 		READ_BRACE_BEGIN();
 		Texture *texture;
@@ -648,6 +663,7 @@ namespace Aya {
 			if (str == "constant") texture = READ_CONSTANT_TEXTURE();
 			else if (str == "cross") texture = READ_CROSS_TEXTURE();
 			else if (str == "noise") texture = READ_NOISE_TEXTURE();
+			else if (str == "image") texture = READ_IMAGE_TEXTURE();
 			else Assert(0);
 		} while (!READ_BRACE_ELEMENT_END());
 		READ_BRACE_END();
