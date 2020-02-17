@@ -6,7 +6,7 @@ namespace Aya {
 	template<class T>
 	inline void Mipmap2D<T>::generate(const Vector2i & dims, const T * raw_tex) {
 
-		Bitmap::save("fuck.bmp", (Byte*)raw_tex, dims.x, dims.y);
+		Bitmap::save("fuck.bmp", (float*)raw_tex, dims.x, dims.y, RGBA_32);
 
 		m_tex_dims = dims;
 		m_levels = ceilLog2(Max(dims.x, dims.y));
@@ -41,13 +41,14 @@ namespace Aya {
 
 					T sum = T(0);
 					sum += m_leveled_texels[l - 1](idx0.x, idx0.y);
-					sum += m_leveled_texels[l - 1](idx1.x, idx1.y);
-					sum += m_leveled_texels[l - 1](idx0.x, idx1.y);
-					sum += m_leveled_texels[l - 1](idx1.x, idx0.y);
-					m_leveled_texels[l](x, y) = sum / 4;
+					//sum += m_leveled_texels[l - 1](idx1.x, idx1.y);
+					//sum += m_leveled_texels[l - 1](idx0.x, idx1.y);
+					//sum += m_leveled_texels[l - 1](idx1.x, idx0.y);
+					//m_leveled_texels[l](x, y) = sum / 4;
+					m_leveled_texels[l](x, y) = sum;
 				}
 			char s[2] = { 'a' + l - 1, 0 };
-			Bitmap::save((std::string(s) + std::string(".bmp")).c_str(), (Byte*)m_leveled_texels[l].data(), level_dims.x, level_dims.y);
+			Bitmap::save((std::string(s) + std::string(".bmp")).c_str(), (float*)m_leveled_texels[l].data(), level_dims.x, level_dims.y, RGBA_32);
 		}
 	}
 
