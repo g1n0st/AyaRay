@@ -38,7 +38,7 @@ namespace Aya {
 
 	class ImageTexture : public Texture {
 	public:
-		ImageTexture2D<Spectrum, byteSpectrum> image;
+		ImageTexture2D<Spectrum, Spectrum> image;
 		Vector2f diffs[2];
 	public:
 		ImageTexture(const char *file_name, const float gamma = 0.454545f) : image(file_name, gamma) {
