@@ -97,25 +97,25 @@ namespace Aya {
 	{
 		const BlockedArray<T> &texel = m_leveled_texels[level];
 		
-		float coord_x = Min(coord.x * texel.x(), texel.x() - 1.f);
-		float coord_y = Min(coord.y * texel.y(), texel.y() - 1.f);
+		float coord_x = Min(coord.x * texel.v(), texel.v() - 1.f);
+		float coord_y = Min(coord.y * texel.u(), texel.u() - 1.f);
 		int idx0_x = floorToInt(coord_x);
 		int idx0_y = floorToInt(coord_y);
-		int idx1_x = Min(idx0_x + 1, texel.x() - 1);
-		int idx1_y = Min(idx0_y + 1, texel.y() - 1);
+		int idx1_x = Min(idx0_x + 1, texel.v() - 1);
+		int idx1_y = Min(idx0_y + 1, texel.u() - 1);
 
 		if (coord_x == idx0_x && coord_y == idx0_y) {
-			return texel(idx0_x, idx0_y);
+			return texel(idx0_y, idx0_x);
 		}
 
-		const T &v1 = texel(idx0_x, idx0_y);
-		const T &v2 = texel(idx1_x, idx0_y);
-		const T &v3 = texel(idx0_x, idx1_y);
-		const T &v4 = texel(idx1_x, idx1_y);
+		const T &v1 = texel(idx0_y, idx0_x);
+		const T &v2 = texel(idx1_y, idx0_x);
+		const T &v3 = texel(idx0_y, idx1_x);
+		const T &v4 = texel(idx1_y, idx1_x);
 		return Lerp(
-			coord_y - idx0_y,
-			Lerp(coord_x - idx0_x, v1, v2),
-			Lerp(coord_x - idx0_x, v3, v4)
+			coord_x - idx0_x,
+			Lerp(coord_y - idx0_y, v1, v2),
+			Lerp(coord_y - idx0_y, v3, v4)
 		);
 	}
 
@@ -123,9 +123,9 @@ namespace Aya {
 	T Mipmap2D<T>::nearestSample(const Vector2f & coord) const
 	{
 		const BlockedArray<T> &texel = m_leveled_texels[0];
-		int coord_x = Min(int(coord.x * texel.x()), texel.x() - 1);
-		int coord_y = Min(int(coord.y * texel.y()), texel.y() - 1);
-		return texel(coord_x, coord_y);
+		int coord_x = Min(int(coord.x * texel.v()), texel.v() - 1);
+		int coord_y = Min(int(coord.y * texel.u()), texel.u() - 1);
+		return texel(coord_y, coord_x);
 	}
 
 	template<class TRet, class TMem>
@@ -157,9 +157,8 @@ namespace Aya {
 
 	template<class TRet, class TMem>
 	TRet ImageTexture2D<TRet, TMem>::sample(const Vector2f & coord, const Vector2f diffs[2]) const {
-		Vector2f wrapped_coord(	coord.y - floorToInt(coord.y), 
-								coord.x - floorToInt(coord.x));
-		Vector2f wrapped_diffs[2] = { diffs[1], diffs[0] };
+		Vector2f wrapped_coord(	coord.x - floorToInt(coord.x), 
+								coord.y - floorToInt(coord.y));
 
 		switch (m_filter) {
 		case TextureFilter::Nearest:
@@ -167,13 +166,13 @@ namespace Aya {
 		case TextureFilter::Linear:
 			return m_texels.levelLinearSample(wrapped_coord, 0);
 		case TextureFilter::TriLinear:
-			return m_texels.triLinearSample(wrapped_coord, wrapped_diffs);
+			return m_texels.triLinearSample(wrapped_coord, diffs);
 		case TextureFilter::Anisotropic4x:
-			return anisotropicSample(wrapped_coord, wrapped_diffs, 4);
+			return anisotropicSample(wrapped_coord, diffs, 4);
 		case TextureFilter::Anisotropic8x:
-			return anisotropicSample(wrapped_coord, wrapped_diffs, 8);
+			return anisotropicSample(wrapped_coord, diffs, 8);
 		case TextureFilter::Anisotropic16x:
-			return anisotropicSample(wrapped_coord, wrapped_diffs, 16);
+			return anisotropicSample(wrapped_coord, diffs, 16);
 		}
 
 		return TRet(0);
@@ -181,23 +180,22 @@ namespace Aya {
 
 	template<class TRet, class TMem>
 	TRet ImageTexture2D<TRet, TMem>::sample(const Vector2f & coord, const Vector2f diffs[2], TextureFilter filter) const {
-		Vector2f wrapped_coord(coord.y - floorToInt(coord.y),
-			coord.x - floorToInt(coord.x));
-		Vector2f wrapped_diffs[2] = { diffs[1], diffs[0] };
+		Vector2f wrapped_coord(coord.x - floorToInt(coord.x),
+			coord.y - floorToInt(coord.y));
 
 		switch (filter) {
 		case TextureFilter::Nearest:
 			return m_texels.nearestSample(wrapped_coord);
 		case TextureFilter::Linear:
-			return m_texels.linearSample(wrapped_coord, wrapped_diffs);
+			return m_texels.linearSample(wrapped_coord, diffs);
 		case TextureFilter::TriLinear:
-			return m_texels.triLinearSample(wrapped_coord, wrapped_diffs);
+			return m_texels.triLinearSample(wrapped_coord, diffs);
 		case TextureFilter::Anisotropic4x:
-			return anisotropicSample(wrapped_coord, wrapped_diffs, 4);
+			return anisotropicSample(wrapped_coord, diffs, 4);
 		case TextureFilter::Anisotropic8x:
-			return anisotropicSample(wrapped_coord, wrapped_diffs, 8);
+			return anisotropicSample(wrapped_coord, diffs, 8);
 		case TextureFilter::Anisotropic16x:
-			return anisotropicSample(wrapped_coord, wrapped_diffs, 16);
+			return anisotropicSample(wrapped_coord, diffs, 16);
 		}
 
 		return TRet(0);
