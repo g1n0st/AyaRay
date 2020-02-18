@@ -113,7 +113,7 @@ namespace Aya {
 			std::swap(result, rp);
 			return result;
 		}
-		T * get() {
+		T * get() const {
 			return rp;
 		}
 		void swap(UniquePtr& src) noexcept {
