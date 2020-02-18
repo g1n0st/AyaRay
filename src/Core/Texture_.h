@@ -46,7 +46,7 @@ namespace Aya {
 		}
 
 		virtual Spectrum value(float u, float v, const Point3 &p) const {
-			return image.sample(Vector2f(u, v), diffs, TextureFilter::TriLinear);
+			return image.sample(Vector2f(u, v), diffs, TextureFilter::Anisotropic16x);
 		}
 	};
 

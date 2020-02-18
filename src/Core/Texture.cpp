@@ -5,34 +5,31 @@
 namespace Aya {
 	template<class T>
 	inline void Mipmap2D<T>::generate(const Vector2i & dims, const T * raw_tex) {
-
-		Bitmap::save("fuck.bmp", (float*)raw_tex, dims.x, dims.y, RGBA_32);
-
 		m_tex_dims = dims;
 		m_levels = ceilLog2(Max(dims.x, dims.y));
 		SetMax(m_levels, 1);
 
 		m_leveled_texels = new BlockedArray<T>[m_levels];
-		m_leveled_texels[0].init(dims.x, dims.y, raw_tex);
+		m_leveled_texels[0].init(dims.y, dims.x, raw_tex);
 
 		Vector2i level_dims = m_tex_dims;
 		for (auto l = 1; l < m_levels; l++) {
 			level_dims.x = Max(level_dims.x >> 1, 1);
 			level_dims.y = Max(level_dims.y >> 1, 1);
 
-			m_leveled_texels[l].init(level_dims.x, level_dims.y);
+			m_leveled_texels[l].init(level_dims.y, level_dims.x);
 			for (auto x = 0; x < level_dims.x; x++)
 				for (auto y = 0; y < level_dims.y; y++) {
 					Vector2i idx0, idx1;
 
-					if (level_dims.x < m_leveled_texels[l - 1].x()) {
+					if (level_dims.x < m_leveled_texels[l - 1].v()) {
 						idx0.x = x << 1;
 						idx1.x = x << 1 | 1;
 					}
 					else
 						idx0.x = idx1.x = x;
 
-					if (level_dims.y < m_leveled_texels[l - 1].y()) {
+					if (level_dims.y < m_leveled_texels[l - 1].u()) {
 						idx0.y = y << 1;
 						idx1.y = y << 1 | 1;
 					}
@@ -40,15 +37,12 @@ namespace Aya {
 						idx0.y = idx1.y = y;
 
 					T sum = T(0);
-					sum += m_leveled_texels[l - 1](idx0.x, idx0.y);
-					//sum += m_leveled_texels[l - 1](idx1.x, idx1.y);
-					//sum += m_leveled_texels[l - 1](idx0.x, idx1.y);
-					//sum += m_leveled_texels[l - 1](idx1.x, idx0.y);
-					//m_leveled_texels[l](x, y) = sum / 4;
-					m_leveled_texels[l](x, y) = sum;
+					sum += m_leveled_texels[l - 1](idx0.y, idx0.x);
+					sum += m_leveled_texels[l - 1](idx1.y, idx1.x);
+					sum += m_leveled_texels[l - 1](idx0.y, idx1.x);
+					sum += m_leveled_texels[l - 1](idx1.y, idx0.x);
+					m_leveled_texels[l](y, x) = sum / 4;
 				}
-			char s[2] = { 'a' + l - 1, 0 };
-			Bitmap::save((std::string(s) + std::string(".bmp")).c_str(), (float*)m_leveled_texels[l].data(), level_dims.x, level_dims.y, RGBA_32);
 		}
 	}
 
@@ -163,8 +157,9 @@ namespace Aya {
 
 	template<class TRet, class TMem>
 	TRet ImageTexture2D<TRet, TMem>::sample(const Vector2f & coord, const Vector2f diffs[2]) const {
-		Vector2f wrapped_coord(	coord.x - floorToInt(coord.x), 
-								coord.y - floorToInt(coord.y));
+		Vector2f wrapped_coord(	coord.y - floorToInt(coord.y), 
+								coord.x - floorToInt(coord.x));
+		Vector2f wrapped_diffs[2] = { diffs[1], diffs[0] };
 
 		switch (m_filter) {
 		case TextureFilter::Nearest:
@@ -172,13 +167,13 @@ namespace Aya {
 		case TextureFilter::Linear:
 			return m_texels.levelLinearSample(wrapped_coord, 0);
 		case TextureFilter::TriLinear:
-			return m_texels.triLinearSample(wrapped_coord, diffs);
+			return m_texels.triLinearSample(wrapped_coord, wrapped_diffs);
 		case TextureFilter::Anisotropic4x:
-			return anisotropicSample(wrapped_coord, diffs, 4);
+			return anisotropicSample(wrapped_coord, wrapped_diffs, 4);
 		case TextureFilter::Anisotropic8x:
-			return anisotropicSample(wrapped_coord, diffs, 8);
+			return anisotropicSample(wrapped_coord, wrapped_diffs, 8);
 		case TextureFilter::Anisotropic16x:
-			return anisotropicSample(wrapped_coord, diffs, 16);
+			return anisotropicSample(wrapped_coord, wrapped_diffs, 16);
 		}
 
 		return TRet(0);
@@ -186,22 +181,23 @@ namespace Aya {
 
 	template<class TRet, class TMem>
 	TRet ImageTexture2D<TRet, TMem>::sample(const Vector2f & coord, const Vector2f diffs[2], TextureFilter filter) const {
-		Vector2f wrapped_coord(coord.x - floorToInt(coord.x),
-			coord.y - floorToInt(coord.y));
+		Vector2f wrapped_coord(coord.y - floorToInt(coord.y),
+			coord.x - floorToInt(coord.x));
+		Vector2f wrapped_diffs[2] = { diffs[1], diffs[0] };
 
 		switch (filter) {
 		case TextureFilter::Nearest:
 			return m_texels.nearestSample(wrapped_coord);
 		case TextureFilter::Linear:
-			return m_texels.linearSample(wrapped_coord, diffs);
+			return m_texels.linearSample(wrapped_coord, wrapped_diffs);
 		case TextureFilter::TriLinear:
-			return m_texels.triLinearSample(wrapped_coord, diffs);
+			return m_texels.triLinearSample(wrapped_coord, wrapped_diffs);
 		case TextureFilter::Anisotropic4x:
-			return anisotropicSample(wrapped_coord, diffs, 4);
+			return anisotropicSample(wrapped_coord, wrapped_diffs, 4);
 		case TextureFilter::Anisotropic8x:
-			return anisotropicSample(wrapped_coord, diffs, 8);
+			return anisotropicSample(wrapped_coord, wrapped_diffs, 8);
 		case TextureFilter::Anisotropic16x:
-			return anisotropicSample(wrapped_coord, diffs, 16);
+			return anisotropicSample(wrapped_coord, wrapped_diffs, 16);
 		}
 
 		return TRet(0);
