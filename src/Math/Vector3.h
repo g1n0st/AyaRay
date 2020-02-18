@@ -372,6 +372,17 @@ namespace Aya {
 				return BaseVector3(dot(v0), dot(v1), dot(v2));
 #endif
 			}
+			static __forceinline void coordinateSystem(const BaseVector3& x, BaseVector3* y, BaseVector3* z) {
+				if (Abs(x.x()) > Abs(x.y())) {
+					float inv = 1.f / Sqrt(x.x() * x.x() + x.z() * x.z());
+					*y = BaseVector3(-x.z() * inv, 0.f, x.x() * inv);
+				}
+				else {
+					float inv = 1.f / Sqrt(x.y() * x.y() + x.z() * x.z());
+					*y = BaseVector3(0.f, x.z() * inv, -x.y() * inv);
+				}
+				*z = x.cross(*y);
+			}
 
 			friend __forceinline std::ostream &operator<<(std::ostream &os, const BaseVector3 &v) {
 				os << "[ " << AYA_SCALAR_OUTPUT(v.m_val[0])
