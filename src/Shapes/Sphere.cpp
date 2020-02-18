@@ -14,9 +14,9 @@ namespace Aya {
 		float phi = atan2f(p.x(), p.z());
 		float theta = acosf(p.y());
 
-		if (phi < 0.0f) phi += M_PI * 2;
-		(*u) = phi * M_2_PI;
-		(*v) = 1.f - theta * M_1_PI;
+		if (phi < 0.0f) phi += float(M_PI) * 2;
+		(*u) = phi * float(M_2_PI);
+		(*v) = 1.f - theta * float(M_1_PI);
 	}
 
 	bool Sphere::intersect(const Ray &ray, float *hit_t, SurfaceInteraction *si) const {
