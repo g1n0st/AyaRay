@@ -1,8 +1,6 @@
 #include "Core/Scene.h"
 #include "Core/Parser.h"
 
-#include "Core\Texture.h"
-
 void ayaInit() {
 	Aya::SampledSpectrum::init();
 }

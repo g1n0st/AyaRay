@@ -110,7 +110,7 @@ namespace Aya {
 		Mipmap2D<TMem> m_texels;
 
 	public:
-		ImageTexture2D(const char* file_name, const float gamma);
+		ImageTexture2D(const char* file_name, const float gamma = 1.f / 2.2f);
 		ImageTexture2D(const TMem* pixels, const int width, const int height);
 		~ImageTexture2D() {}
 

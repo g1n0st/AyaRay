@@ -18,7 +18,7 @@ namespace Aya {
 		
 		Point3 pp;
 		int st_time = clock();
-		
+
 		int total = m_sample_times, loading = 0;
 		for (int s = 0; s < m_sample_times; s++) {
 			for (int j = m_screen_y - 1; j >= 0; j--) {

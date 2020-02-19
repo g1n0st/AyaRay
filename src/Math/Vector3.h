@@ -372,7 +372,28 @@ namespace Aya {
 				return BaseVector3(dot(v0), dot(v1), dot(v2));
 #endif
 			}
-			static __forceinline void coordinateSystem(const BaseVector3& x, BaseVector3* y, BaseVector3* z) {
+
+			static __forceinline BaseVector3 sphericalDirection(float sin_theta, float cos_theta, float phi) {
+				return BaseVector3(sin_theta * std::cosf(phi),
+					cos_theta,
+					sin_theta * std::sinf(phi));
+			}
+			static __forceinline BaseVector3 sphericalDirection(float sin_theta, float cos_theta,
+				float phi, const BaseVector3& vX,
+				const BaseVector3& vY, const BaseVector3& vZ)
+			{
+				return sin_theta * std::cosf(phi) * vX +
+					cos_theta * vY + 
+					sin_theta * std::sinf(phi) * vZ;
+			}
+			static __forceinline float sphericalTheta(const BaseVector3& v) {
+				return std::acosf(Clamp(v.y(), -1.f, 1.f));
+			}
+			static __forceinline float sphericalPhi(const BaseVector3& v) {
+				float p = std::atan2f(v.z(), v.x());
+				return (p < 0.f) ? p + float(M_PI) * 2.f : p;
+			}
+			static __forceinline void coordinateSystem(const BaseVector3 &x, BaseVector3* y, BaseVector3* z) {
 				if (Abs(x.x()) > Abs(x.y())) {
 					float inv = 1.f / Sqrt(x.x() * x.x() + x.z() * x.z());
 					*y = BaseVector3(-x.z() * inv, 0.f, x.x() * inv);
