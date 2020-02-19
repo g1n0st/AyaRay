@@ -10,21 +10,74 @@
 #include "../Math/Vector3.h"
 
 namespace Aya {
+	__forceinline float CosTheta(const Vector3 &v) {
+		return v.z();
+	}
+	__forceinline float CosTheta2(const Vector3 &v) {
+		return v.z() * v.z();
+	}
+	__forceinline float AbsCosTheta(const Vector3 &v) {
+		return Abs(v.z());
+	}
+	__forceinline float SinTheta2(const Vector3 &v) {
+		return Max(0.f, 1.f - CosTheta2(v));
+	}
+	__forceinline float SinTheta(const Vector3 &v) {
+		return Sqrt(SinTheta2(v));
+	}
+	__forceinline float CosPhi(const Vector3 &v) {
+		float sint = SinTheta(v);
+		if (sint == 0.f)
+			return 1.f;
+		return Clamp(v.x() / sint, -1.f, 1.f);
+	}
+	__forceinline float SinPhi(const Vector3 &v) {
+		float sint = SinTheta(v);
+		if (sint == 0.f)
+			return 0.f;
+		return Clamp(v.y() / sint, -1.f, 1.f);
+	}
+	__forceinline float TanTheta(const Vector3 &v) {
+		float tmp = 1.f - v.z() * v.z();
+		if (tmp <= 0.f)
+			return 0.f;
+		return Sqrt(tmp) / v.z();
+	}
+	__forceinline float TanTheta2(const Vector3 &v) {
+		float tmp = 1.f - v.z() * v.z();
+		if (tmp <= 0.f)
+			return 0.f;
+		return tmp / (v.z() * v.z());
+	}
+	__forceinline bool sameHemisphere(const Vector3 &v1, const Vector3 &v2) {
+		return v1.z() * v2.z() > 0.f;
+	}
+
 	enum ScatterType {
-		BSDF_REFLECTION = 1 << 0,
+		BSDF_REFLECTION =	1 << 0,
 		BSDF_TRANSMISSION = 1 << 1,
-		BSDF_DIFFUSE = 1 << 2,
-		BSDF_GLOSSY = 1 << 3,
-		BSDF_SPECULAR = 1 << 4,
-		BSDF_ALL_TYPES = BSDF_DIFFUSE | BSDF_GLOSSY | BSDF_SPECULAR,
-		BSDF_ALL_REFLECTION = BSDF_REFLECTION | BSDF_ALL_TYPES,
-		BSDF_ALL_TRANSMISSION = BSDF_TRANSMISSION | BSDF_ALL_TYPES,
-		BSDF_ALL = BSDF_ALL_REFLECTION | BSDF_ALL_TRANSMISSION
+		BSDF_DIFFUSE =		1 << 2,
+		BSDF_GLOSSY =		1 << 3,
+		BSDF_SPECULAR =		1 << 4,
+		BSDF_ALL_TYPES = 
+			BSDF_DIFFUSE		| 
+			BSDF_GLOSSY		| 
+			BSDF_SPECULAR,
+		BSDF_ALL_REFLECTION = 
+			BSDF_REFLECTION | 
+			BSDF_ALL_TYPES,
+		BSDF_ALL_TRANSMISSION = 
+			BSDF_TRANSMISSION | 
+			BSDF_ALL_TYPES,
+		BSDF_ALL = 
+			BSDF_ALL_REFLECTION | 
+			BSDF_ALL_TRANSMISSION
 	};
 
 	enum class BSDFType {
-		Diffuse,
+		LambertianDiffuse,
 		Mirror,
+		Glass,
 		RoughConductor,
 		RoughDielectric,
 		Disney
@@ -39,8 +92,9 @@ namespace Aya {
 
 	public:
 		BSDF(ScatterType t1, BSDFType t2, const Spectrum &color);
-		BSDF(ScatterType t, BSDFType t2, UniquePtr<Texture2D<Spectrum>> tex, UniquePtr<Texture2D<Spectrum>> normal);
-		BSDF(ScatterType t, BSDFType t2, const char* file1, const char* file2);
+		BSDF(ScatterType t1, BSDFType t2, UniquePtr<Texture2D<Spectrum>> tex, UniquePtr<Texture2D<Spectrum>> normal);
+		BSDF(ScatterType t1, BSDFType t2, const char* texture_file);
+		BSDF(ScatterType t1, BSDFType t2, const char* texture_file, const char* normal_file);
 		virtual ~BSDF() {}
 
 		bool matchesTypes(ScatterType flags) const {
@@ -59,9 +113,9 @@ namespace Aya {
 		__forceinline const T getValue(const Texture2D<T> *tex,
 			const SurfaceIntersection &intersection,
 			const TextureFilter filter = TextureFilter::TriLinear) const {
-			Vector2 diffs[2] = {
-				(intersection.dudx, intersection.dvdx),
-				(intersection.dudy, intersection.dvdy)
+			Vector2f diffs[2] = {
+				Vector2f(intersection.dudx, intersection.dvdx),
+				Vector2f(intersection.dudy, intersection.dvdy)
 			};
 			return tex->sample(intersection.tex_coord, diffs, filter);
 		}
@@ -91,10 +145,16 @@ namespace Aya {
 		virtual float pdfInner(const Vector3 &v_out, const Vector3 &v_in, const SurfaceIntersection &intersection, ScatterType types = BSDF_ALL) const = 0;
 
 	public:
+		// https://en.wikipedia.org/wiki/Schlick%27s_approximation
 		static float fresnelDielectric(float cosi, float etai, float etat);
-		static float fresnelConductor(float cosi, const float &eta, const float k);
+		static float fresnelConductor(float cosi, const float &eta, const float &k);
 
 	protected:
+		// for Cook Torrance Model
+		// https://zhuanlan.zhihu.com/p/20091064
+		// https://zhuanlan.zhihu.com/p/20119162
+
+		// http://www.cs.cornell.edu/~srm/publications/EGSR07-btdf.pdf
 		static float GGX_D(const Vector3 &wh, float alpha);
 		static Vector3 GGX_SampleNormal(float u1, float u2, float* pdf, float alpha);
 		static float SmithG(const Vector3 &v, const Vector3 &wh, float alpha);
@@ -105,28 +165,5 @@ namespace Aya {
 		static Vector3 GGX_SampleVisibleNormal(const Vector3 &wi, float u1, float u2, float* pdf, float roughness);
 		static float GGX_Pdf_VisibleNormal(const Vector3 &wi, const Vector3 &h, float roughness);
  	};
-
-	class LambertianDiffuse : public BSDF {
-	public:
-		LambertianDiffuse(const Spectrum &color = RGBSpectrum().toSpectrum())
-			: BSDF(ScatterType(BSDF_REFLECTION | BSDF_DIFFUSE), BSDFType::Diffuse, color) {}
-		LambertianDiffuse(UniquePtr<Texture2D<Spectrum>> tex, UniquePtr<Texture2D<Spectrum>> normal)
-			: BSDF(ScatterType(BSDF_REFLECTION | BSDF_DIFFUSE), BSDFType::Diffuse, std::move(tex), std::move(normal)) {}
-		LambertianDiffuse(const char* file1, const char* file2)
-			: BSDF(ScatterType(BSDF_REFLECTION | BSDF_DIFFUSE), BSDFType::Diffuse, file1, file2) {}
-
-		virtual Spectrum sample_f(const Vector3 &v_out, const Sample &sample,
-			const SurfaceIntersection &intersection, Vector3* v_in, float* pdf, ScatterType types = BSDF_ALL, ScatterType *sample_types = nullptr) const override;
-
-	private:
-		virtual float evalInner(const Vector3 &v_out, const Vector3 &v_in, const SurfaceIntersection &intersection, ScatterType types = BSDF_ALL) const override;
-		virtual float pdfInner(const Vector3 &v_out, const Vector3 &v_in, const SurfaceIntersection &intersection, ScatterType types = BSDF_ALL) const override;
-	};
-
-	//class Mirror : public BSDF {
-	//public:
-
-	//};
 }
-
 #endif
