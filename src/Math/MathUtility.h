@@ -107,7 +107,7 @@ namespace Aya {
 #endif
 	}
 
-	__forceinline uint32_t roundUpToPowerOfTwo(uint32_t val) {
+	__forceinline uint32_t RoundUpToPowerOfTwo(uint32_t val) {
 		--val;
 		val |= val >> 1;
 		val |= val >> 2;
@@ -116,12 +116,12 @@ namespace Aya {
 		val |= val >> 16;
 		return val + 1;
 	}
-	__forceinline uint32_t countLeadingZeros(uint32_t value) {
+	__forceinline uint32_t CountLeadingZeros(uint32_t value) {
 		unsigned long log2;
 		if (_BitScanReverse(&log2, value)) return 31 - log2;
 		return 32;
 	}
-	__forceinline uint32_t countTrailingZeros(uint32_t value) {
+	__forceinline uint32_t CountTrailingZeros(uint32_t value) {
 		if (value == 0) {
 			return 32;
 		}
@@ -129,27 +129,27 @@ namespace Aya {
 		_BitScanForward((unsigned long *)&bitidx, value);
 		return bitidx;
 	}
-	__forceinline uint32_t floorLog2(uint32_t value) {
+	__forceinline uint32_t FloorLog2(uint32_t value) {
 		unsigned long log2;
 		if (_BitScanReverse(&log2, value)) return log2;
 		return 0;
 	}
-	__forceinline uint32_t ceilLog2(uint32_t value) {
-		int bitmask = ((int)(countLeadingZeros(value) << 26)) >> 31;
-		return (32 - countLeadingZeros(value - 1)) & (~bitmask);
+	__forceinline uint32_t CeilLog2(uint32_t value) {
+		int bitmask = ((int)(CountLeadingZeros(value) << 26)) >> 31;
+		return (32 - CountLeadingZeros(value - 1)) & (~bitmask);
 	}
 
-	__forceinline int truncToInt(float val) {
+	__forceinline int TruncToInt(float val) {
 		return _mm_cvtt_ss2si(_mm_set_ss(val));
 	}
 
-	__forceinline int floorToInt(const float val) {
+	__forceinline int FloorToInt(const float val) {
 		return _mm_cvt_ss2si(_mm_set_ss(val + val - .5f)) >> 1;
 	}
-	__forceinline int ceilToInt(const float val) {
+	__forceinline int CeilToInt(const float val) {
 		return -(_mm_cvt_ss2si(_mm_set_ss(-0.5f - (val + val))) >> 1);
 	}
-	__forceinline int roundToInt(const float val) {
+	__forceinline int RoundToInt(const float val) {
 		return _mm_cvt_ss2si(_mm_set_ss(val + val + .5f)) >> 1;
 	}
 }

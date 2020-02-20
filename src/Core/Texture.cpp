@@ -6,7 +6,7 @@ namespace Aya {
 	template<class T>
 	inline void Mipmap2D<T>::generate(const Vector2i & dims, const T * raw_tex) {
 		m_tex_dims = dims;
-		m_levels = ceilLog2(Max(dims.x, dims.y));
+		m_levels = CeilLog2(Max(dims.x, dims.y));
 		SetMax(m_levels, 1);
 
 		mp_leveled_texels = new BlockedArray<T>[m_levels];
@@ -78,7 +78,7 @@ namespace Aya {
 		if (lod >= m_levels - 1)
 			return mp_leveled_texels[m_levels - 1](0, 0);
 
-		uint32_t lod_base = floorToInt(lod);
+		uint32_t lod_base = FloorToInt(lod);
 		float lin = lod - lod_base;
 		if (lin < .2f)
 			return levelLinearSample(coord, lod_base);
@@ -99,8 +99,8 @@ namespace Aya {
 		
 		float coord_x = Min(coord.x * texel.v(), texel.v() - 1.f);
 		float coord_y = Min(coord.y * texel.u(), texel.u() - 1.f);
-		int idx0_x = floorToInt(coord_x);
-		int idx0_y = floorToInt(coord_y);
+		int idx0_x = FloorToInt(coord_x);
+		int idx0_y = FloorToInt(coord_y);
 		int idx1_x = Min(idx0_x + 1, texel.v() - 1);
 		int idx1_y = Min(idx0_y + 1, texel.u() - 1);
 
@@ -157,8 +157,8 @@ namespace Aya {
 
 	template<class TRet, class TMem>
 	TRet ImageTexture2D<TRet, TMem>::sample(const Vector2f & coord, const Vector2f diffs[2]) const {
-		Vector2f wrapped_coord(	coord.x - floorToInt(coord.x), 
-								coord.y - floorToInt(coord.y));
+		Vector2f wrapped_coord(	coord.x - FloorToInt(coord.x), 
+								coord.y - FloorToInt(coord.y));
 
 		switch (m_filter) {
 		case TextureFilter::Nearest:
@@ -180,8 +180,8 @@ namespace Aya {
 
 	template<class TRet, class TMem>
 	TRet ImageTexture2D<TRet, TMem>::sample(const Vector2f & coord, const Vector2f diffs[2], TextureFilter filter) const {
-		Vector2f wrapped_coord(coord.x - floorToInt(coord.x),
-			coord.y - floorToInt(coord.y));
+		Vector2f wrapped_coord(coord.x - FloorToInt(coord.x),
+			coord.y - FloorToInt(coord.y));
 
 		switch (filter) {
 		case TextureFilter::Nearest:
@@ -260,8 +260,8 @@ namespace Aya {
 		float step_u = length_major * aniso_dir.x * inv_rate;
 		float step_v = length_major * aniso_dir.y * inv_rate;
 		int lod1, lod2;
-		lod1 = Min(floorToInt(LOD), m_texels.getLevels() - 1);
-		lod2 = Min(ceilToInt(LOD), m_texels.getLevels() - 1);
+		lod1 = Min(FloorToInt(LOD), m_texels.getLevels() - 1);
+		lod2 = Min(CeilToInt(LOD), m_texels.getLevels() - 1);
 
 		TMem ret;
 		Vector2f uv;

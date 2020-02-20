@@ -19,8 +19,8 @@ namespace Aya {
 	public:
 		SobolSampler(const int rx, const int ry) :
 			m_sample_idx(0), m_sobol_idx(0), m_dim(0), m_scramble(0) {
-			m_res = roundUpToPowerOfTwo(Max(rx, ry));
-			m_log2_res = floorLog2(m_res);
+			m_res = RoundUpToPowerOfTwo(Max(rx, ry));
+			m_log2_res = FloorLog2(m_res);
 			assert(m_res == 1 << m_log2_res);
 		}
 		SobolSampler(const int res, const int log2_res, const uint64_t scramble, const uint64_t sample_idx) :
