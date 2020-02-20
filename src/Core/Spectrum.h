@@ -385,7 +385,7 @@ namespace Aya {
 	class SampledSpectrum;
 
 	class SampledSpectrum : public CoefficientSpectrum<n_spectral_samples> {
-	private:
+	public:
 		// SampledSpectrum Private Data
 		static SampledSpectrum X, Y, Z;
 		static SampledSpectrum rgb_refl_2spect_white, rgb_illum_2spect_white;
@@ -527,6 +527,10 @@ namespace Aya {
 			return *this;
 		}
 		static SampledSpectrum fromRGB(const float rgb[3], SpectrumType type = SpectrumType::Illuminant);
+		static SampledSpectrum fromRGB(const float &r, const float &g, const float &b, SpectrumType type = SpectrumType::Illuminant) {
+			float rgb[3] = { r, g, b };
+			return fromRGB(rgb, type);
+		}
 		static SampledSpectrum fromXYZ(const float xyz[3], SpectrumType type = SpectrumType::Reflectance) {
 			float rgb[3];
 			XYZToRGB(xyz, rgb);
@@ -563,6 +567,13 @@ namespace Aya {
 			s[0] = rgb[0];
 			s[1] = rgb[1];
 			s[2] = rgb[2];
+			return s;
+		}
+		static RGBSpectrum fromRGB(const float &r, const float &g, const float &b, SpectrumType type = SpectrumType::Illuminant) {
+			RGBSpectrum s;
+			s[0] = r;
+			s[1] = g;
+			s[2] = b;
 			return s;
 		}
 		static RGBSpectrum fromXYZ(const float xyz[3], SpectrumType type = SpectrumType::Reflectance) {
