@@ -100,6 +100,8 @@ namespace Aya {
 #endif
 	}
 	__forceinline float Sqrt(const float &x) {
+		if (x == 0.f)
+			return 0.f;
 #if defined(AYA_USE_SIMD) && defined(AYA_USE_SQRT_APPROXIMATION)
 		return 1.f / RSqrt(x);
 #else
