@@ -5,6 +5,7 @@
 #include "../Core/Intersection.h"
 #include "../Core/Spectrum.h"
 #include "../Core/Sampler.h"
+#include "../Core/Sampling.h"
 #include "../Core/Texture.h"
 #include "../Math/Vector2.h"
 #include "../Math/Vector3.h"
