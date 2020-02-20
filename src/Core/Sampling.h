@@ -119,7 +119,90 @@ namespace Aya {
 		}
 	};
 
+	inline void ConcentricSampleDisk(float u1, float u2, float *dx, float *dy) {
+		float r1 = 2.f * u1 - 1.f;
+		float r2 = 2.f * u2 - 1.f;
 
+		/* Modified concencric map code with less branching (by Dave Cline), see
+		http://psgraphics.blogspot.ch/2011/01/improved-code-for-concentric-map.html */
+
+		float phi, r;
+		if (r1 == 0.f && r2 == 0.f)
+			r = phi = 0.f;
+		else {
+			if (r1 * r1 > r2 * r2) {
+				r = r1;
+				phi = float(M_PI_4) * (r2 / r1);
+			}
+			else {
+				r = r2;
+				phi = float(M_PI_2) - (r1 / r2) * float(M_PI_4);
+			}
+		}
+		*dx = r * std::cosf(phi);
+		*dy = r * std::sinf(phi);
+	}
+	inline void UniformSampleTriangle(float u1, float u2, float *u, float *v) {
+		float su1 = Sqrt(u1);
+		*u = 1.f - su1;
+		*v = u2 * su1;
+	}
+	inline Vector3 CosineSampleHemisphere(float u1, float u2) {
+		Vector3 ret;
+		ConcentricSampleDisk(u1, u2, &ret[0], &ret[1]);
+		ret[2] = Sqrt(Max(0.f, 1.f - ret.x() * ret.x() - ret.y() * ret.y()));
+		return ret;
+	}
+	inline Vector3 UniformSampleSphere(float u1, float u2) {
+		float z = 1.f - 2.f * u1;
+		float r = Sqrt(Max(0.f, 1.f - z * z));
+		float phi = 2.f * float(M_PI) * u2;
+		float x = r * std::cosf(phi);
+		float y = r * std::sinf(phi);
+		return Vector3(x, y, z);
+	}
+	inline Vector3 UniformSampleCone(float u1, float u2, float costhetamax,
+		const Vector3 &x, const Vector3 &y, const Vector3 &z) {
+		float costheta = Lerp(u1, costhetamax, 1.f);
+		float sintheta = Sqrt(1.f - costheta * costheta);
+		float phi = 2.f * float(M_PI) * u2;
+		return	std::cosf(phi) * sintheta * x + 
+				std::sinf(phi) * sintheta * y +
+				costheta * z;
+	}
+
+	inline float UniformSpherePDF() {
+		return float(M_1_PI * .25f);
+	}
+	inline float UniformHemispherePDF() {
+		return float(M_1_PI * .5f);
+	}
+	inline float ConcentricDiscPdf() {
+		return float(M_1_PI);
+	}
+	inline float CosineHemispherePDF(float cos) {
+		return Max(0.f, cos) * float(M_1_PI);
+	}
+	inline float CosineHemispherePDF(const Vector3 &norm, const Vector3 &vec) {
+		return Max(0.f, norm.dot(vec)) * float(M_1_PI);
+	}
+	inline float UniformConePDF(float cos_theta_max) {
+		if (cos_theta_max == 1.f)
+			return 1.f;
+
+		return 1.f / (2.f * float(M_PI) * (1.f - cos_theta_max));
+	}
+	inline bool DirectionInCone(const Vector3 &dir, const Vector3 &cone_dir, const float cos_theta_max) {
+		return dir.dot(cone_dir) > cos_theta_max;
+	}
+
+	inline float BalanceHeuristic(int nf, float f_pdf, int ng, float g_pdf) {
+		return (nf * f_pdf) / (nf * f_pdf + ng * g_pdf);
+	}
+	inline float PowerHeuristic(int nf, float f_pdf, int ng, float g_pdf) {
+		float f = nf * f_pdf, g = ng * g_pdf;
+		return (f * f) / (f * f + g * g);
+	}
 }
 
 #endif
