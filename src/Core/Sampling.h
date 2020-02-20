@@ -87,9 +87,9 @@ namespace Aya {
 			assert(count_x > 0);
 			assert(count_y > 0);
 
-			m_conditional.clear();
+			m_conditional.resize(count_y);
 			for (auto i = 0; i < count_y; i++) {
-				m_conditional.push_back(MakeUnique<Distribution1D>(&func[i * count_x], count_x));
+				m_conditional[i] = MakeUnique<Distribution1D>(&func[i * count_x], count_x);
 			}
 
 			float *marginal = new float[count_y];
