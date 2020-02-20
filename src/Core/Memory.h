@@ -151,6 +151,22 @@ namespace Aya {
 	}
 	void FreeAligned(void *ptr);
 
+	template<class T>
+	static __forceinline void SafeDelete(T*& ptr) {
+		if (ptr != NULL) {
+			delete ptr;
+			ptr = NULL;
+		}
+	}
+
+	template<class T>
+	static __forceinline void SafeDeleteArray(T*& ptr) {
+		if (ptr != NULL) {
+			delete[] ptr;
+			ptr = NULL;
+		}
+	}
+
 	template <typename T> class BlockedArray {
 	private:
 		T *m_data;

@@ -143,7 +143,7 @@ namespace Aya {
 		m_width_inv = 1.f / float(m_width);
 		m_height_inv = 1.f / float(m_height);
 
-		delete[] pixels;
+		SafeDeleteArray(pixels);
 	}
 	template<class TRet, class TMem>
 	ImageTexture2D<TRet, TMem>::ImageTexture2D(const TMem * pixels, const int width, const int height) {

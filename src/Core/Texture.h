@@ -80,7 +80,7 @@ namespace Aya {
 		BlockedArray<T>* mp_leveled_texels;
 		Mipmap2D() {}
 		~Mipmap2D() {
-			delete[] mp_leveled_texels;
+			SafeDeleteArray(mp_leveled_texels);
 		}
 
 		void generate(const Vector2i &dims, const T* raw_tex);
