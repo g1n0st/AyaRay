@@ -20,7 +20,7 @@ namespace Aya {
 		uint32_t m_sample_count;
 		BlockedArray<RGBSpectrum> m_pixel_buffer;
 		BlockedArray<Pixel> m_accumulate_buffer;
-		UniquePtr<Filter> m_filter;
+		UniquePtr<Filter> mp_filter;
 
 		// there may need a thread lock
 

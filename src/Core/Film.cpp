@@ -8,8 +8,8 @@ namespace Aya {
 
 	void Film::init(int width, int height, Filter *filter) {
 		resize(width, height);
-		m_filter.reset();
-		m_filter = UniquePtr<Filter>(filter);
+		mp_filter.reset();
+		mp_filter = UniquePtr<Filter>(filter);
 	}
 	void Film::resize(int width, int height) {
 		m_width = width;
@@ -33,15 +33,15 @@ namespace Aya {
 		// add lock
 		x -= .5f;
 		y -= .5f;
-		int min_x = Clamp((int)std::ceil(x - m_filter->getRadius()), 0, m_width - 1);
-		int max_x = Clamp((int)std::floor(x + m_filter->getRadius()), 0, m_width - 1);
-		int min_y = Clamp((int)std::ceil(y - m_filter->getRadius()), 0, m_height - 1);
-		int max_y = Clamp((int)std::floor(y + m_filter->getRadius()), 0, m_height - 1);
+		int min_x = Clamp((int)std::ceil(x - mp_filter->getRadius()), 0, m_width - 1);
+		int max_x = Clamp((int)std::floor(x + mp_filter->getRadius()), 0, m_width - 1);
+		int min_y = Clamp((int)std::ceil(y - mp_filter->getRadius()), 0, m_height - 1);
+		int max_y = Clamp((int)std::floor(y + mp_filter->getRadius()), 0, m_height - 1);
 
 		for (auto i = min_y; i <= max_y; i++) {
 			for (auto j = min_x; j <= max_x; j++) {
 				Pixel& pixel = m_accumulate_buffer(j, m_height - 1 - i);
-				float weight = m_filter->evaluate(j - x, i - y);
+				float weight = mp_filter->evaluate(j - x, i - y);
 				pixel.weight += weight;
 				pixel.color += weight * L;
 			}

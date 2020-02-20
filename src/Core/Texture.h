@@ -77,10 +77,10 @@ namespace Aya {
 		int m_levels;
 
 	public:
-		BlockedArray<T>* m_leveled_texels;
+		BlockedArray<T>* mp_leveled_texels;
 		Mipmap2D() {}
 		~Mipmap2D() {
-			delete[] m_leveled_texels;
+			delete[] mp_leveled_texels;
 		}
 
 		void generate(const Vector2i &dims, const T* raw_tex);
@@ -92,7 +92,7 @@ namespace Aya {
 
 		const T* getLevelData(const int level = 0) const {
 			assert(level < m_levels);
-			return m_leveled_texels[level].data();
+			return mp_leveled_texels[level].data();
 		}
 		const int getLevels() const {
 			return m_levels;
@@ -110,7 +110,7 @@ namespace Aya {
 		Mipmap2D<TMem> m_texels;
 
 	public:
-		ImageTexture2D(const char* file_name, const float gamma = 1.f / 2.2f);
+		ImageTexture2D(const char *file_name, const float gamma = 1.f / 2.2f);
 		ImageTexture2D(const TMem* pixels, const int width, const int height);
 		~ImageTexture2D() {}
 

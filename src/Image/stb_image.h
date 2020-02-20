@@ -4916,7 +4916,7 @@ static stbi_uc *stbi__tga_load(stbi__context *s, int *x, int *y, int *comp, int 
    // swap RGB
    if (tga_comp >= 3)
    {
-      unsigned char* tga_pixel = tga_data;
+      unsigned char *tga_pixel = tga_data;
       for (i=0; i < tga_width * tga_height; ++i)
       {
          unsigned char temp = tga_pixel[0];

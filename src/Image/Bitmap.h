@@ -17,13 +17,13 @@ namespace Aya {
 
 	class Bitmap {
 	public:
-		static void save(const char* name, const float* data, int width, int height, ImageFormat format = RGBA_32);
-		static void save(const char* name, const Byte* data, int width, int height);
+		static void save(const char *name, const float* data, int width, int height, ImageFormat format = RGBA_32);
+		static void save(const char *name, const Byte* data, int width, int height);
 
 		template<typename T>
-		static T* read(const char* name, int* width, int* height, int* channel);
+		static T* read(const char *name, int* width, int* height, int* channel);
 		template<typename T>
-		static T* read(const char* name, int* width, int* height, int* channel, int required_channel);
+		static T* read(const char *name, int* width, int* height, int* channel, int required_channel);
 	};
 }
 

@@ -87,14 +87,14 @@ namespace Aya {
 	protected:
 		const ScatterType m_scatter_type;
 		const BSDFType m_BSDF_type;
-		UniquePtr<Texture2D<Spectrum>> m_texture;
-		UniquePtr<Texture2D<Spectrum>> m_normal_map;
+		UniquePtr<Texture2D<Spectrum>> mp_texture;
+		UniquePtr<Texture2D<Spectrum>> mp_normal_map;
 
 	public:
 		BSDF(ScatterType t1, BSDFType t2, const Spectrum &color);
 		BSDF(ScatterType t1, BSDFType t2, UniquePtr<Texture2D<Spectrum>> tex, UniquePtr<Texture2D<Spectrum>> normal);
-		BSDF(ScatterType t1, BSDFType t2, const char* texture_file);
-		BSDF(ScatterType t1, BSDFType t2, const char* texture_file, const char* normal_file);
+		BSDF(ScatterType t1, BSDFType t2, const char *texture_file);
+		BSDF(ScatterType t1, BSDFType t2, const char *texture_file, const char *normal_file);
 		virtual ~BSDF() {}
 
 		bool matchesTypes(ScatterType flags) const {
@@ -107,7 +107,7 @@ namespace Aya {
 		virtual Spectrum f(const Vector3 &v_out, const Vector3 &v_in, const SurfaceIntersection &intersection, ScatterType types = BSDF_ALL) const;
 		virtual float pdf(const Vector3 &v_out, const Vector3 &v_in, const SurfaceIntersection &intersection, ScatterType types = BSDF_ALL) const;
 		virtual Spectrum sample_f(const Vector3 &v_out, const Sample &sample,
-			const SurfaceIntersection &intersection, Vector3* v_in, float* pdf, ScatterType types = BSDF_ALL, ScatterType *sample_types = nullptr) const = 0;
+			const SurfaceIntersection &intersection, Vector3 *v_in, float* pdf, ScatterType types = BSDF_ALL, ScatterType *sample_types = nullptr) const = 0;
 
 		template<typename T>
 		__forceinline const T getValue(const Texture2D<T> *tex,
@@ -127,17 +127,17 @@ namespace Aya {
 			return m_BSDF_type;
 		}
 		const Texture2D<Spectrum>* getTexture() const {
-			return m_texture.get();
+			return mp_texture.get();
 		}
 		const Texture2D<Spectrum>* getNormalMap() const {
-			return m_normal_map.get();
+			return mp_normal_map.get();
 		}
 
 		UniquePtr<Texture2D<Spectrum>> moveTexture() {
-			return std::move(m_texture);
+			return std::move(mp_texture);
 		}
 		UniquePtr<Texture2D<Spectrum>> moveNormalMap() {
-			return std::move(m_normal_map);
+			return std::move(mp_normal_map);
 		}
 
 	protected:

@@ -1,13 +1,13 @@
 #include "Bitmap.h"
 
 namespace Aya {
-	void Bitmap::save(const char* name, const float* data, int width, int height, ImageFormat format) {
+	void Bitmap::save(const char *name, const float* data, int width, int height, ImageFormat format) {
 		int pixel_bytes = int(format);
 		int size = width * height * pixel_bytes;
 
 		const float inv_gamma = 1.f / 2.2f; // Gamma
 
-		unsigned char* pixels = new unsigned char[size];
+		unsigned char *pixels = new unsigned char[size];
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
 				int idx = pixel_bytes * (i * width + j);
@@ -60,13 +60,13 @@ namespace Aya {
 		pixels = nullptr;
 	}
 
-	void Bitmap::save(const char* name, const Byte* data, int width, int height) {
+	void Bitmap::save(const char *name, const Byte* data, int width, int height) {
 		int pixel_bytes = 4;
 		int size = width * height * pixel_bytes;
 
 		const float inv_gamma = 1.f / 2.2f; // Gamma
 
-		unsigned char* pixels = new unsigned char[size];
+		unsigned char *pixels = new unsigned char[size];
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
 				int idx = pixel_bytes * (i * width + j);
@@ -117,15 +117,15 @@ namespace Aya {
 	}
 
 	template<>
-	float* Bitmap::read(const char* name, int* width, int* height, int* channel) {
+	float* Bitmap::read(const char *name, int* width, int* height, int* channel) {
 		return (float*)stbi_loadf(name, width, height, channel, 4);
 	}
 	template<>
-	RGBSpectrum* Bitmap::read(const char* name, int* width, int* height, int* channel) {
+	RGBSpectrum* Bitmap::read(const char *name, int* width, int* height, int* channel) {
 		return (RGBSpectrum*)stbi_loadf(name, width, height, channel, 4);
 	}
 	template<>
-	SampledSpectrum* Bitmap::read(const char* name, int* width, int* height, int* channel) {
+	SampledSpectrum* Bitmap::read(const char *name, int* width, int* height, int* channel) {
 		float *rgbs = (float*)stbi_loadf(name, width, height, channel, 4);
 
 		int size = (*width) * (*height);
@@ -137,7 +137,7 @@ namespace Aya {
 		return pixels;
 	}
 	template<>
-	byteSpectrum* Bitmap::read(const char* name, int* width, int* height, int* channel) {
+	byteSpectrum* Bitmap::read(const char *name, int* width, int* height, int* channel) {
 		float *rgbs = (float*)stbi_loadf(name, width, height, channel, 4);
 
 		int size = (*width) * (*height);
@@ -153,11 +153,11 @@ namespace Aya {
 	}
 
 	template<>
-	float* Bitmap::read(const char* name, int* width, int* height, int* channel, int required_channel) {
+	float* Bitmap::read(const char *name, int* width, int* height, int* channel, int required_channel) {
 		return (float*)stbi_loadf(name, width, height, channel, required_channel);
 	}
 	template<>
-	uint8_t* Bitmap::read(const char* name, int* width, int* height, int* channel, int required_channel) {
+	uint8_t* Bitmap::read(const char *name, int* width, int* height, int* channel, int required_channel) {
 		return (uint8_t*)stbi_loadf(name, width, height, channel, required_channel);
 	}
 }

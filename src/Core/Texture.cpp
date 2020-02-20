@@ -9,27 +9,27 @@ namespace Aya {
 		m_levels = ceilLog2(Max(dims.x, dims.y));
 		SetMax(m_levels, 1);
 
-		m_leveled_texels = new BlockedArray<T>[m_levels];
-		m_leveled_texels[0].init(dims.y, dims.x, raw_tex);
+		mp_leveled_texels = new BlockedArray<T>[m_levels];
+		mp_leveled_texels[0].init(dims.y, dims.x, raw_tex);
 
 		Vector2i level_dims = m_tex_dims;
 		for (auto l = 1; l < m_levels; l++) {
 			level_dims.x = Max(level_dims.x >> 1, 1);
 			level_dims.y = Max(level_dims.y >> 1, 1);
 
-			m_leveled_texels[l].init(level_dims.y, level_dims.x);
+			mp_leveled_texels[l].init(level_dims.y, level_dims.x);
 			for (auto x = 0; x < level_dims.x; x++)
 				for (auto y = 0; y < level_dims.y; y++) {
 					Vector2i idx0, idx1;
 
-					if (level_dims.x < m_leveled_texels[l - 1].v()) {
+					if (level_dims.x < mp_leveled_texels[l - 1].v()) {
 						idx0.x = x << 1;
 						idx1.x = x << 1 | 1;
 					}
 					else
 						idx0.x = idx1.x = x;
 
-					if (level_dims.y < m_leveled_texels[l - 1].u()) {
+					if (level_dims.y < mp_leveled_texels[l - 1].u()) {
 						idx0.y = y << 1;
 						idx1.y = y << 1 | 1;
 					}
@@ -37,11 +37,11 @@ namespace Aya {
 						idx0.y = idx1.y = y;
 
 					T sum = T(0);
-					sum += m_leveled_texels[l - 1](idx0.y, idx0.x);
-					sum += m_leveled_texels[l - 1](idx1.y, idx1.x);
-					sum += m_leveled_texels[l - 1](idx0.y, idx1.x);
-					sum += m_leveled_texels[l - 1](idx1.y, idx0.x);
-					m_leveled_texels[l](y, x) = sum / 4;
+					sum += mp_leveled_texels[l - 1](idx0.y, idx0.x);
+					sum += mp_leveled_texels[l - 1](idx1.y, idx1.x);
+					sum += mp_leveled_texels[l - 1](idx0.y, idx1.x);
+					sum += mp_leveled_texels[l - 1](idx1.y, idx0.x);
+					mp_leveled_texels[l](y, x) = sum / 4;
 				}
 		}
 	}
@@ -76,7 +76,7 @@ namespace Aya {
 		if (lod < 0)
 			return levelLinearSample(coord, 0);
 		if (lod >= m_levels - 1)
-			return m_leveled_texels[m_levels - 1](0, 0);
+			return mp_leveled_texels[m_levels - 1](0, 0);
 
 		uint32_t lod_base = floorToInt(lod);
 		float lin = lod - lod_base;
@@ -95,7 +95,7 @@ namespace Aya {
 	template<class T>
 	T Mipmap2D<T>::levelLinearSample(const Vector2f & coord, const int level) const
 	{
-		const BlockedArray<T> &texel = m_leveled_texels[level];
+		const BlockedArray<T> &texel = mp_leveled_texels[level];
 		
 		float coord_x = Min(coord.x * texel.v(), texel.v() - 1.f);
 		float coord_y = Min(coord.y * texel.u(), texel.u() - 1.f);
@@ -122,7 +122,7 @@ namespace Aya {
 	template<class T>
 	T Mipmap2D<T>::nearestSample(const Vector2f & coord) const
 	{
-		const BlockedArray<T> &texel = m_leveled_texels[0];
+		const BlockedArray<T> &texel = mp_leveled_texels[0];
 		int coord_x = Min(int(coord.x * texel.v()), texel.v() - 1);
 		int coord_y = Min(int(coord.y * texel.u()), texel.u() - 1);
 		return texel(coord_y, coord_x);

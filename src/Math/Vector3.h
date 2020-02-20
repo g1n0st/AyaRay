@@ -393,7 +393,7 @@ namespace Aya {
 				float p = std::atan2f(v.z(), v.x());
 				return (p < 0.f) ? p + float(M_PI) * 2.f : p;
 			}
-			static __forceinline void coordinateSystem(const BaseVector3 &x, BaseVector3* y, BaseVector3* z) {
+			static __forceinline void coordinateSystem(const BaseVector3 &x, BaseVector3 *y, BaseVector3 *z) {
 				if (Abs(x.x()) > Abs(x.y())) {
 					float inv = 1.f / Sqrt(x.x() * x.x() + x.z() * x.z());
 					*y = BaseVector3(-x.z() * inv, 0.f, x.x() * inv);
