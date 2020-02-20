@@ -131,7 +131,7 @@ namespace Aya {
 			return &*(*this);
 		}
 		const T *operator -> () const {
-			return rp->p;
+			return rp;
 		}
 	};
 
