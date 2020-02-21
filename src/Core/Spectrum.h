@@ -128,7 +128,6 @@ namespace Aya {
 			return ret;
 		}
 		CoefficientSpectrum &operator += (const CoefficientSpectrum &s) {
-			CoefficientSpectrum ret = *this;
 #if defined(AYA_USE_SIMD)
 			for (int i = 0; i < nChips; i++) {
 				c[i].m_val128 = _mm_add_ps(c[i].m_val128, s.c[i].m_val128);
@@ -154,7 +153,6 @@ namespace Aya {
 			return ret;
 		}
 		CoefficientSpectrum &operator -= (const CoefficientSpectrum &s) {
-			CoefficientSpectrum ret = *this;
 #if defined(AYA_USE_SIMD)
 			for (int i = 0; i < nChips; i++) {
 				c[i].m_val128 = _mm_sub_ps(c[i].m_val128, s.c[i].m_val128);
@@ -194,7 +192,6 @@ namespace Aya {
 			return ret;
 		}
 		CoefficientSpectrum &operator *= (const CoefficientSpectrum &s) {
-			CoefficientSpectrum ret = *this;
 #if defined(AYA_USE_SIMD)
 			for (int i = 0; i < nChips; i++) {
 				c[i].m_val128 = _mm_mul_ps(c[i].m_val128, s.c[i].m_val128);
@@ -220,7 +217,6 @@ namespace Aya {
 			return ret;
 		}
 		CoefficientSpectrum &operator /= (const CoefficientSpectrum &s) {
-			CoefficientSpectrum ret = *this;
 #if defined(AYA_USE_SIMD)
 			for (int i = 0; i < nChips; i++) {
 				c[i].m_val128 = _mm_div_ps(c[i].m_val128, s.c[i].m_val128);
@@ -248,7 +244,6 @@ namespace Aya {
 			return ret;
 		}
 		CoefficientSpectrum &operator *= (const float &s) {
-			CoefficientSpectrum ret = *this;
 #if defined(AYA_USE_SIMD)
 			__m128 vs = _mm_load1_ps(&s);
 
@@ -264,6 +259,21 @@ namespace Aya {
 		}
 		friend inline CoefficientSpectrum operator * (const float &a, const CoefficientSpectrum &s) {
 			return s * a;
+		}
+		friend inline CoefficientSpectrum operator / (const float &a, const CoefficientSpectrum &s) {
+			CoefficientSpectrum ret;
+#if defined(AYA_USE_SIMD)
+			__m128 va = _mm_load1_ps(&a);
+
+			for (int i = 0; i < nChips; i++) {
+				ret.c[i].m_val128 = _mm_div_ps(va, s.c[i].m_val128);
+			}
+#else 
+			for (int i = 0; i < nSamples; i++) {
+				ret.c[i] = a / s.c[i];
+			}
+#endif
+			return ret;
 		}
 		CoefficientSpectrum operator / (const float &s) const {
 			assert(s != 0.f);
@@ -550,6 +560,12 @@ namespace Aya {
 	class RGBSpectrum : public CoefficientSpectrum<4> {
 	public:
 		RGBSpectrum(const float val = 0.f) noexcept : CoefficientSpectrum<4>(val) {
+			(*this)[3] = 1.f;
+		}
+		RGBSpectrum(const float &r, const float &g, const float &b) noexcept {
+			(*this)[0] = r;
+			(*this)[1] = g;
+			(*this)[2] = b;
 			(*this)[3] = 1.f;
 		}
 		RGBSpectrum(const CoefficientSpectrum<4> &s) noexcept : CoefficientSpectrum<4>(s) {
