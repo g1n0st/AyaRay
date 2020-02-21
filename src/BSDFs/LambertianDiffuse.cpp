@@ -19,7 +19,7 @@ namespace Aya {
 			return Spectrum(0.f);
 		}
 
-		Vector3 wo = intersection.W2O(v_out);
+		Vector3 wo = intersection.worldToLocal(v_out);
 		Vector3 wi = CosineSampleHemisphere(sample.u, sample.v);
 		if (CosTheta(wo) <= 0.f || !sameHemisphere(wo, wi))
 			return 0.f;
@@ -27,7 +27,7 @@ namespace Aya {
 		if (wo.z() < 0.f)
 			wi[2] *= -1.f;
 
-		*v_in = intersection.O2W(wi);
+		*v_in = intersection.localToWorld(wi);
 
 		if (v_out.dot(intersection.n) * v_in->dot(intersection.n) > 0.f)
 			types = ScatterType(types & ~BSDF_TRANSMISSION);

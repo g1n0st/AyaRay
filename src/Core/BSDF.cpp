@@ -23,8 +23,8 @@ namespace Aya {
 		if (!matchesTypes(types))
 			return Spectrum(0.f);
 
-		Vector3 l_out = intersection.W2O(v_out);
-		Vector3 l_in = intersection.W2O(v_in);
+		Vector3 l_out = intersection.worldToLocal(v_out);
+		Vector3 l_in = intersection.worldToLocal(v_in);
 
 		return getValue(mp_texture.get(), intersection) * 
 			evalInner(l_out, l_in, intersection, types);
@@ -39,8 +39,8 @@ namespace Aya {
 		if (!matchesTypes(types))
 			return 0.f;
 
-		Vector3 l_out = intersection.W2O(v_out);
-		Vector3 l_in = intersection.W2O(v_in);
+		Vector3 l_out = intersection.worldToLocal(v_out);
+		Vector3 l_in = intersection.worldToLocal(v_in);
 
 		return pdfInner(l_out, l_in, intersection, types);
 	}

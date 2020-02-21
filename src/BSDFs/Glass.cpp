@@ -27,7 +27,7 @@ namespace Aya {
 
 		bool sample_both = (sample_reflect == sample_refract);
 
-		Vector3 wo = intersection.W2O(v_out), wi;
+		Vector3 wo = intersection.worldToLocal(v_out), wi;
 
 		float fresnel = fresnelDielectric(CosTheta(wo), m_etai, m_etat);
 		float prob = .5f * fresnel + .25f;
@@ -36,7 +36,7 @@ namespace Aya {
 		if (sample.w <= prob && sample_both || (sample_reflect && !sample_refract)) {
 			wi = Vector3(-wo.x(), -wo.y(), wo.z());
 
-			*v_in = intersection.O2W(wi);
+			*v_in = intersection.localToWorld(wi);
 			*pdf = !sample_both ? 1.f : prob;
 			if (sample_types != NULL)
 				*sample_types = ScatterType(BSDF_REFLECTION | BSDF_SPECULAR);
@@ -63,7 +63,7 @@ namespace Aya {
 
 			wi = Vector3(toi * -wo.x(), toi * -wo.y(), cost);
 
-			*v_in = intersection.O2W(wi);
+			*v_in = intersection.localToWorld(wi);
 			*pdf = !sample_both ? 1.f : 1.f - prob;
 			if (sample_types != NULL)
 				*sample_types = ScatterType(BSDF_TRANSMISSION | BSDF_SPECULAR);

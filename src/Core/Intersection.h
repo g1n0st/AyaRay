@@ -28,10 +28,10 @@ namespace Aya {
 			BaseVector3::coordinateSystem(w, &u, &v);
 		}
 
-		Vector3 O2W(const Vector3 &vec) const {
+		Vector3 localToWorld(const Vector3 &vec) const {
 			return u * vec.x() + v * vec.y() + w * vec.z();
 		}
-		Vector3 W2O(const Vector3 &vec) const {
+		Vector3 worldToLocal(const Vector3 &vec) const {
 			return vec.dot3(u, v, w);
 		}
 
@@ -85,11 +85,11 @@ namespace Aya {
 		SurfaceIntersection()
 			: dudx(0.f), dudy(0.f), dvdx(0.f), dvdy(0.f) {}
 
-		__forceinline Vector3 W2O(const Vector3 &vec) const {
-			return shading_frame.W2O(vec);
+		__forceinline Vector3 worldToLocal(const Vector3 &vec) const {
+			return shading_frame.worldToLocal(vec);
 		}
-		__forceinline Vector3 O2W(const Vector3 &vec) const {
-			return shading_frame.O2W(vec);
+		__forceinline Vector3 localToWorld(const Vector3 &vec) const {
+			return shading_frame.localToWorld(vec);
 		}
 
 		void computeDifferentials(const RayDifferential& ray) const;
