@@ -7,6 +7,8 @@
 #define AYA_RAY_EPS 1e-4f
 
 namespace Aya {
+	class Medium;
+
 	class Ray {
 	public:
 		Point3 m_ori;
@@ -14,10 +16,13 @@ namespace Aya {
 		mutable float m_mint, m_maxt;
 		float m_time;
 
-		Ray() : m_mint(AYA_RAY_EPS), m_maxt(INFINITY), m_time(0.f) {}
+		const Medium *mp_medium;
+
+		Ray() : m_mint(AYA_RAY_EPS), m_maxt(INFINITY), mp_medium(nullptr), m_time(0.f) {}
 		inline Ray(const Point3 &ori, const Vector3 &dir,
+			const Medium *medium = nullptr,
 			float start = AYA_RAY_EPS, float end = INFINITY, float t = 0.f)
-			: m_ori(ori), m_dir(dir), m_mint(start + AYA_RAY_EPS), m_maxt(end - AYA_RAY_EPS), m_time(t) {}
+			: m_ori(ori), m_dir(dir), mp_medium(medium), m_mint(start + AYA_RAY_EPS), m_maxt(end - AYA_RAY_EPS), m_time(t) {}
 
 		inline Point3 operator() (const float &t) const {
 			return m_ori + m_dir * t;
@@ -38,7 +43,8 @@ namespace Aya {
 
 		RayDifferential() { m_has_differentials = false; }
 		RayDifferential(const Point3 &ori, const Vector3 &dir,
-			float start = AYA_RAY_EPS, float end = INFINITY, float t = 0.f) : Ray(ori, dir, start, end, t){
+			const Medium *medium = nullptr,
+			float start = AYA_RAY_EPS, float end = INFINITY, float t = 0.f) : Ray(ori, dir, medium, start, end, t){
 			m_has_differentials = false;
 		}
 		RayDifferential(const Ray &ray) : Ray(ray) {
