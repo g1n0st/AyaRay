@@ -73,7 +73,16 @@ namespace Aya {
 		}
 	};
 
+	struct MeasuredSS {
+	public:
+		static void f(const Spectrum &diffuse_refectance, const Vector3 &diffuse_mean_free_path, const float eta,
+			Vector3 *sigma_s, Vector3 *sigma_a);
 
+	private:
+		// Lookup Table
+		const static int LUT_size = 1000;
+		static float reduced_albedo_LUT[LUT_size];
+	};
 }
 
 #endif
