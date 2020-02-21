@@ -72,6 +72,8 @@ namespace Aya {
 			return mp_inside != mp_outside;
 		}
 	};
+
+	bool GetMediumScatteringProperties(const std::string &name, Spectrum *sigma_a, Spectrum *sigma_prime_s);
 }
 
 #endif
