@@ -43,5 +43,7 @@ namespace Aya {
 
 		if (sample_types != NULL)
 			*sample_types = m_scatter_type;
+
+		return getValue(mp_texture.get(), intersection) * evalInner(wo, wi, intersection, types);
 	}
 }
