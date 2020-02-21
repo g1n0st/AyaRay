@@ -3,13 +3,13 @@
 
 #include "../Math/Vector2.h"
 #include "../Math/Vector3.h"
+#include "../Core/Medium.h"
 #include "../Core/Ray.h"
 
 namespace Aya {
 	//class BSDF;
 	//class BSSRDF;
 	//class AreaLight;
-	//class MediumInterface;
 
 	class Frame {
 	private:
@@ -50,12 +50,13 @@ namespace Aya {
 	public:
 		Point3 p;
 		Normal3 n;
-		//MediumInterface medium_interface;
+		MediumInterface m_medium_interface;
 
 	public:
 		Scatter(const Point3 pos = Point3(0.f, 0.f, 0.f), 
-			const Normal3 norm = Normal3(0.f, 0.f, 1.f)) :
-			p(pos), n(pos) {}
+			const Normal3 norm = Normal3(0.f, 0.f, 1.f),
+			const MediumInterface &medium_interface = MediumInterface()) :
+			p(pos), n(pos), m_medium_interface(medium_interface) {}
 		virtual bool isSurfaceScatter() const = 0;
 	};
 
@@ -94,6 +95,25 @@ namespace Aya {
 		void computeDifferentials(const RayDifferential& ray) const;
 		bool isSurfaceScatter() const override {
 			return true;
+		}
+	};
+
+	class MediumIntersection : public Scatter {
+	public:
+		const PhaseFunctionHG *mp_func;
+
+	public:
+		MediumIntersection(const Vector3 &pos = Vector3(0.f, 0.f, 0.f), 
+			PhaseFunctionHG *func = nullptr, 
+			const MediumInterface &medium_interface = MediumInterface())
+			: Scatter(pos, Normal3(0.f, 0.f, 0.f), medium_interface) ,
+			mp_func(func) {}
+
+		bool isValid() {
+			return mp_func != nullptr;
+		}
+		bool isSurfaceScatter() const override {
+			return false;
 		}
 	};
 }
