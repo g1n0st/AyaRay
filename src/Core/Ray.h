@@ -1,21 +1,23 @@
 #ifndef AYA_CORE_RAY_H
 #define AYA_CORE_RAY_H
 
-#include "Config.h"
-#include "..\Math\Vector3.h"
+#include "../Core/Config.h"
+#include "../Math/Vector3.h"
+
+#define AYA_RAY_EPS 1e-4f
 
 namespace Aya {
 	class Ray {
 	public:
 		Point3 m_ori;
 		Vector3 m_dir;
-		mutable float m_maxt;
+		mutable float m_mint, m_maxt;
 		float m_time;
 
-		Ray() : m_maxt(INFINITY), m_time(0.f) {}
+		Ray() : m_mint(AYA_RAY_EPS), m_maxt(INFINITY), m_time(0.f) {}
 		inline Ray(const Point3 &ori, const Vector3 &dir,
-			float start, float end = INFINITY, float t = 0.f)
-			: m_ori(ori), m_dir(dir), m_maxt(end), m_time(t) {}
+			float start = AYA_RAY_EPS, float end = INFINITY, float t = 0.f)
+			: m_ori(ori), m_dir(dir), m_mint(start), m_maxt(end), m_time(t) {}
 
 		inline Point3 operator() (const float &t) const {
 			return m_ori + m_dir * t;
@@ -36,7 +38,7 @@ namespace Aya {
 
 		RayDifferential() { m_has_differentials = false; }
 		RayDifferential(const Point3 &ori, const Vector3 &dir,
-			float start, float end = INFINITY, float t = 0.f) : Ray(ori, dir, end, t){
+			float start = AYA_RAY_EPS, float end = INFINITY, float t = 0.f) : Ray(ori, dir, start, end, t){
 			m_has_differentials = false;
 		}
 		RayDifferential(const Ray &ray) : Ray(ray) {
