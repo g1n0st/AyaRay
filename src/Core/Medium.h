@@ -75,8 +75,8 @@ namespace Aya {
 
 	struct MeasuredSS {
 	public:
-		static void f(const Spectrum &diffuse_refectance, const Vector3 &diffuse_mean_free_path, const float eta,
-			Vector3 *sigma_s, Vector3 *sigma_a);
+		static void f(const Spectrum &diffuse_refectance, const RGBSpectrum &diffuse_mean_free_path, const float eta,
+			RGBSpectrum *sigma_s, RGBSpectrum *sigma_a);
 
 	private:
 		// Lookup Table

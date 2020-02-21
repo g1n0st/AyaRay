@@ -228,31 +228,19 @@ namespace Aya {
 			0.980664f, 0.980718f, 0.980771f, 0.980825f, 0.980878f,
 			0.980932f, 0.980986f, 0.981039f, 0.981093f, 0.981146f
 	};
-	void MeasuredSS::f(const Spectrum &diffuse_refectance, const Vector3 &diffuse_mean_free_path, const float eta,
-		Vector3 * sigma_s, Vector3 * sigma_a) {
+	void MeasuredSS::f(const Spectrum &diffuse_refectance, const RGBSpectrum &diffuse_mean_free_path, const float eta,
+		RGBSpectrum *sigma_s, RGBSpectrum *sigma_a) {
 		// Instead simply look up from a precomputed table. The IOR is hard coded to be 1.5
 		float rgb[3];
 		diffuse_refectance.toRGB(rgb);
-		Vector3 alpha_p = Vector3(
+		RGBSpectrum alpha_p = RGBSpectrum(
 			reduced_albedo_LUT[RoundToInt(Min(rgb[0] * LUT_size, LUT_size - 1.f))],
 			reduced_albedo_LUT[RoundToInt(Min(rgb[1] * LUT_size, LUT_size - 1.f))],
 			reduced_albedo_LUT[RoundToInt(Min(rgb[2] * LUT_size, LUT_size - 1.f))]
 		);
-		Vector3 sigma_tr = Vector3(
-			1.f / diffuse_mean_free_path[0],
-			1.f / diffuse_mean_free_path[1],
-			1.f / diffuse_mean_free_path[2]
-		);
-		Vector3 sigma_t_p = Vector3(
-			sigma_tr[0] / Sqrt(3.f * (1.f - alpha_p[0])),
-			sigma_tr[1] / Sqrt(3.f * (1.f - alpha_p[1])),
-			sigma_tr[2] / Sqrt(3.f * (1.f - alpha_p[2]))
-			);
-		*sigma_s = Vector3(
-			alpha_p[0] * sigma_t_p[0],
-			alpha_p[1] * sigma_t_p[1],
-			alpha_p[2] * sigma_t_p[2]
-		);
+		RGBSpectrum sigma_tr = 1.f / diffuse_mean_free_path;
+		RGBSpectrum sigma_t_p = sigma_tr / (RGBSpectrum(3.f) * (RGBSpectrum(1.f) - alpha_p)).sqrt();
+		*sigma_s = alpha_p * sigma_t_p;
 		*sigma_a = sigma_t_p - *sigma_s;
 	}
 }
