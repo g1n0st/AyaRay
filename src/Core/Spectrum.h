@@ -61,11 +61,14 @@ namespace Aya {
 	extern const float RGB_illum_2spect_green[n_RGB_2spect_samples];
 	extern const float RGB_illum_2spect_blue[n_RGB_2spect_samples];
 
-	template<int nSamples>
+	template<int n_samples>
 	class CoefficientSpectrum {
 #if defined(AYA_USE_SIMD)
+	public:
+		const static int nChips = (n_samples + 3) / 4;
+		const static int nSamples = n_samples;
+
 	protected:
-		const static int nChips = (nSamples + 3) / 4;
 		union Chip {
 			float m_val[4];
 			__m128 m_val128;
