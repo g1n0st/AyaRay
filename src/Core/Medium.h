@@ -72,17 +72,6 @@ namespace Aya {
 			return mp_inside != mp_outside;
 		}
 	};
-
-	struct MeasuredSS {
-	public:
-		static void f(const Spectrum &diffuse_refectance, const RGBSpectrum &diffuse_mean_free_path, const float eta,
-			RGBSpectrum *sigma_s, RGBSpectrum *sigma_a);
-
-	private:
-		// Lookup Table
-		const static int LUT_size = 1000;
-		static float reduced_albedo_LUT[LUT_size];
-	};
 }
 
 #endif
