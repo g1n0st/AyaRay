@@ -17,7 +17,7 @@ namespace Aya {
 		Ray() : m_mint(AYA_RAY_EPS), m_maxt(INFINITY), m_time(0.f) {}
 		inline Ray(const Point3 &ori, const Vector3 &dir,
 			float start = AYA_RAY_EPS, float end = INFINITY, float t = 0.f)
-			: m_ori(ori), m_dir(dir), m_mint(start), m_maxt(end), m_time(t) {}
+			: m_ori(ori), m_dir(dir), m_mint(start + AYA_RAY_EPS), m_maxt(end - AYA_RAY_EPS), m_time(t) {}
 
 		inline Point3 operator() (const float &t) const {
 			return m_ori + m_dir * t;
