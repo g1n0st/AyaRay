@@ -2,7 +2,7 @@
 #define AYA_CORE_TEXTURE_H
 
 #include "../Core/Spectrum.h"
-#include "../Image/Bitmap.h"
+#include "../Loaders/Bitmap.h"
 #include "../Math/Vector2.h"
 #include "../Core/Memory.h"
 

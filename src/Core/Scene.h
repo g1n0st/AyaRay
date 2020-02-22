@@ -7,8 +7,6 @@
 #include "Memory.h"
 #include "Primitive.h"
 
-#include "../Image/Bitmap.h"
-
 #include <ppl.h>
 #include <fstream>
 
