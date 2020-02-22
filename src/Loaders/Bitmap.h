@@ -1,5 +1,5 @@
-#ifndef AYA_IMAGE_BITMAP_H
-#define AYA_IMAGE_BITMAP_H
+#ifndef AYA_LOADERS_BITMAP_H
+#define AYA_LOADERS_BITMAP_H
 
 #include "stb_image.h"
 
