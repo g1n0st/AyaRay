@@ -410,8 +410,8 @@ namespace Aya {
 		do {
 			std::string str = READ_INDEX();
 			if (str == "transform" && !r_trans_id) trans_id = READ_INT(), r_trans_id = true;
-			else if (str == "normal") normal = READ_BOOL();
-			else if (str == "uv") uv = READ_BOOL();
+			//else if (str == "normal") normal = READ_BOOL();
+			//else if (str == "uv") uv = READ_BOOL();
 			else if (str == "file" && !r_file_name) file_name = READ_STRING(), r_file_name = true;
 			else Assert(0);
 		} while (!READ_BRACE_ELEMENT_END());
@@ -422,9 +422,38 @@ namespace Aya {
 		int *vv = NULL, vs = 0, ts = 0;
 		Point3 *pp = NULL;
 		Normal3 *nn = NULL;
+		/*
 		if (uv)  loadObjc(file_name.c_str(), ts, vs, &vv, &pp, &nn, &uvs);
 		else if (normal) loadObj(file_name.c_str(), ts, vs, &vv, &pp, &nn);
 		else loadObjs(file_name.c_str(), ts, vs, &vv, &pp);
+		m_shapes.push_back(new TriangleMesh(m_trans[trans_id], m_invts[trans_id], ts, vs, vv, pp, nn, uvs));
+		*/
+		ObjMesh mesh;
+		mesh.loadObj(file_name.c_str());
+		vs = mesh.getVertexCount();
+		ts = mesh.getTriangleCount();
+		if (mesh.isTextured()) {
+			uvs = new float[2 * vs];
+			for (int i = 0; i < vs; i++) {
+				uvs[i * 2] = mesh.getVertexAt(i).u;
+				uvs[i * 2 + 1] = mesh.getVertexAt(i).v;
+			}
+		}
+		if (mesh.isNormaled()) {
+			nn = new Normal3[vs];
+			for (int i = 0; i < vs; i++)
+				nn[i] = mesh.getVertexAt(i).n;
+		}
+		pp = new Point3[vs];
+		for (int i = 0; i < vs; i++)
+			pp[i] = mesh.getVertexAt(i).p;
+		vv = new int[ts * 3];
+		for (int i = 0; i < ts; i++) {
+			const uint32_t *s = mesh.getIndexAt(i);
+			vv[i * 3 + 0] = s[0];
+			vv[i * 3 + 1] = s[1];
+			vv[i * 3 + 2] = s[2];
+		}
 		m_shapes.push_back(new TriangleMesh(m_trans[trans_id], m_invts[trans_id], ts, vs, vv, pp, nn, uvs));
 	}
 	inline void Parser::READ_SHAPE() {

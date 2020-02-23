@@ -4,6 +4,8 @@
 #include "Config.h"
 #include "Scene.h"
 
+#include "../Loaders/ObjMesh.h"
+
 #include "../Shapes/Rectangle.h"
 #include "../Shapes/Sphere.h"
 #include "../Shapes/Heart.h"
