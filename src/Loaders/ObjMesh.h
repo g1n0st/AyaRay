@@ -9,9 +9,9 @@
 #include <string>
 #include <vector>
 #include <cstdio>
-#include <map>
+#include <functional>
 
-#define MAX_PATH 260
+#define MAX_PATH 257
 
 namespace Aya {
 	struct MeshVertex {
@@ -98,6 +98,12 @@ namespace Aya {
 		__forceinline const uint32_t* getIndexAt(int num) const {
 			return m_indices.data() + 3 * num;
 		}
+		__forceinline const MeshFace& getFaceAt(int idx) const {
+			return m_faces[idx];
+		}
+		__forceinline const std::vector<MeshFace>& getFacesBuff() const {
+			return m_faces;
+		}
 		__forceinline const MeshVertex& getVertexAt(int idx) const {
 			return m_vertices[idx];
 		}
@@ -136,6 +142,9 @@ namespace Aya {
 		__forceinline const uint32_t getSubsetMtlIdx(int idx) const {
 			return m_subset_mtl_idx[idx];
 		}
+
+	private:
+		void parserFramework(const char *filename, std::function<void(char*, char *)> callback);
 	};
 }
 
