@@ -300,7 +300,32 @@ namespace Aya {
 				return (p - (*this)).length();
 			}
 
-			__forceinline BaseVector3& normalize() {
+			__forceinline BaseVector3 normalize() const {
+				BaseVector3 ret;
+#if defined(AYA_USE_SIMD)
+				__m128 vd = _mm_mul_ps(m_val128, m_val128);
+				__m128 z = _mm_movehl_ps(vd, vd);
+				__m128 y = _mm_pshufd_ps(vd, 0x55);
+				vd = _mm_add_ss(vd, y);
+				vd = _mm_add_ss(vd, z);
+
+				y = _mm_rsqrt_ss(vd);
+				z = v1_5;
+				vd = _mm_mul_ss(vd, v0_5);
+				vd = _mm_mul_ss(vd, y);
+				vd = _mm_mul_ss(vd, y);
+				z = _mm_sub_ss(z, vd);
+				y = _mm_mul_ss(y, z);
+
+				y = _mm_splat_ps(y, 0x80);
+				ret.m_val128 = _mm_mul_ps(m_val128, y);
+
+				return ret;
+#else
+				return *this / length();
+#endif
+			}
+			__forceinline void normalized() {
 #if defined(AYA_USE_SIMD)
 				__m128 vd = _mm_mul_ps(m_val128, m_val128);
 				__m128 z = _mm_movehl_ps(vd, vd);
@@ -318,21 +343,9 @@ namespace Aya {
 
 				y = _mm_splat_ps(y, 0x80);
 				m_val128 = _mm_mul_ps(m_val128, y);
-
-				return *this;
 #else
-				return *this /= length();
+				*this /= length();
 #endif
-			}
-			__forceinline BaseVector3& safeNormalize() {
-				float l2 = safeLength();
-				if (l2 >= AYA_EPSILON) {
-					return *this /= l2;
-				}
-				else {
-					setValue(1, 0, 0);
-				}
-				return *this;
 			}
 
 			__forceinline BaseVector3 cross(const BaseVector3 &v) const {
