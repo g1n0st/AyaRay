@@ -89,11 +89,11 @@ namespace Aya {
 		const ScatterType m_scatter_type;
 		const BSDFType m_BSDF_type;
 		UniquePtr<Texture2D<Spectrum>> mp_texture;
-		UniquePtr<Texture2D<Spectrum>> mp_normal_map;
+		UniquePtr<Texture2D<RGBSpectrum>> mp_normal_map;
 
 	public:
 		BSDF(ScatterType t1, BSDFType t2, const Spectrum &color);
-		BSDF(ScatterType t1, BSDFType t2, UniquePtr<Texture2D<Spectrum>> tex, UniquePtr<Texture2D<Spectrum>> normal);
+		BSDF(ScatterType t1, BSDFType t2, UniquePtr<Texture2D<Spectrum>> tex, UniquePtr<Texture2D<RGBSpectrum>> normal);
 		BSDF(ScatterType t1, BSDFType t2, const char *texture_file);
 		BSDF(ScatterType t1, BSDFType t2, const char *texture_file, const char *normal_file);
 		virtual ~BSDF() {}
@@ -130,14 +130,14 @@ namespace Aya {
 		const Texture2D<Spectrum>* getTexture() const {
 			return mp_texture.get();
 		}
-		const Texture2D<Spectrum>* getNormalMap() const {
+		const Texture2D<RGBSpectrum>* getNormalMap() const {
 			return mp_normal_map.get();
 		}
 
 		UniquePtr<Texture2D<Spectrum>> moveTexture() {
 			return std::move(mp_texture);
 		}
-		UniquePtr<Texture2D<Spectrum>> moveNormalMap() {
+		UniquePtr<Texture2D<RGBSpectrum>> moveNormalMap() {
 			return std::move(mp_normal_map);
 		}
 
