@@ -1,7 +1,7 @@
 #include "Triangle.h"
 
 namespace Aya {
-	TriangleMesh::TriangleMesh(const Transform *O2W, const Transform *W2O, int tris, int verts,
+	triangleMesh::triangleMesh(const Transform *O2W, const Transform *W2O, int tris, int verts,
 		const int *vert, const Point3 *P, const Normal3 *N, const float *UV) 
 			: Shape(O2W, W2O){
 		m_tris = tris;
@@ -28,38 +28,38 @@ namespace Aya {
 			m_p[i] = (*o2w)(P[i]);
 		}
 	}
-	TriangleMesh::~TriangleMesh() {
+	triangleMesh::~triangleMesh() {
 		delete[] m_vert_idx;
 		delete[] m_p;
 		delete[] m_n;
 		delete[] m_uvs;
 	}
 
-	BBox TriangleMesh::objectBound() const {
+	BBox triangleMesh::objectBound() const {
 		BBox aabb;
 		for (int i = 0; i < m_verts; i++) {
 			aabb.unity((*w2o)(m_p[i]));
 		}
 		return aabb;
 	}
-	BBox TriangleMesh::worldBound() const {
+	BBox triangleMesh::worldBound() const {
 		BBox aabb;
 		for (int i = 0; i < m_verts; i++) {
 			aabb.unity(m_p[i]);
 		}
 		return aabb;
 	}
-	inline bool TriangleMesh::canIntersect() const {
+	inline bool triangleMesh::canIntersect() const {
 		return false;
 	}
-	void TriangleMesh::refine(std::vector<SharedPtr<Shape> > &refined) const {
+	void triangleMesh::refine(std::vector<SharedPtr<Shape> > &refined) const {
 		for (int i = 0; i < m_tris; i++) {
-			refined.push_back(new Triangle(o2w, w2o, (TriangleMesh*)this, i));
+			refined.push_back(new Triangle(o2w, w2o, (triangleMesh*)this, i));
 		}
 
 	}
 
-	Triangle::Triangle(const Transform *O2W, const Transform *W2O, TriangleMesh * m, int n) :
+	Triangle::Triangle(const Transform *O2W, const Transform *W2O, triangleMesh * m, int n) :
 		Shape(O2W, W2O){
 		m_mesh = m;
 		m_v = &m_mesh->m_vert_idx[3 * n];
