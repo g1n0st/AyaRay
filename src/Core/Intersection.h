@@ -7,7 +7,7 @@
 #include "../Core/Ray.h"
 
 namespace Aya {
-	//class BSDF;
+	class BSDF;
 	//class BSSRDF;
 	//class AreaLight;
 
@@ -71,25 +71,27 @@ namespace Aya {
 
 	class SurfaceIntersection : public Intersection, public Scatter {
 	public:
-		Vector2f tex_coord;
-		Vector3 geom_normal;
+		Vector2f uv;
+		Vector3 gn;
 		Vector3 dpdu, dpdv;
 		Vector3 dndu, dndv;
 
 		mutable Vector3 dpdx, dpdy;
 		mutable float dudx, dudy, dvdx, dvdy;
 
-		Frame shading_frame;
+		Frame frame;
+
+		const BSDF *bsdf;
 
 	public:
 		SurfaceIntersection()
 			: dudx(0.f), dudy(0.f), dvdx(0.f), dvdy(0.f) {}
 
 		__forceinline Vector3 worldToLocal(const Vector3 &vec) const {
-			return shading_frame.worldToLocal(vec);
+			return frame.worldToLocal(vec);
 		}
 		__forceinline Vector3 localToWorld(const Vector3 &vec) const {
-			return shading_frame.localToWorld(vec);
+			return frame.localToWorld(vec);
 		}
 
 		void computeDifferentials(const RayDifferential& ray) const;

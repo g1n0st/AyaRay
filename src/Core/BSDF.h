@@ -118,7 +118,7 @@ namespace Aya {
 				Vector2f(intersection.dudx, intersection.dvdx),
 				Vector2f(intersection.dudy, intersection.dvdy)
 			};
-			return tex->sample(intersection.tex_coord, diffs, filter);
+			return tex->sample(intersection.uv, diffs, filter);
 		}
 
 		const ScatterType getScatterType() const {
