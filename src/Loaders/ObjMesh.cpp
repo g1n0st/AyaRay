@@ -58,7 +58,7 @@ namespace Aya {
 	bool ObjMesh::loadObj(const char * path, const bool force_compute_normal, const bool left_handed) {
 		std::vector<Point3> position_buff;
 		std::vector<Normal3> normal_buff;
-		std::vector<float> uv_buff;
+		std::vector<Vector2f> uv_buff;
 		int smoothing_group = force_compute_normal ? 1 : 0;
 		bool has_smooth_group = false;
 		int current_mtl = 0;
@@ -80,8 +80,7 @@ namespace Aya {
 				// Vertex TexCoord
 				float u, v;
 				sscanf_s(cmd_para, "%f %f", &u, &v);
-				uv_buff.emplace_back(u);
-				uv_buff.emplace_back(1.f - v);
+				uv_buff.emplace_back(u, 1.f - v);
 				m_textured = true;
 			}
 			else if (0 == std::strcmp(cmd_header, "vn")) {
@@ -173,8 +172,7 @@ namespace Aya {
 							if (pos_idx < 0) pos_idx = int(position_buff.size()) + pos_idx + 1;
 							if (uv_idx < 0) uv_idx = int(uv_buff.size()) / 2 + uv_idx + 1;
 							vertex.p = position_buff[pos_idx - 1];
-							vertex.u = uv_buff[2 * uv_idx - 2];
-							vertex.v = uv_buff[2 * uv_idx - 1];
+							vertex.uv = uv_buff[uv_idx - 1];
 						}
 						else if (slash_count == 2) {
 							sscanf_s(cmd_para + start_idx, "%d/%d/%d", &pos_idx, &uv_idx, &normal_idx);
@@ -182,8 +180,7 @@ namespace Aya {
 							if (uv_idx < 0) uv_idx = int(uv_buff.size()) / 2 + uv_idx + 1;
 							if (normal_idx < 0) normal_idx = int(normal_buff.size()) + normal_idx + 1;
 							vertex.p = position_buff[pos_idx - 1];
-							vertex.u = uv_buff[2 * uv_idx - 2];
-							vertex.v = uv_buff[2 * uv_idx - 1];
+							vertex.uv = uv_buff[uv_idx - 1];
 							vertex.n = normal_buff[normal_idx - 1];
 						}
 					}

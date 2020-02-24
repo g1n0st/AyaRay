@@ -1,6 +1,7 @@
 #ifndef AYA_LOADERS_OBJMESH_H
 #define AYA_LOADERS_OBJMESH_H
 
+#include "../Math/Vector2.h"
 #include "../Math/Vector3.h"
 #include "../Core/Spectrum.h"
 #include "../Core/Memory.h"
@@ -17,11 +18,11 @@ namespace Aya {
 	struct MeshVertex {
 		Point3 p;
 		Normal3 n;
-		float u, v;
+		Vector2f uv;
 
 		MeshVertex() = default;
 		MeshVertex(const Point3 &pp, const Normal3 &nn, const float uu, const float vv) :
-			p(pp), n(nn), u(uu), v(vv) {}
+			p(pp), n(nn), uv(uu, vv) {}
 	};
 	struct MeshFace {
 		int idx[3];

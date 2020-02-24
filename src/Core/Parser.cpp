@@ -426,7 +426,7 @@ namespace Aya {
 		if (uv)  loadObjc(file_name.c_str(), ts, vs, &vv, &pp, &nn, &uvs);
 		else if (normal) loadObj(file_name.c_str(), ts, vs, &vv, &pp, &nn);
 		else loadObjs(file_name.c_str(), ts, vs, &vv, &pp);
-		m_shapes.push_back(new TriangleMesh(m_trans[trans_id], m_invts[trans_id], ts, vs, vv, pp, nn, uvs));
+		m_shapes.push_back(new triangleMesh(m_trans[trans_id], m_invts[trans_id], ts, vs, vv, pp, nn, uvs));
 		*/
 		ObjMesh mesh;
 		mesh.loadObj(file_name.c_str());
@@ -435,8 +435,8 @@ namespace Aya {
 		if (mesh.isTextured()) {
 			uvs = new float[2 * vs];
 			for (int i = 0; i < vs; i++) {
-				uvs[i * 2] = mesh.getVertexAt(i).u;
-				uvs[i * 2 + 1] = mesh.getVertexAt(i).v;
+				uvs[i * 2] = mesh.getVertexAt(i).uv.u;
+				uvs[i * 2 + 1] = mesh.getVertexAt(i).uv.v;
 			}
 		}
 		if (mesh.isNormaled()) {
@@ -454,7 +454,7 @@ namespace Aya {
 			vv[i * 3 + 1] = s[1];
 			vv[i * 3 + 2] = s[2];
 		}
-		m_shapes.push_back(new TriangleMesh(m_trans[trans_id], m_invts[trans_id], ts, vs, vv, pp, nn, uvs));
+		m_shapes.push_back(new triangleMesh(m_trans[trans_id], m_invts[trans_id], ts, vs, vv, pp, nn, uvs));
 	}
 	inline void Parser::READ_SHAPE() {
 		READ_BRACE_BEGIN();
