@@ -104,6 +104,15 @@ namespace Aya {
 		bool isSpecular() const {
 			return (ScatterType(BSDF_SPECULAR | BSDF_DIFFUSE | BSDF_GLOSSY) & m_scatter_type) == ScatterType(BSDF_SPECULAR);
 		}
+		void setNormalMap(const char *normal_file) {
+			mp_normal_map = MakeUnique<ImageTexture2D<RGBSpectrum, byteSpectrum>>(normal_file, 1.f);
+		}
+		void setTexture(const char *image_file) {
+			mp_texture = MakeUnique<ImageTexture2D<RGBSpectrum, byteSpectrum>>(image_file);
+		}
+		void setTexture(const Spectrum &color) {
+			mp_texture = MakeUnique<ConstantTexture2D<RGBSpectrum>>(color);
+		}
 
 		virtual Spectrum f(const Vector3 &v_out, const Vector3 &v_in, const SurfaceIntersection &intersection, ScatterType types = BSDF_ALL) const;
 		virtual float pdf(const Vector3 &v_out, const Vector3 &v_in, const SurfaceIntersection &intersection, ScatterType types = BSDF_ALL) const;

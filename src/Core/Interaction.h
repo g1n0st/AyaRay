@@ -7,7 +7,7 @@
 
 namespace Aya {
 
-	class Primitive;
+	class _Primitive;
 	class GeometricPrimitive;
 
 	class SurfaceInteraction {

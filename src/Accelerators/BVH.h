@@ -3,7 +3,7 @@
 
 #include <algorithm>
 
-#include "../core/primitive.h"
+#include "../core/primitive_.h"
 
 namespace Aya {
 	class BVHNode{
@@ -26,13 +26,13 @@ namespace Aya {
 	};
 	class BVHLeaf : public BVHNode {
 	public:
-		SharedPtr<Primitive> m_prim;
+		SharedPtr<_Primitive> m_prim;
 
 		BVHLeaf() {
 			l_l = r_l = NULL;
 			m_box = BBox();
 		}
-		BVHLeaf(const SharedPtr<Primitive> &prim) {
+		BVHLeaf(const SharedPtr<_Primitive> &prim) {
 			m_prim = prim;
 			m_box = m_prim->worldBound();
 		}
@@ -45,7 +45,7 @@ namespace Aya {
 
 	class BVHAccel : public Accelerator {
 	public:
-		std::vector<SharedPtr<Primitive> > m_prims;
+		std::vector<SharedPtr<_Primitive> > m_prims;
 		BVHNode *m_root;
 	public:
 		BVHAccel() {
@@ -56,7 +56,7 @@ namespace Aya {
 			m_prims.clear();
 		}
 
-		virtual void construct(std::vector<SharedPtr<Primitive> > prims);
+		virtual void construct(std::vector<SharedPtr<_Primitive> > prims);
 		virtual BBox worldBound() const;
 		virtual bool canIntersect() {
 			return false;

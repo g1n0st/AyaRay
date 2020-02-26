@@ -2,7 +2,7 @@
 
 
 namespace Aya {
-	void BVHAccel::construct(std::vector<SharedPtr<Primitive> > prims) {
+	void BVHAccel::construct(std::vector<SharedPtr<_Primitive> > prims) {
 		// refine all the primitives
 		for (auto p : prims) {
 			p->fullyRefine(m_prims);
@@ -50,17 +50,17 @@ namespace Aya {
 		}
 		return false;
 	}
-	inline bool xBVHCmp(const SharedPtr<Primitive> &a, const SharedPtr<Primitive> &b) {
+	inline bool xBVHCmp(const SharedPtr<_Primitive> &a, const SharedPtr<_Primitive> &b) {
 		BBox ab = a->worldBound();
 		BBox bb = b->worldBound();
 		return ab.m_pmin.x() < bb.m_pmin.x();
 	}
-	inline bool yBVHCmp(const SharedPtr<Primitive> &a, const SharedPtr<Primitive> &b) {
+	inline bool yBVHCmp(const SharedPtr<_Primitive> &a, const SharedPtr<_Primitive> &b) {
 		BBox ab = a->worldBound();
 		BBox bb = b->worldBound();
 		return ab.m_pmin.y() < bb.m_pmin.y();
 	}
-	inline bool zBVHCmp(const SharedPtr<Primitive> &a, const SharedPtr<Primitive> &b) {
+	inline bool zBVHCmp(const SharedPtr<_Primitive> &a, const SharedPtr<_Primitive> &b) {
 		BBox ab = a->worldBound();
 		BBox bb = b->worldBound();
 		return ab.m_pmin.z() < bb.m_pmin.z();

@@ -3,7 +3,7 @@
 
 #include "Config.h"
 #include "Camera.h"
-#include "Primitive.h"
+#include "Primitive_.h"
 
 namespace Aya {
 	class Integrator {

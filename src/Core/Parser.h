@@ -25,7 +25,7 @@ namespace Aya {
 		std::vector<Transform *> m_invts;
 		std::vector<SharedPtr<Shape> > m_shapes;
 		std::vector<SharedPtr<Material> > m_materials;
-		std::vector<SharedPtr<Primitive> > m_prims;
+		std::vector<SharedPtr<_Primitive> > m_prims;
 		SharedPtr<Camera> m_cam;
 
 		int m_sx, m_sy, m_st;

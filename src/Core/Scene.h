@@ -5,7 +5,7 @@
 #include "Film.h"
 #include "Integrator.h"
 #include "Memory.h"
-#include "Primitive.h"
+#include "Primitive_.h"
 
 #include <ppl.h>
 #include <fstream>
