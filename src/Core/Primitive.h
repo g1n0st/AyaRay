@@ -1,46 +1,78 @@
 #ifndef AYA_CORE_PRIMITIVE_H
 #define AYA_CORE_PRIMITIVE_H
 
-#include "Config.h"
-#include "Shape.h"
-#include "Material.h"
-#include "Memory.h"
+#include "../Core/BSDF.h"
+#include "../Core/Medium.h"
+#include "../Core/TriangleMesh.h"
 
 namespace Aya {
 	class Primitive {
-	public:
-		Primitive();
-		virtual ~Primitive();
-		virtual BBox worldBound() const = 0;
-		virtual bool canIntersect() const;
-		virtual bool intersect(const Ray &ray, SurfaceInteraction *si) const = 0;
-		virtual void refine(std::vector<SharedPtr<Primitive> > &refined) const;
-		virtual void fullyRefine(std::vector<SharedPtr<Primitive> > &refined) const;
-	};
+	private:
+		friend class Scene;
 
-	class GeometricPrimitive : public Primitive {
-	public:
-		SharedPtr<Shape> m_shape;
-		SharedPtr<Material> m_material;
+		UniquePtr<TriangleMesh> mp_mesh;
+
+		std::vector<UniquePtr<BSDF>> mp_BSDFs;
+		//std::vector<UniquePtr<BSSRDF>> mp_BSSRDFs;
+		//const AreaLight *mp_light = nullptr;
+
+		uint32_t *mp_material_idx = nullptr;
+		uint32_t *mp_subset_start_idx  = nullptr;
+		uint32_t *mp_subset_material_idx = nullptr;
+		uint32_t m_subset_count;
+
+		std::vector<MediumInterface> m_medium_interface;
 
 	public:
-		GeometricPrimitive(const SharedPtr<Shape> &s, const SharedPtr<Material> &m);
-		virtual BBox worldBound() const;
-		virtual bool canIntersect() const;
-		virtual bool intersect(const Ray &ray, SurfaceInteraction *si) const;
-		virtual void refine(std::vector<SharedPtr<Primitive> > &refined) const;
-	};
-
-	class Accelerator : public Primitive {
-	public:
-		Accelerator() {}
-
-		virtual void construct(std::vector<SharedPtr<Primitive> > prims) = 0;
-		virtual BBox worldBound() const = 0;
-		virtual bool canIntersect() {
-			return false;
+		Primitive() {
 		}
-		virtual bool intersect(const Ray &ray, SurfaceInteraction *si) const = 0;
+		~Primitive();
+
+		void loadMesh(const Transform &o2w,
+			const char *path,
+			const bool force_compute_normal = false,
+			UniquePtr<BSDF> bsdf = UniquePtr<BSDF>(nullptr),
+			const MediumInterface &medium_interface = MediumInterface());
+		void loadSphere(const Transform &o2w,
+			const float radius,
+			UniquePtr<BSDF> bsdf,
+			const MediumInterface &medium_interface = MediumInterface());
+		void loadPlane(const Transform &o2w,
+			const float length,
+			UniquePtr<BSDF> bsdf,
+			const MediumInterface &medium_interface = MediumInterface());
+
+		void postIntersect(const Ray &ray, SurfaceIntersection *intersection) const;
+
+		const BSDF* getBSDF(const uint32_t id) const {
+			return mp_BSDFs[mp_material_idx[id]].get();
+		}
+		const MediumInterface* getMediumInterface(const uint32_t id) const {
+			return &m_medium_interface[mp_material_idx[id]];
+		}
+		void setBSDF(const uint32_t id, UniquePtr<BSDF> bsdf) {
+			mp_BSDFs[mp_material_idx[id]] = std::move(bsdf);
+		}
+		void setMediumInterface(const uint32_t id, const MediumInterface &medium_interface) {
+			m_medium_interface[mp_material_idx[id]] = medium_interface;
+		}
+
+		const TriangleMesh* getMesh() const {
+			return mp_mesh.get();
+		}
+		const uint32_t* getMaterialIdx() const {
+			return mp_material_idx;
+		}
+		const uint32_t* getSubsetStartIdx() const {
+			return mp_subset_start_idx;
+		}
+		const uint32_t* getSubsetMaterialIdx() const {
+			return mp_subset_material_idx;
+		}
+		const uint32_t getSubsetCount() const {
+			return m_subset_count;
+		}
 	};
 }
+
 #endif

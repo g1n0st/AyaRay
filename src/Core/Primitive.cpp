@@ -1,63 +1,104 @@
 #include "Primitive.h"
 
+#include "../BSDFs/LambertianDiffuse.h"
+#include "../BSDFs/Glass.h"
+#include "../BSDFs/Mirror.h"
+
 namespace Aya {
-	Primitive::Primitive() {}
-	Primitive::~Primitive() {}
-
-	bool Primitive::canIntersect() const {
-		return false;
+	Primitive::~Primitive() {
+		SafeDeleteArray(mp_material_idx);
+		SafeDeleteArray(mp_subset_start_idx);
+		SafeDeleteArray(mp_subset_material_idx);
 	}
 
-	void Primitive::refine(std::vector<SharedPtr<Primitive>>& refined) const {
-		assert(0);
-	}
-	void Primitive::fullyRefine(std::vector<SharedPtr<Primitive>>& refined) const {
-		std::vector<SharedPtr<Primitive> > r;
-		r.push_back(const_cast<Primitive *>(this));
+	void Primitive::loadMesh(const Transform &o2w,
+		const char *path,
+		const bool force_compute_normal,
+		UniquePtr<BSDF> bsdf,
+		const MediumInterface &medium_interface) {
+		ObjMesh *mesh = new ObjMesh;
+		mesh->loadObj(path, force_compute_normal);
+		mp_mesh->loadMesh(o2w, mesh);
 
-		while (r.size()) {
-			SharedPtr<Primitive> p = r.back();
-			r.pop_back();
-			if (p->canIntersect()) {
-				refined.push_back(p);
+		const auto& mtl_info = mesh->getMaterialBuff();
+		for (auto mtl : mtl_info) {
+			if (bsdf.get() == nullptr) {
+				if (mtl.texture_path[0]) {
+					if (mtl.bump_path[0])
+						mp_BSDFs.emplace_back(MakeUnique<LambertianDiffuse>(mtl.texture_path, mtl.bump_path));
+					else
+						mp_BSDFs.emplace_back(MakeUnique<LambertianDiffuse>(mtl.texture_path));
+				}
+				else {
+					if (mtl.trans_color != Spectrum(0.f))
+						mp_BSDFs.emplace_back(MakeUnique<Glass>(mtl.trans_color, 1.f, mtl.refractive_index));
+					else if (mtl.specular_color != Spectrum(0.f))
+						mp_BSDFs.emplace_back(MakeUnique<Mirror>(mtl.specular_color));
+					else
+						mp_BSDFs.emplace_back(MakeUnique<LambertianDiffuse>(mtl.diffuse_color));
+
+					if (mtl.bump_path[0])
+						mp_BSDFs.back()->setNormalMap(mtl.bump_path);
+				}
 			}
-			else {
-				p->refine(r);
-			}
+			else
+				mp_BSDFs.emplace_back(std::move(bsdf));
+
+			m_medium_interface.emplace_back(medium_interface);
+		}
+
+		mp_material_idx = new uint32_t[mesh->getTriangleCount()];
+		for (auto i = 0; i < mesh->getTriangleCount(); i++)
+			mp_material_idx[i] = mesh->getMaterialIdx(i);
+
+		m_subset_count = mesh->getSubsetCount();
+		mp_subset_material_idx = new uint32_t[m_subset_count];
+		mp_subset_start_idx = new uint32_t[m_subset_count];
+		for (auto i = 0; i < m_subset_count; i++) {
+			mp_subset_material_idx[i] = mesh->getSubsetMtlIdx(i);
+			mp_subset_start_idx[i] = mesh->getSubsetStartIdx(i);
 		}
 	}
-	
+	void Primitive::loadSphere(const Transform &o2w,
+		const float radius,
+		UniquePtr<BSDF> bsdf,
+		const MediumInterface &medium_interface) {
+		mp_mesh->loadSphere(o2w, radius);
 
-	GeometricPrimitive::GeometricPrimitive(const SharedPtr<Shape> &s, const SharedPtr<Material> &m) 
-		: m_shape(s), m_material(m) {}
+		mp_BSDFs.emplace_back(std::move(bsdf));
+		m_medium_interface.emplace_back(medium_interface);
 
-	BBox GeometricPrimitive::worldBound() const {
-		return m_shape->worldBound();
+		mp_material_idx = new uint32_t[mp_mesh->getTriangleCount()];
+		memset(mp_material_idx, 0, sizeof(mp_material_idx));
+
+		m_subset_count = 1;
+		mp_subset_material_idx = new uint32_t[1];
+		mp_subset_start_idx = new uint32_t[1];
+		mp_subset_material_idx[0] = mp_subset_start_idx[0] = 0;
+	}
+	void Primitive::loadPlane(const Transform &o2w,
+		const float length,
+		UniquePtr<BSDF> bsdf,
+		const MediumInterface &medium_interface) {
+		mp_mesh->loadPlane(o2w, length);
+
+		mp_BSDFs.emplace_back(std::move(bsdf));
+		m_medium_interface.emplace_back(medium_interface);
+
+		mp_material_idx = new uint32_t[mp_mesh->getTriangleCount()];
+		memset(mp_material_idx, 0, sizeof(mp_material_idx));
+
+		m_subset_count = 1;
+		mp_subset_material_idx = new uint32_t[1];
+		mp_subset_start_idx = new uint32_t[1];
+		mp_subset_material_idx[0] = mp_subset_start_idx[0] = 0;
 	}
 
-	bool GeometricPrimitive::canIntersect() const {
-		return m_shape->canIntersect();
+	void Primitive::postIntersect(const Ray &ray, SurfaceIntersection *intersection) const {
+		intersection->bsdf = mp_BSDFs[mp_material_idx[intersection->tri_id]].get();
+		// BSSRDF Part
+		// Light Part
+		intersection->m_medium_interface = m_medium_interface[mp_material_idx[intersection->tri_id]];
+		mp_mesh->postIntersect(ray, intersection);
 	}
-
-	bool GeometricPrimitive::intersect(const Ray &ray, SurfaceInteraction * si) const {
-		float thit;
-		if (!m_shape->intersect(ray, &thit, si)) {
-			return false;
-		}
-		si->prim = this;
-		ray.m_maxt = thit;
-
-		return true;
-	}
-
-	void GeometricPrimitive::refine(std::vector<SharedPtr<Primitive> >& refined) const {
-		std::vector<SharedPtr<Shape> > r;
-		m_shape->refine(r);
-
-		for (auto s : r) {
-			GeometricPrimitive *gp = new GeometricPrimitive(s, m_material);
-			refined.push_back(gp);
-		}
-	}
-
 }
