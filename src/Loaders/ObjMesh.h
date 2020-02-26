@@ -12,7 +12,7 @@
 #include <cstdio>
 #include <functional>
 
-#define _MAX_PATH 257
+#define AYA_MAX_PATH 257
 
 namespace Aya {
 	struct MeshVertex {
@@ -42,9 +42,9 @@ namespace Aya {
 		Cache *next;
 	};
 	struct ObjMaterial {
-		char name[_MAX_PATH];
-		char texture_path[_MAX_PATH];
-		char bump_path[_MAX_PATH];
+		char name[AYA_MAX_PATH];
+		char texture_path[AYA_MAX_PATH];
+		char bump_path[AYA_MAX_PATH];
 		Spectrum diffuse_color;
 		Spectrum specular_color;
 		Spectrum trans_color;
@@ -55,9 +55,9 @@ namespace Aya {
 			specular_color(0.f),
 			trans_color(0.f),
 			refractive_index(0.f) {
-			strcpy_s(name, _MAX_PATH, _name);
-			std::memset(texture_path, 0, _MAX_PATH);
-			std::memset(bump_path, 0, _MAX_PATH);
+			strcpy_s(name, AYA_MAX_PATH, _name);
+			std::memset(texture_path, 0, AYA_MAX_PATH);
+			std::memset(bump_path, 0, AYA_MAX_PATH);
 		}
 
 		inline bool operator == (const ObjMaterial &rhs) const {

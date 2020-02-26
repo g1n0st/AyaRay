@@ -3,7 +3,7 @@
 namespace Aya {
 	void ObjMesh::parserFramework(const char * filename, std::function<void(char*, char*)> callback) {
 		int cmd_len, header_len;
-		char command[_MAX_PATH], cmd_header[_MAX_PATH];
+		char command[AYA_MAX_PATH], cmd_header[AYA_MAX_PATH];
 
 		FILE *fp;
 		fopen_s(&fp, filename, "rt");
@@ -62,7 +62,7 @@ namespace Aya {
 		int smoothing_group = force_compute_normal ? 1 : 0;
 		bool has_smooth_group = false;
 		int current_mtl = 0;
-		char mtl_filename[_MAX_PATH];
+		char mtl_filename[AYA_MAX_PATH];
 
 		parserFramework(path, [this, force_compute_normal, left_handed,
 		&position_buff, &normal_buff, &uv_buff,
@@ -100,11 +100,11 @@ namespace Aya {
 			}
 			else if (0 == std::strcmp(cmd_header, "mtllib")) {
 				// Material library
-				sscanf_s(cmd_para, "%s", mtl_filename, _MAX_PATH);
+				sscanf_s(cmd_para, "%s", mtl_filename, AYA_MAX_PATH);
 			}
 			else if (0 == std::strcmp(cmd_header, "usemtl")) {
-				char name[_MAX_PATH];
-				sscanf_s(cmd_para, "%s", name, _MAX_PATH);
+				char name[AYA_MAX_PATH];
+				sscanf_s(cmd_para, "%s", name, AYA_MAX_PATH);
 
 				ObjMaterial mtl(name);
 				auto idx_iter = std::find(m_materials.begin(), m_materials.end(), mtl);
@@ -267,8 +267,8 @@ namespace Aya {
 			const char *path2 = strrchr(path, '\\');
 			if (path1 || path2) {
 				int idx = int((path1 ? path1 : path2) - path + 1);
-				char mtl_path[_MAX_PATH] = { 0 };
-				strncpy_s(mtl_path, _MAX_PATH, path, idx);
+				char mtl_path[AYA_MAX_PATH] = { 0 };
+				strncpy_s(mtl_path, AYA_MAX_PATH, path, idx);
 				strcat(mtl_path, mtl_filename);
 				loadMtl(mtl_path);
 			}
@@ -290,8 +290,8 @@ namespace Aya {
 			}
 			else if (0 == std::strcmp(cmd_header, "newmtl")) {
 				// Switching active materials
-				char name[_MAX_PATH];
-				sscanf_s(cmd_para, "%s", name, _MAX_PATH);
+				char name[AYA_MAX_PATH];
+				sscanf_s(cmd_para, "%s", name, AYA_MAX_PATH);
 				ObjMaterial mtl(name);
 				current_material = int(std::find(m_materials.begin(), m_materials.end(), mtl) - m_materials.begin());
 			}
@@ -299,6 +299,12 @@ namespace Aya {
 			if (!~current_material)
 				return;
 
+			else if (0 == std::strcmp(cmd_header, "Ni")) {
+				// Refractive Index
+				float ni;
+				sscanf_s(cmd_para, "%f", &ni);
+				m_materials[current_material].refractive_index = ni;
+			}
 			else if (0 == std::strcmp(cmd_header, "Kd")) {
 				// Diffuse color
 				float r, g, b;
@@ -330,9 +336,9 @@ namespace Aya {
 
 				if (path1 || path2) {
 					int idx = int((path1 ? path1 : path2) - path + 1);
-					strncpy_s(m_materials[current_material].texture_path, _MAX_PATH, path, idx);
+					strncpy_s(m_materials[current_material].texture_path, AYA_MAX_PATH, path, idx);
 				}
-				strcat_s(m_materials[current_material].texture_path, _MAX_PATH, cmd_para);
+				strcat_s(m_materials[current_material].texture_path, AYA_MAX_PATH, cmd_para);
 			}
 			else if (0 == std::strcmp(cmd_header, "bump")) {
 				// Bump Map
@@ -342,9 +348,9 @@ namespace Aya {
 					
 					if (path1 || path2) {
 						int idx = int((path1 ? path1 : path2) - path + 1);
-						strncpy_s(m_materials[current_material].bump_path, _MAX_PATH, path, idx);
+						strncpy_s(m_materials[current_material].bump_path, AYA_MAX_PATH, path, idx);
 					}
-					strcat_s(m_materials[current_material].bump_path, _MAX_PATH, cmd_para);
+					strcat_s(m_materials[current_material].bump_path, AYA_MAX_PATH, cmd_para);
 				}
 			}
 			else {
@@ -467,5 +473,3 @@ namespace Aya {
 		m_normaled = true;
 	}
 }
-
-#undef _MAX_PATH
