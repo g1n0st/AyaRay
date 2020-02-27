@@ -26,6 +26,9 @@ namespace Aya {
 		Scene(const int &x, const int &y, const int &time);
 
 		void render(const char *output);
+		bool occluded(const Ray &ray) const {
+			return true;
+		}
 	};
 }
 #endif
