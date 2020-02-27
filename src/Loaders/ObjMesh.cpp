@@ -1,7 +1,7 @@
 #include "ObjMesh.h"
 
 namespace Aya {
-	void ObjMesh::parserFramework(const char * filename, std::function<void(char*, char*)> callback) {
+	void ObjMesh::parserFramework(const char *filename, std::function<void(char*, char*)> callback) {
 		int cmd_len, header_len;
 		char command[AYA_MAX_PATH], cmd_header[AYA_MAX_PATH];
 
@@ -55,14 +55,14 @@ namespace Aya {
 
 		fclose(fp);
 	}
-	bool ObjMesh::loadObj(const char * path, const bool force_compute_normal, const bool left_handed) {
+	bool ObjMesh::loadObj(const char *path, const bool force_compute_normal, const bool left_handed) {
 		std::vector<Point3> position_buff;
 		std::vector<Normal3> normal_buff;
 		std::vector<Vector2f> uv_buff;
 		int smoothing_group = force_compute_normal ? 1 : 0;
 		bool has_smooth_group = false;
 		int current_mtl = 0;
-		char mtl_filename[AYA_MAX_PATH];
+		char mtl_filename[AYA_MAX_PATH] = { 0 };
 
 		parserFramework(path, [this, force_compute_normal, left_handed,
 		&position_buff, &normal_buff, &uv_buff,
@@ -282,7 +282,7 @@ namespace Aya {
 
 		return true;
 	}
-	void ObjMesh::loadMtl(const char * path) {
+	void ObjMesh::loadMtl(const char *path) {
 		int current_material = -1;
 		parserFramework(path, [this, &current_material, path](char *cmd_header, char *cmd_para) {
 			if (0 == std::strcmp(cmd_header, "#")) {
@@ -358,7 +358,7 @@ namespace Aya {
 			}
 		});
 	}
-	uint32_t ObjMesh::addVertex(uint32_t hash, const MeshVertex * vertex) {
+	uint32_t ObjMesh::addVertex(uint32_t hash, const MeshVertex *vertex) {
 		bool is_found = false;
 		uint32_t idx = 0;
 
