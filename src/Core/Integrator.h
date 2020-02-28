@@ -30,8 +30,7 @@ namespace Aya {
 			}
 			else {
 				// sky box
-				Vector3 ud = ray.m_dir;
-				ud.normalize();
+				Vector3 ud = ray.m_dir.normalize();
 
 				float t = .5f * (ud.y() + 1.f);
 				float rgb1[3] = { .85f, .85f, .85f };

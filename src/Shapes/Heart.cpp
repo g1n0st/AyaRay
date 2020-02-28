@@ -129,8 +129,7 @@ namespace Aya {
 		si->t = t1;
 		si->u = si->v = 0;
 		si->p = r(t1);
-		si->n = getNormal(si->p);
-		si->n.normalize();
+		si->n = getNormal(si->p).normalize();
 
 		si->p = (*o2w)(si->p);
 		si->n = (*o2w)(si->n);

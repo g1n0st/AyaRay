@@ -37,7 +37,7 @@ namespace Aya {
 				si->p = r(t);
 				getUV(si->p / m_radius, &si->u, &si->v);
 				si->n = si->p;
-				si->n.normalize();
+				si->n.normalized();
 
 				si->p = (*o2w)(si->p);
 				si->n = (*o2w)(si->n);
@@ -52,7 +52,7 @@ namespace Aya {
 				si->p = r(t);
 				getUV(si->p / m_radius, &si->u, &si->v);
 				si->n = si->p;
-				si->n.normalize();
+				si->n.normalized();
 
 				si->p = (*o2w)(si->p);
 				si->n = (*o2w)(si->n);

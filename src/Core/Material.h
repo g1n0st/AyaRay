@@ -85,9 +85,8 @@ namespace Aya {
 		MentalMaterial(const Spectrum &albedo, float fuzz) : m_albedo(albedo), m_fuzz(Min(fuzz, 1.f)) {}
 
 		virtual bool scatter(const Ray &r_in, const SurfaceInteraction &si, Spectrum &attenuation, Ray &scattered) const {
-			Vector3 nd = r_in.m_dir;
-			nd.normalize();
-
+			Vector3 nd = r_in.m_dir.normalize();
+			if (nd.dot(si.n) < 0) nd = -nd;
 			Vector3 reflected = reflect(nd, si.n);
 			scattered = Ray(si.p, reflected + rng.randomInUnitSphere() * m_fuzz, nullptr, r_in.m_time);
 			attenuation = m_albedo;
@@ -157,8 +156,7 @@ namespace Aya {
 
 	private:
 		inline bool refract(const Vector3 &v, const Normal3 &n, float iot, Vector3& refracted) const {
-			Vector3 uv = v;
-			uv.normalize();
+			Vector3 uv = v.normalize();
 
 			float dt = uv.dot(n);
 			float delta = 1.f - iot * iot *(1 - dt * dt);

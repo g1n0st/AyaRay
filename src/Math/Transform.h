@@ -131,8 +131,7 @@ namespace Aya {
 				return *this;
 			}
 			__forceinline Transform& setRotation(const Vector3 &axis, const float &angle) {
-				Vector3 a = axis;
-				a.normalize();
+				Vector3 a = axis.normalize();
 				float x = a.x();
 				float y = a.y();
 				float z = a.z();
