@@ -32,9 +32,10 @@ namespace Aya {
 	}
 	void Scene::addPrimitive(Primitive *prim) {
 		m_primitves.resize(m_primitves.size() + 1);
-		//m_primitves[m_primitves.size()] = UniquePtr<Primitive>(prim);
+		m_primitves[m_primitves.size() - 1] = UniquePtr<Primitive>(prim);
 	}
 	void Scene::addLight(Light * light) {
+		/*
 		if (light->isEnvironmentLight()) {
 			bool found_light = false;
 			for (auto& it : m_lights) {
@@ -48,6 +49,7 @@ namespace Aya {
 
 			m_env_light = light;
 		}
+		*/
 		// More Things Need To Be Done
 	}
 
