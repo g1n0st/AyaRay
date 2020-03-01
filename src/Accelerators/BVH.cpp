@@ -20,7 +20,7 @@ namespace Aya {
 	BBox BVHAccel::worldBound() const {
 		return m_root->m_box;
 	}
-	bool BVHAccel::intersect(const Ray &ray, SurfaceIntersection *si) const {
+	bool BVHAccel::intersect(const Ray &ray, Intersection *si) const {
 		return intersect(m_root, ray, si);
 	}
 	bool BVHAccel::occluded(const Ray &ray) const {
@@ -33,7 +33,7 @@ namespace Aya {
 			return hit_object;
 		}
 		if (hit_object) {
-			SurfaceIntersection l_si, r_si;
+			Intersection l_si, r_si;
 			bool hit_l = false;
 			if (node->l_l) {
 				hit_l = intersect(node->l_l, ray, &l_si);
@@ -48,14 +48,14 @@ namespace Aya {
 		}
 		return false;
 	}
-	bool BVHAccel::intersect(BVHNode *node, const Ray &ray, SurfaceIntersection *si) const {
+	bool BVHAccel::intersect(BVHNode *node, const Ray &ray, Intersection *si) const {
 		bool is_leaf = false;
 		bool hit_object = node->intersect(ray, si, is_leaf);
 		if (is_leaf) {
 			return hit_object;
 		}
 		if (hit_object) {
-			SurfaceIntersection l_si, r_si;
+			Intersection l_si, r_si;
 			bool hit_l = false;
 			if (node->l_l) {
 				hit_l = intersect(node->l_l, ray, &l_si);
@@ -82,19 +82,13 @@ namespace Aya {
 		return false;
 	}
 	inline bool xBVHCmp(const BVHLeaf &a, const BVHLeaf &b) {
-		BBox ab = a.m_box;
-		BBox bb = b.m_box;
-		return ab.m_pmin.x() < bb.m_pmin.x();
+		return a.m_box.m_pmin.x() < b.m_box.m_pmin.x();
 	}
 	inline bool yBVHCmp(const BVHLeaf &a, const BVHLeaf &b) {
-		BBox ab = a.m_box;
-		BBox bb = b.m_box;
-		return ab.m_pmin.y() < bb.m_pmin.y();
+		return a.m_box.m_pmin.y() < b.m_box.m_pmin.y();
 	}
 	inline bool zBVHCmp(const BVHLeaf &a, const BVHLeaf &b) {
-		BBox ab = a.m_box;
-		BBox bb = b.m_box;
-		return ab.m_pmin.z() < bb.m_pmin.z();
+		return a.m_box.m_pmin.z() < b.m_box.m_pmin.z();
 	}
 
 	void BVHAccel::construct(BVHNode **node, const int &L, const int &R) {

@@ -3,6 +3,15 @@
 
 #include "../Core/Primitive.h"
 
+#include "../BSDFs/Glass.h"
+#include "../BSDFs/LambertianDiffuse.h"
+#include "../BSDFs/Mirror.h"
+
+#include "../Media/Homogeneous.h"
+
+#include "../Samplers/RandomSampler.h"
+#include "../Samplers/SobolSampler.h"
+
 namespace Aya {
 	class BVHTriangle {
 		uint32_t mesh_id, tri_id;
@@ -23,7 +32,7 @@ namespace Aya {
 			n = e1.cross(e2);
 		}
 
-		__forceinline bool intersect(const Ray &ray, SurfaceIntersection *isect) const {
+		__forceinline bool intersect(const Ray &ray, Intersection *isect) const {
 			Point3 ori = ray.m_ori;
 			Vector3 dir = ray.m_dir;
 			Vector3 C = v0 - ori;
@@ -83,7 +92,7 @@ namespace Aya {
 			l_l = r_l = NULL;
 			m_box = BBox();
 		}
-		virtual inline bool intersect(const Ray &ray, SurfaceIntersection* si, bool &is_leaf) const {
+		virtual inline bool intersect(const Ray &ray, Intersection* si, bool &is_leaf) const {
 			is_leaf = false;
 			return m_box.intersect(ray);
 		}
@@ -112,7 +121,7 @@ namespace Aya {
 			m_box = BBox(p1, p2);
 			m_box.unity(p3);
 		}
-		virtual inline bool intersect(const Ray &ray, SurfaceIntersection * si, bool &is_leaf) const {
+		virtual inline bool intersect(const Ray &ray, Intersection * si, bool &is_leaf) const {
 			is_leaf = true;
 			if (!m_box.intersect(ray)) return false;
 			return triangle.intersect(ray, si);
@@ -130,7 +139,7 @@ namespace Aya {
 
 		std::vector<BVHLeaf> m_leafs;
 
-		bool intersect(BVHNode *node, const Ray &ray, SurfaceIntersection *si) const;
+		bool intersect(BVHNode *node, const Ray &ray, Intersection *si) const;
 		bool occluded(BVHNode *node, const Ray &ray) const;
 		void construct(BVHNode **node, const int &L, const int &R);
 		void freeNode(BVHNode **node);
@@ -143,7 +152,7 @@ namespace Aya {
 
 		void construct(const std::vector<Primitive*> &prims);
 		BBox worldBound() const;
-		bool intersect(const Ray &ray, SurfaceIntersection *si) const;
+		bool intersect(const Ray &ray, Intersection *si) const;
 		bool occluded(const Ray &ray) const;
 	};
 }
