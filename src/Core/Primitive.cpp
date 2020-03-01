@@ -51,6 +51,7 @@ namespace Aya {
 		}
 
 		mp_material_idx = new uint32_t[mesh->getTriangleCount()];
+		
 		for (uint32_t i = 0; i < mesh->getTriangleCount(); i++)
 			mp_material_idx[i] = mesh->getMaterialIdx(i);
 

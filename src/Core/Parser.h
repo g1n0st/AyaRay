@@ -10,7 +10,7 @@
 #include "../Shapes/Sphere.h"
 #include "../Shapes/Heart.h"
 #include "../Shapes/Triangle.h"
-#include "../Accelerators/BVH.h"
+#include "../Accelerators/BVH_.h"
 
 #include <vector>
 #include <string>

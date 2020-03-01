@@ -500,7 +500,7 @@ namespace Aya {
 		scene->m_sample_times = m_st;
 		scene->m_cam = m_cam;
 		scene->m_int = new SampleIntegrator();
-		scene->m_acc = new BVHAccel();
+		scene->m_acc = new BVHAccel_();
 		scene->m_acc->construct(m_prims);
 		READ_BRACE_END();
 	}
