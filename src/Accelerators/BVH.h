@@ -1,12 +1,80 @@
-#ifndef AYA_ACCELERATOR_BVH_H
-#define AYA_ACCELERATOR_BVH_H
+#ifndef AYA_ACCELERATORS_BVH_H
+#define AYA_ACCELERATORS_BVH_H
 
-#include <algorithm>
-
-#include "../core/primitive_.h"
+#include "../Core/Primitive.h"
 
 namespace Aya {
-	class BVHNode{
+	class BVHTriangle {
+		uint32_t mesh_id, tri_id;
+		Point3 v0;
+		Vector3 e1, e2;
+		Normal3 n;
+
+	public:
+		BVHTriangle() {}
+		BVHTriangle(const Point3 p1,
+			const Point3 p2,
+			const Point3 p3,
+			const uint32_t mid, const uint32_t tid) :
+			mesh_id(mid), tri_id(tid) {
+			v0 = p1;
+			e1 = p1 - p2;
+			e2 = p3 - p1;
+			n = e1.cross(e2);
+		}
+
+		__forceinline bool intersect(const Ray &ray, SurfaceIntersection *isect) const {
+			Point3 ori = ray.m_ori;
+			Vector3 dir = ray.m_dir;
+			Vector3 C = v0 - ori;
+			Vector3 R = dir.cross(C);
+			float det = n.dot(dir);
+			float absdot = Abs(det);
+			float U = R.dot(e2);
+			if (det < 0) U = -U;
+			float V = R.dot(e1);
+			if (det < 0) V = -V;
+			bool valid = (det != 0) & (U >= 0.0f) & (V >= 0.0f) & (U + V <= absdot);
+			if (!valid)
+				return false;
+
+			float T = n.dot(C);
+			if (det < 0) T = -T;
+
+			const float inv = 1.f / det;
+			const float u = U * inv;
+			const float v = V * inv;
+			const float t = T * inv;
+
+			ray.m_maxt = t;
+			isect->dist = t;
+			isect->u = u;
+			isect->v = v;
+			isect->prim_id = mesh_id;
+			isect->tri_id = tri_id;
+			
+			return true;
+		}
+		__forceinline bool occluded(const Ray &ray) const {
+			Point3 ori = ray.m_ori;
+			Vector3 dir = ray.m_dir;
+			Vector3 C = v0 - ori;
+			Vector3 R = dir.cross(C);
+			float det = n.dot(dir);
+			float absdot = Abs(det);
+			float U = R.dot(e2);
+			if (det < 0) U = -U;
+			float V = R.dot(e1);
+			if (det < 0) V = -V;
+			bool valid = (det != 0) & (U >= 0.0f) & (V >= 0.0f) & (U + V <= absdot);
+			if (!valid)
+				return false;
+
+			return true;
+		}
+	};
+
+	class BVHNode {
 	public:
 		BVHNode *l_l, *r_l;
 		BBox m_box;
@@ -15,7 +83,11 @@ namespace Aya {
 			l_l = r_l = NULL;
 			m_box = BBox();
 		}
-		virtual inline bool intersect(const Ray &ray, SurfaceInteraction * si, bool &is_leaf) const {
+		virtual inline bool intersect(const Ray &ray, SurfaceIntersection* si, bool &is_leaf) const {
+			is_leaf = false;
+			return m_box.intersect(ray);
+		}
+		virtual inline bool occluded(const Ray &ray, bool &is_leaf) const {
 			is_leaf = false;
 			return m_box.intersect(ray);
 		}
@@ -26,47 +98,53 @@ namespace Aya {
 	};
 	class BVHLeaf : public BVHNode {
 	public:
-		SharedPtr<_Primitive> m_prim;
+		BVHTriangle triangle;
 
 		BVHLeaf() {
 			l_l = r_l = NULL;
 			m_box = BBox();
 		}
-		BVHLeaf(const SharedPtr<_Primitive> &prim) {
-			m_prim = prim;
-			m_box = m_prim->worldBound();
+		BVHLeaf(const Point3 &p1,
+			const Point3 &p2,
+			const Point3 &p3,
+			const uint32_t mid, const uint32_t tid) :
+			triangle(p1, p2, p3, mid, tid){
+			m_box = BBox(p1, p2);
+			m_box.unity(p3);
 		}
-		virtual inline bool intersect(const Ray &ray, SurfaceInteraction * si, bool &is_leaf) const {
+		virtual inline bool intersect(const Ray &ray, SurfaceIntersection * si, bool &is_leaf) const {
 			is_leaf = true;
 			if (!m_box.intersect(ray)) return false;
-			return m_prim->intersect(ray, si);
+			return triangle.intersect(ray, si);
+		}
+		virtual inline bool occluded(const Ray &ray, bool &is_leaf) const {
+			is_leaf = true;
+			if (!m_box.intersect(ray)) return false;
+			return triangle.occluded(ray);
 		}
 	};
 
-	class BVHAccel : public Accelerator {
-	public:
-		std::vector<SharedPtr<_Primitive> > m_prims;
-		BVHNode *m_root;
-	public:
-		BVHAccel() {
-			m_root = NULL;
-		}
-		~BVHAccel() {
-			freeNode(&m_root);
-			m_prims.clear();
-		}
-
-		virtual void construct(std::vector<SharedPtr<_Primitive> > prims);
-		virtual BBox worldBound() const;
-		virtual bool canIntersect() {
-			return false;
-		}
-		virtual bool intersect(const Ray &ray, SurfaceInteraction *si) const;
-
+	class BVHAccel {
 	private:
-		bool intersect(BVHNode *node, const Ray &ray, SurfaceInteraction *si) const;
+		BVHNode *m_root;
+
+		std::vector<BVHLeaf> m_leafs;
+
+		bool intersect(BVHNode *node, const Ray &ray, SurfaceIntersection *si) const;
+		bool occluded(BVHNode *node, const Ray &ray) const;
 		void construct(BVHNode **node, const int &L, const int &R);
 		void freeNode(BVHNode **node);
+
+	public:
+		BVHAccel() {}
+		~BVHAccel() {
+
+		}
+
+		void construct(const std::vector<Primitive*> &prims);
+		BBox worldBound() const;
+		bool intersect(const Ray &ray, SurfaceIntersection *si) const;
+		bool occluded(const Ray &ray) const;
 	};
 }
 

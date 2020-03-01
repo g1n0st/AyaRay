@@ -1,30 +1,61 @@
 #include "BVH.h"
 
-
 namespace Aya {
-	void BVHAccel::construct(std::vector<SharedPtr<_Primitive> > prims) {
-		// refine all the primitives
-		for (auto p : prims) {
-			p->fullyRefine(m_prims);
+	void BVHAccel::construct(const std::vector<Primitive*> &prims) {
+		for (uint32_t i = 0; i < prims.size(); i++) {
+			auto mesh = prims[i]->getMesh();
+			for (uint32_t j = 0; j < mesh->getTriangleCount(); j++) {
+				m_leafs.emplace_back(
+					mesh->getPositionAt(3 * j + 0),
+					mesh->getPositionAt(3 * j + 1),
+					mesh->getPositionAt(3 * j + 2),
+					i,
+					j
+				);
+			}
 		}
-		construct(&m_root, 0, (int)m_prims.size() - 1);
+		construct(&m_root, 0, (int)m_leafs.size() - 1);
 		return;
 	}
 	BBox BVHAccel::worldBound() const {
 		return m_root->m_box;
 	}
-	bool BVHAccel::intersect(const Ray &ray, SurfaceInteraction *si) const {
+	bool BVHAccel::intersect(const Ray &ray, SurfaceIntersection *si) const {
 		return intersect(m_root, ray, si);
 	}
+	bool BVHAccel::occluded(const Ray &ray) const {
+		return occluded(m_root, ray);
+	}
+	bool BVHAccel::occluded(BVHNode *node, const Ray &ray) const {
+		bool is_leaf = false;
+		bool hit_object = node->occluded(ray, is_leaf);
+		if (is_leaf) {
+			return hit_object;
+		}
+		if (hit_object) {
+			SurfaceIntersection l_si, r_si;
+			bool hit_l = false;
+			if (node->l_l) {
+				hit_l = intersect(node->l_l, ray, &l_si);
+			}
+			bool hit_r = false;
+			if (node->r_l) {
+				hit_r = intersect(node->r_l, ray, &r_si);
+			}
 
-	bool BVHAccel::intersect(BVHNode *node, const Ray &ray, SurfaceInteraction *si) const {
+			if (hit_l || hit_r) return true;
+			return false;
+		}
+		return false;
+	}
+	bool BVHAccel::intersect(BVHNode *node, const Ray &ray, SurfaceIntersection *si) const {
 		bool is_leaf = false;
 		bool hit_object = node->intersect(ray, si, is_leaf);
 		if (is_leaf) {
 			return hit_object;
 		}
 		if (hit_object) {
-			SurfaceInteraction l_si, r_si;
+			SurfaceIntersection l_si, r_si;
 			bool hit_l = false;
 			if (node->l_l) {
 				hit_l = intersect(node->l_l, ray, &l_si);
@@ -35,7 +66,7 @@ namespace Aya {
 			}
 
 			if (hit_l && hit_r) {
-				(*si) = l_si.t < r_si.t ? l_si : r_si;
+				(*si) = l_si.dist < r_si.dist ? l_si : r_si;
 				return true;
 			}
 			else if (hit_l) {
@@ -50,19 +81,19 @@ namespace Aya {
 		}
 		return false;
 	}
-	inline bool xBVHCmp(const SharedPtr<_Primitive> &a, const SharedPtr<_Primitive> &b) {
-		BBox ab = a->worldBound();
-		BBox bb = b->worldBound();
+	inline bool xBVHCmp(const BVHLeaf &a, const BVHLeaf &b) {
+		BBox ab = a.m_box;
+		BBox bb = b.m_box;
 		return ab.m_pmin.x() < bb.m_pmin.x();
 	}
-	inline bool yBVHCmp(const SharedPtr<_Primitive> &a, const SharedPtr<_Primitive> &b) {
-		BBox ab = a->worldBound();
-		BBox bb = b->worldBound();
+	inline bool yBVHCmp(const BVHLeaf &a, const BVHLeaf &b) {
+		BBox ab = a.m_box;
+		BBox bb = b.m_box;
 		return ab.m_pmin.y() < bb.m_pmin.y();
 	}
-	inline bool zBVHCmp(const SharedPtr<_Primitive> &a, const SharedPtr<_Primitive> &b) {
-		BBox ab = a->worldBound();
-		BBox bb = b->worldBound();
+	inline bool zBVHCmp(const BVHLeaf &a, const BVHLeaf &b) {
+		BBox ab = a.m_box;
+		BBox bb = b.m_box;
 		return ab.m_pmin.z() < bb.m_pmin.z();
 	}
 
@@ -76,17 +107,17 @@ namespace Aya {
 		axis = (axis + 1) % 3;
 		switch (axis) {
 		case 0:
-			std::sort(m_prims.begin() + L, m_prims.begin() + R + 1, xBVHCmp);
+			std::sort(m_leafs.begin() + L, m_leafs.begin() + R + 1, xBVHCmp);
 			break;
 		case 1:
-			std::sort(m_prims.begin() + L, m_prims.begin() + R + 1, yBVHCmp);
+			std::sort(m_leafs.begin() + L, m_leafs.begin() + R + 1, yBVHCmp);
 			break;
 		default:
-			std::sort(m_prims.begin() + L, m_prims.begin() + R + 1, zBVHCmp);
+			std::sort(m_leafs.begin() + L, m_leafs.begin() + R + 1, zBVHCmp);
 		}
 
 		if (L == R) {
-			*node = new BVHLeaf(m_prims[L]);
+			*node = new BVHLeaf(m_leafs[L]);
 			return;
 		}
 
