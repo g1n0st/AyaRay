@@ -1,34 +1,80 @@
 #ifndef AYA_CORE_SCENE_H
 #define AYA_CORE_SCENE_H
 
-#include "Camera.h"
-#include "Film.h"
-#include "Integrator.h"
-#include "Memory.h"
-#include "Primitive_.h"
+#include "../Math/Transform.h"
+#include "../Core/Light.h"
+#include "../Core/Primitive.h"
+#include "../Accelerators/BVH.h"
 
-#include <ppl.h>
-#include <fstream>
+#include <vector>
 
 namespace Aya {
 	class Scene {
 	private:
-		RNG rng;
-	public:
-		int m_screen_x, m_screen_y;
-		int m_sample_times;
-		SharedPtr<Accelerator> m_acc;
-		SharedPtr<Camera> m_cam;
-		SharedPtr<Integrator> m_int;
+		std::vector<UniquePtr<Primitive>> m_primitves;
+		std::vector<UniquePtr<Light>> m_lights;
+		Light* m_env_light;
+		UniquePtr<BVHAccel> m_accel;
+		bool m_dirty;
+		std::vector<UniquePtr<const Medium>> m_media;
+
+		Transform m_scene_scale, m_scene_scale_inv;
 
 	public:
-		Scene() {}
-		Scene(const int &x, const int &y, const int &time);
+		Scene() : m_env_light(nullptr), m_dirty(true) {}
+		~Scene() {}
 
-		void render(const char *output);
-		bool occluded(const Ray &ray) const {
-			return true;
+		bool intersect(const Ray &ray, Intersection *isect) const;
+		void postIntersect(const Ray &ray, SurfaceIntersection *intersection) const;
+		bool occluded(const Ray &ray) const;
+
+		BBox worldBound() const;
+
+		void addPrimitive(Primitive *prim);
+		void addLight(Light *light);
+
+		__forceinline const std::vector<UniquePtr<Primitive>>& getPrimitives() const {
+			return m_primitves;
+		}
+		__forceinline const std::vector<UniquePtr<Light>>& getLights() const {
+			return m_lights;
+		}
+		__forceinline const Light* getLight(const uint32_t idx) const {
+			return m_lights[idx].get();
+		}
+		__forceinline const Light* getEnviromentLight() const {
+			return m_env_light;
+		}
+		__forceinline uint32_t getLightCount() const {
+			return uint32_t(m_lights.size());
+		}
+
+		const Light* chooseLightSource(const float light_sample, float *pdf) const {
+			int light_count = int(m_lights.size());
+			int light_id = Min(FloorToInt(light_sample * light_count), light_count - 1);
+			
+			if (pdf)
+				*pdf = 1.f / float(light_count);
+
+			return getLight(light_id);
+ 		}
+		float lightPdf(const Light *light) const {
+			return 1.f / float(m_lights.size());
+		}
+
+		void initAccelerator();
+
+		__forceinline void setScale(const float scale) {
+			assert(scale > 0.f);
+			m_scene_scale.setScale(scale, scale, scale);
+			
+			float inv = 1.f / scale;
+			m_scene_scale_inv.setScale(inv, inv, inv);
+		}
+		__forceinline const Transform& getScale() const {
+			return m_scene_scale;
 		}
 	};
 }
+
 #endif

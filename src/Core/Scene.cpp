@@ -1,51 +1,67 @@
 #include "Scene.h"
 
 namespace Aya {
+	bool Scene::intersect(const Ray &ray0, Intersection * isect) const {
+		Ray ray = m_scene_scale(ray0);
+		if (!m_accel->intersect(ray, isect))
+			return false;
 
-	Scene::Scene(const int & x, const int & y, const int & time) : m_screen_x(x), m_screen_y(y), m_sample_times(time) {}
+		ray0.m_maxt = isect->dist;
+		return true;
+	}
+	void Scene::postIntersect(const Ray & ray, SurfaceIntersection * intersection) const {
+		assert(intersection);
+		m_primitves[intersection->prim_id]->postIntersect(ray, intersection);
 
-	void Scene::render(const char *output) {
+		intersection->p = m_scene_scale(intersection->p);
+		intersection->n = m_scene_scale_inv(intersection->n).normalize();
+		intersection->gn = m_scene_scale_inv(intersection->gn).normalize();
+		intersection->frame = Frame(intersection->n);
 
-		std::ofstream fout(
-			output
-		);
-
-		fout << "P3\n" << m_screen_x << " " << m_screen_y << "\n255\n";
-
-		MitchellNetravaliFilter *filter = new MitchellNetravaliFilter();
-		//BoxFilter *filter = new BoxFilter();
-		Film film(m_screen_x, m_screen_y, filter);
-		
-		Point3 pp;
-		int st_time = clock();
-
-		int total = m_sample_times, loading = 0;
-		for (int s = 0; s < m_sample_times; s++) {
-			for (int j = m_screen_y - 1; j >= 0; j--) {
-				for (int i = 0; i < m_screen_x; i++) {
-					Spectrum col;
-					float u = float(i + rng.drand48());
-					float v = float(j + rng.drand48());
-
-					Ray r = m_cam->getRay(u / m_screen_x, v / m_screen_y);
-					film.addSample(u, v, m_int->li(r, m_acc, 0));
+		intersection->dpdu = m_scene_scale(intersection->dpdu);
+		intersection->dpdv = m_scene_scale(intersection->dpdv);
+		intersection->dndu = m_scene_scale(intersection->dndu);
+		intersection->dndv = m_scene_scale(intersection->dndv);
+	}
+	bool Scene::occluded(const Ray & ray0) const {
+		Ray ray = m_scene_scale(ray0);
+		return m_accel->occluded(ray);
+	}
+	BBox Scene::worldBound() const {
+		return m_scene_scale(m_accel->worldBound());
+	}
+	void Scene::addPrimitive(Primitive *prim) {
+		m_primitves.resize(m_primitves.size() + 1);
+		//m_primitves[m_primitves.size()] = UniquePtr<Primitive>(prim);
+	}
+	void Scene::addLight(Light * light) {
+		if (light->isEnvironmentLight()) {
+			bool found_light = false;
+			for (auto& it : m_lights) {
+				if (it->isEnvironmentLight()) {
+					found_light = true;
+					it.reset(light);
 				}
 			}
-			loading++;
-			std::cout << loading << " / " << total << "(" << (float)loading / (float)total << ")\n";
-			film.addSampleCount();
+			if (!found_light)
+				m_lights.push_back(UniquePtr<Light>(light));
+
+			m_env_light = light;
 		}
-		film.updateDisplay();
-		const RGBSpectrum * offset = film.getPixelBuffer();
-		int cnt = 0;
-		for (int j = 0; j < m_screen_y; j++)
-			for (int i = 0; i < m_screen_x; i++) {
-				byteSpectrum b = offset[cnt];
-				fout << b.r << ' ' << b.g << ' ' << b.b << std::endl;
-				cnt++;
-			}
-		Bitmap::save("output.bmp", (float*)film.getPixelBuffer(), m_screen_x, m_screen_y, RGBA_32);
-		int ed_time = clock();
-		std::cout << "used " << (float)(ed_time - st_time) / 1000.0f << " sec.\n";
+		// More Things Need To Be Done
 	}
+
+	void Scene::initAccelerator() {
+		if (m_dirty) {
+			m_accel = MakeUnique<BVHAccel>();
+			std::vector<Primitive*> prims;
+			for (const auto& it : m_primitves) {
+				prims.push_back(it.get());
+			}
+
+			m_accel->construct(prims);
+			m_dirty = false;
+		}
+	}
+
 }
