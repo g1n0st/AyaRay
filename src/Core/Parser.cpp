@@ -477,7 +477,7 @@ namespace Aya {
 		READ_ARRAY_END();
 	}
 
-	void Parser::run(Scene *scene) {
+	void Parser::run(Scene_ *scene) {
 		m_p = 0;
 		if (m_str.size() == 0) {
 			printf("Please load .json config file first!\n");

@@ -2,7 +2,7 @@
 #define AYA_CORE_PHASER_H
 
 #include "Config.h"
-#include "Scene.h"
+#include "Scene_.h"
 
 #include "../Loaders/ObjMesh.h"
 
@@ -35,7 +35,7 @@ namespace Aya {
 		Parser();
 		
 		void load(const char *file);
-		void run(Scene *scene);
+		void run(Scene_ *scene);
 
 	private:
 		inline void ADD();

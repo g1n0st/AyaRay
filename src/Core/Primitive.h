@@ -8,7 +8,7 @@
 namespace Aya {
 	class Primitive {
 	private:
-		friend class Scene;
+		friend class Scene_;
 
 		UniquePtr<TriangleMesh> mp_mesh;
 
