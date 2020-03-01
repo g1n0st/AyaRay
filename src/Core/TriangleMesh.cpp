@@ -15,7 +15,7 @@ namespace Aya {
 			mp_vertices[i].uv = vertex.uv;
 		}
 		mp_vert_idx = new uint32_t[3 * m_tris];
-		std::memcpy(mp_vert_idx, obj_mesh->getIndexAt(0), sizeof(mp_vert_idx));
+		std::memcpy(mp_vert_idx, obj_mesh->getIndexAt(0), sizeof(uint32_t) * 3 * m_tris);
 	}
 	void TriangleMesh::loadSphere(const Transform & O2W, const float radius, const uint32_t slices, const uint32_t stacks) {
 		o2w = MakeUnique<Transform>(O2W);
