@@ -104,9 +104,10 @@ namespace Aya {
 		UniquePtr(UniquePtr const&) = delete;
 		UniquePtr& operator = (UniquePtr const&) = delete;
 
-		void reset() {
-			T* tmp = release();
-			delete tmp;
+		void reset(T* ptr = nullptr) {
+			T* oldptr = rp;
+			rp = ptr;
+			delete oldptr;
 		}
 		T * release() noexcept {
 			T* result = nullptr;
