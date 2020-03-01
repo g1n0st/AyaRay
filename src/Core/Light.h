@@ -3,7 +3,7 @@
 
 #include "../Core/Ray.h"
 #include "../Math/Vector3.h"
-#include "../Core/Scene.h"
+#include "../Core/Scene_.h"
 #include "../Core/Intersection.h"
 #include "../Core/Sampler.h"
 
@@ -24,8 +24,8 @@ namespace Aya {
 			ray.mp_medium = medium;
 		}
 
-		bool unoccluded(const Scene *scene) const;
-		Spectrum transmittance(const Scene *scene, Sampler *sampler) const;
+		bool unoccluded(const Scene_ *scene) const;
+		Spectrum transmittance(const Scene_ *scene, Sampler *sampler) const;
 	};
 
 	class Light {
