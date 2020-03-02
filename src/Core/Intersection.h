@@ -72,7 +72,7 @@ namespace Aya {
 	class SurfaceIntersection : public Intersection, public Scatter {
 	public:
 		Vector2f uv;
-		Vector3 gn;
+		Normal3 gn;
 		Vector3 dpdu, dpdv;
 		Vector3 dndu, dndv;
 
