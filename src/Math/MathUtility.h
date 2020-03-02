@@ -64,10 +64,10 @@ namespace Aya {
 		return a + t * (b - a);
 	}
 
-	template<class T>
-	__forceinline T Clamp(const T &t, const T  &low, const T &high) {
-		if (t < low) return low;
-		if (t > high) return high;
+	template<class T, class T1, class T2>
+	__forceinline T Clamp(const T &t, const T1  &low, const T2 &high) {
+		if (t < T(low)) return low;
+		if (t > T(high)) return high;
 		return t;
 	}
 
