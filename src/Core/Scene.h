@@ -13,15 +13,15 @@ namespace Aya {
 	private:
 		std::vector<UniquePtr<Primitive>> m_primitves;
 		std::vector<UniquePtr<Light>> m_lights;
-		Light* m_env_light;
-		UniquePtr<BVHAccel> m_accel;
+		Light* mp_env_light;
+		UniquePtr<BVHAccel> mp_accel;
 		bool m_dirty;
 		std::vector<UniquePtr<const Medium>> m_media;
 
 		Transform m_scene_scale, m_scene_scale_inv;
 
 	public:
-		Scene() : m_env_light(nullptr), m_dirty(true) {}
+		Scene() : mp_env_light(nullptr), m_dirty(true) {}
 		~Scene() {}
 
 		bool intersect(const Ray &ray, Intersection *isect) const;
@@ -43,7 +43,7 @@ namespace Aya {
 			return m_lights[idx].get();
 		}
 		__forceinline const Light* getEnviromentLight() const {
-			return m_env_light;
+			return mp_env_light;
 		}
 		__forceinline uint32_t getLightCount() const {
 			return uint32_t(m_lights.size());

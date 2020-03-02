@@ -3,7 +3,7 @@
 namespace Aya {
 	bool Scene::intersect(const Ray &ray0, Intersection * isect) const {
 		Ray ray = m_scene_scale(ray0);
-		if (!m_accel->intersect(ray, isect))
+		if (!mp_accel->intersect(ray, isect))
 			return false;
 
 		ray0.m_maxt = isect->dist;
@@ -25,10 +25,10 @@ namespace Aya {
 	}
 	bool Scene::occluded(const Ray & ray0) const {
 		Ray ray = m_scene_scale(ray0);
-		return m_accel->occluded(ray);
+		return mp_accel->occluded(ray);
 	}
 	BBox Scene::worldBound() const {
-		return m_scene_scale(m_accel->worldBound());
+		return m_scene_scale(mp_accel->worldBound());
 	}
 	void Scene::addPrimitive(Primitive *prim) {
 		m_primitves.resize(m_primitves.size() + 1);
@@ -47,7 +47,7 @@ namespace Aya {
 			if (!found_light)
 				m_lights.push_back(UniquePtr<Light>(light));
 
-			m_env_light = light;
+			mp_env_light = light;
 		}
 		*/
 		// More Things Need To Be Done
@@ -55,13 +55,13 @@ namespace Aya {
 
 	void Scene::initAccelerator() {
 		if (m_dirty) {
-			m_accel = MakeUnique<BVHAccel>();
+			mp_accel = MakeUnique<BVHAccel>();
 			std::vector<Primitive*> prims;
 			for (const auto& it : m_primitves) {
 				prims.push_back(it.get());
 			}
 
-			m_accel->construct(prims);
+			mp_accel->construct(prims);
 			m_dirty = false;
 		}
 	}
