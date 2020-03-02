@@ -124,6 +124,10 @@ namespace Aya {
 				}
 				return true;
 			}
+			__forceinline void boundingSphere(Point3 *center, float *radius) {
+				*center = (m_pmin + m_pmax) * .5f;
+				*radius = inside(*center) ? center->distance(m_pmax) : 0.f;
+			}
 
 			friend __forceinline std::ostream &operator<<(std::ostream &os, const BBox &b) {
 				os << "[pmin = " << b.m_pmin << ", pmax = " << b.m_pmax << "]";
