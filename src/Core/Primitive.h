@@ -6,6 +6,8 @@
 #include "../Core/TriangleMesh.h"
 
 namespace Aya {
+	class AreaLight;
+	
 	class Primitive {
 	private:
 		friend class Scene_;
@@ -14,7 +16,7 @@ namespace Aya {
 
 		std::vector<UniquePtr<BSDF>> mp_BSDFs;
 		//std::vector<UniquePtr<BSSRDF>> mp_BSSRDFs;
-		//const AreaLight *mp_light = nullptr;
+		const AreaLight *mp_light = nullptr;
 
 		uint32_t *mp_material_idx = nullptr;
 		uint32_t *mp_subset_start_idx  = nullptr;
@@ -71,6 +73,10 @@ namespace Aya {
 		}
 		const uint32_t getSubsetCount() const {
 			return m_subset_count;
+		}
+
+		void setAreaLight(const AreaLight *light) {
+			mp_light = light;
 		}
 	};
 }
