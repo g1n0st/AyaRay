@@ -23,14 +23,17 @@ namespace Aya {
 	class TaskSynchronizer {
 	private:
 		std::vector<RenderTile> m_tiles;
-		uint32_t m_current_idx;
 
 		bool m_abort;
 
 	public:
+		TaskSynchronizer(const int x, const int y) {
+			init(x, y);
+		}
+
 		void init(const int x, const int y) {
 			m_tiles.clear();
-			m_current_idx = 0;
+			m_abort = false;
 
 			for (int i = 0; i < y; i += RenderTile::TILE_SIZE) {
 				for (int j = 0; j < x; j += RenderTile::TILE_SIZE) {
@@ -61,7 +64,7 @@ namespace Aya {
 
 	class Integrator {
 	protected:
-		const TaskSynchronizer &m_task;
+		const TaskSynchronizer&m_task;
 		const uint32_t &m_spp;
 
 	public:
@@ -80,8 +83,10 @@ namespace Aya {
 			: Integrator(task, spp) {
 		}
 
-		virtual void render(const Scene *scene, const Camera *camera, Sampler *sampler, Film *film) const;
-		virtual Spectrum li(const RayDifferential &ray, const Scene *scene, Sampler *sampler, RNG& rng, MemoryPool &memory) const = 0;
+		virtual void render(const Scene *scene, const Camera *camera, Sampler *sampler, Film *film) const override;
+		virtual Spectrum li(const RayDifferential &ray, const Scene *scene, Sampler *sampler, RNG& rng, MemoryPool &memory) const {
+			return Spectrum::fromRGB(0.1, 0.2, 0.3);
+		}
 		virtual ~TiledIntegrator() {}
 	};
 }

@@ -24,10 +24,19 @@ void Aya::TiledIntegrator::render(const Scene *scene, const Camera *camera, Samp
 					cam_sample.image_y += y;
 
 					// When Camera built, there should to modify
-					RayDifferential ray = camera->getRay(cam_sample.image_x, cam_sample.image_y);
-					Spectrum L = li(ray, scene, tile_sampler.get(), rng, memory);
+					SurfaceIntersection si;
+					RayDifferential ray = camera->getRay(cam_sample.image_x / 1000.0f, cam_sample.image_y / 1000.0f);
+					//Spectrum L = li(ray, scene, tile_sampler.get(), rng, memory);
 
-					film->addSample(cam_sample.image_x, cam_sample.image_y, L);
+					//film->addSample(cam_sample.image_x, cam_sample.image_y, L);
+
+					if (scene->occluded(ray)) {
+						film->addSample(cam_sample.image_x, cam_sample.image_y, Spectrum::fromRGB(1.f, 1.f, 1.f));
+					}
+					else {
+						film->addSample(cam_sample.image_x, cam_sample.image_y, Spectrum::fromRGB(0.f, 0.f, 0.f));
+					}
+
 					memory.freeAll();
 				}
 			}
