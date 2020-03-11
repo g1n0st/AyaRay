@@ -30,7 +30,8 @@ namespace Aya {
 	}
 
 	void Film::addSample(float x, float y, const Spectrum& L) {
-		// add lock
+		std::lock_guard<std::mutex> lck(m_mt);
+
 		x -= .5f;
 		y -= .5f;
 		int min_x = Clamp((int)std::ceil(x - mp_filter->getRadius()), 0, m_width - 1);
@@ -48,13 +49,15 @@ namespace Aya {
 		}
 	}
 	void Film::splat(float x, float y, const Spectrum& L) {
-		// add lock
+		std::lock_guard<std::mutex> lck(m_mt);
+
 		int xx = Clamp((int)std::floor(x), 0, m_width - 1);
 		int yy = Clamp((int)std::floor(y), 0, m_height - 1);
 		m_accumulate_buffer(xx, m_height - 1 - yy).splat += L;
 	}
 	void Film::updateDisplay(const float ss) {
-		// add lock
+		std::lock_guard<std::mutex> lck(m_mt);
+
 		float splat_scale = ss > 0.f ? ss : m_sample_count;
 
 		parallel_for(0, m_height, [this, splat_scale](int y) {

@@ -6,10 +6,12 @@
 #include "Spectrum.h"
 
 #include <ppl.h>
+#include <thread>
+#include <mutex>
 
 namespace Aya {
 	class Film {
-	public :
+	protected :
 		struct Pixel {
 			Spectrum color;
 			Spectrum splat;
@@ -22,7 +24,7 @@ namespace Aya {
 		BlockedArray<Pixel> m_accumulate_buffer;
 		UniquePtr<Filter> mp_filter;
 
-		// there may need a thread lock
+		mutable std::mutex m_mt;
 
 		static const float INV_GAMMA;
 
