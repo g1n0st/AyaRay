@@ -1,17 +1,17 @@
-#ifndef AYA_CORE_INTEGRATOR_H
-#define AYA_CORE_INTEGRATOR_H
+#ifndef AYA_CORE_INTEGRATOR__H
+#define AYA_CORE_INTEGRATOR_S_H
 
 #include "Config.h"
 #include "Camera.h"
 #include "Primitive_.h"
 
 namespace Aya {
-	class Integrator {
+	class Integrator_ {
 	public:
 		virtual Spectrum li(const Ray &ray, SharedPtr<Accelerator> acclerator, int depth) const = 0;
 	};
 
-	class SampleIntegrator : public Integrator {
+	class SampleIntegrator : public Integrator_ {
 	public:
 		virtual Spectrum li(const Ray &ray, SharedPtr<Accelerator> acclerator, int depth) const {
 			SurfaceInteraction si;

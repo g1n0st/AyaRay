@@ -3,7 +3,7 @@
 
 #include "Camera.h"
 #include "Film.h"
-#include "Integrator.h"
+#include "Integrator_.h"
 #include "Memory.h"
 #include "Primitive_.h"
 
@@ -19,7 +19,7 @@ namespace Aya {
 		int m_sample_times;
 		SharedPtr<Accelerator> m_acc;
 		SharedPtr<Camera> m_cam;
-		SharedPtr<Integrator> m_int;
+		SharedPtr<Integrator_> m_int;
 
 	public:
 		Scene_() {}
