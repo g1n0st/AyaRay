@@ -9,7 +9,7 @@
 namespace Aya {
 	class BSDF;
 	//class BSSRDF;
-	//class AreaLight;
+	class AreaLight;
 
 	class Frame {
 	private:
@@ -82,6 +82,7 @@ namespace Aya {
 		Frame frame;
 
 		const BSDF *bsdf;
+		const AreaLight *arealight;
 
 	public:
 		SurfaceIntersection()
@@ -94,7 +95,9 @@ namespace Aya {
 			return frame.localToWorld(vec);
 		}
 
+		Spectrum emit(const Vector3& dir) const;
 		void computeDifferentials(const RayDifferential& ray) const;
+
 		bool isSurfaceScatter() const override {
 			return true;
 		}
