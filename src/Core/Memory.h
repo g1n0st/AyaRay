@@ -65,7 +65,7 @@ namespace Aya {
 	template<typename T>
 	class UniquePtr {
 	private:
-		T *rp;
+		T *rp = nullptr;
 
 	public:
 		UniquePtr() : rp(nullptr) {}
