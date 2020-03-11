@@ -105,7 +105,7 @@ namespace Aya {
 	void Primitive::postIntersect(const Ray &ray, SurfaceIntersection *intersection) const {
 		intersection->bsdf = mp_BSDFs[mp_material_idx[intersection->tri_id]].get();
 		// BSSRDF Part
-		// Light Part
+		intersection->arealight = mp_light;
 		intersection->m_medium_interface = m_medium_interface[mp_material_idx[intersection->tri_id]];
 		mp_mesh->postIntersect(ray, intersection);
 	}
