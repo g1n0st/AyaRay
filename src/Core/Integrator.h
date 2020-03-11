@@ -4,6 +4,8 @@
 #include "../Core/Config.h"
 #include "../Core/Camera.h"
 #include "../Core/Scene.h"
+#include "../Core/Film.h"
+#include "../Core/Light.h"
 #include "../Core/Sampler.h"
 #include "../Core/Ray.h"
 #include "../Core/BSDF.h"
@@ -22,6 +24,7 @@ namespace Aya {
 
 	class TaskSynchronizer {
 	private:
+		int m_x, m_y;
 		std::vector<RenderTile> m_tiles;
 
 		bool m_abort;
@@ -32,6 +35,8 @@ namespace Aya {
 		}
 
 		void init(const int x, const int y) {
+			m_x = x;
+			m_y = y;
 			m_tiles.clear();
 			m_abort = false;
 
@@ -54,6 +59,12 @@ namespace Aya {
 		inline int getTilesCount() const {
 			return (int)m_tiles.size();
 		}
+		inline int getX() const {
+			return m_x;
+		}
+		inline int getY() const {
+			return m_y;
+		}
 		inline void setAbort(const bool ab) {
 			m_abort = ab;
 		}
@@ -61,6 +72,9 @@ namespace Aya {
 			return m_abort;
 		}
 	};
+
+	class Integrator;
+	class TiledIntegrator;
 
 	class Integrator {
 	protected:
@@ -73,6 +87,14 @@ namespace Aya {
 
 		virtual void render(const Scene *scene, const Camera *camera, Sampler *sampler, Film *film) const = 0;
 		virtual ~Integrator() {}
+
+	public:
+		static Spectrum estimateDirectLighting(const Scatter &scatter, const Vector3 &out, const Light *light,
+			const Scene *scene, Sampler *sampler, ScatterType scatter_type = ScatterType(BSDF_ALL & ~BSDF_SPECULAR));
+		static Spectrum specularReflect(const TiledIntegrator *integrator, const Scene *scene, Sampler *sampler, const RayDifferential &ray,
+			const SurfaceIntersection &intersection, RNG &rng, MemoryPool &memory);
+		static Spectrum specularTransmit(const TiledIntegrator *integrator, const Scene *scene, Sampler *sampler, const RayDifferential &ray,
+			const SurfaceIntersection &intersection, RNG &rng, MemoryPool &memory);
 	};
 
 	class TiledIntegrator : public Integrator {
@@ -84,9 +106,7 @@ namespace Aya {
 		}
 
 		virtual void render(const Scene *scene, const Camera *camera, Sampler *sampler, Film *film) const override;
-		virtual Spectrum li(const RayDifferential &ray, const Scene *scene, Sampler *sampler, RNG& rng, MemoryPool &memory) const {
-			return Spectrum::fromRGB(0.1, 0.2, 0.3);
-		}
+		virtual Spectrum li(const RayDifferential &ray, const Scene *scene, Sampler *sampler, RNG& rng, MemoryPool &memory) const = 0;
 		virtual ~TiledIntegrator() {}
 	};
 }
