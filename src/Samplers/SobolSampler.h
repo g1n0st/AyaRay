@@ -24,7 +24,7 @@ namespace Aya {
 			assert(m_res == 1 << m_log2_res);
 		}
 		SobolSampler(const int res, const int log2_res, const uint64_t scramble, const uint64_t sample_idx) :
-			m_sample_idx(sample_idx), m_res(res), m_log2_res(log2_res), 
+			m_sample_idx(sample_idx), m_res(res), m_log2_res(log2_res), m_scramble(scramble),
 			m_sobol_idx(0), m_dim(0) {}
 
 		void generateSamples(
