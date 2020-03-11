@@ -4,6 +4,7 @@
 #include "config.h"
 
 #include <atomic>
+#include <vector>
 
 namespace Aya {
 	
@@ -228,6 +229,57 @@ namespace Aya {
 		}
 		__forceinline int v() const {
 			return v_res;
+		}
+	};
+
+	class MemoryPool {
+	private:
+		uint32_t m_size;
+		uint32_t m_offset;
+		uint8_t *mp_current;
+
+		std::vector<uint8_t*> m_used, m_avail;
+
+	public:
+		MemoryPool(uint32_t size = 32768) {
+			m_size = size;
+			m_offset = 0;
+			mp_current = AllocAligned<uint8_t>(m_size);
+		}
+		~MemoryPool() {
+			FreeAligned(mp_current);
+			for (auto p : m_used) FreeAligned(p);
+			for (auto p : m_avail) FreeAligned(p);
+		}
+
+		template<class T>
+		inline T* alloc(uint32_t count = 1) {
+			uint32_t size = (count * sizeof(T) + 15) & (~15);
+
+			if (m_offset + size > m_size) {
+				m_used.emplace_back(mp_current);
+				if (m_avail.size() > 0 && size < m_size) {
+					mp_current = m_avail.back();
+					m_avail.pop_back();
+				}
+				else {
+					mp_current = AllocAligned<uint8_t>(Max(size, m_size));
+				}
+				m_offset = 0;
+			}
+
+			T *ret = (T*)(mp_current + m_offset);
+			m_offset += size;
+
+			return ret;
+		}
+
+		inline void freeAll() {
+			m_offset = 0;
+			while (m_used.size()) {
+				m_avail.emplace_back(m_used.back());
+				m_used.pop_back();
+			}
 		}
 	};
 }
