@@ -1,5 +1,5 @@
 #ifndef AYA_CORE_INTEGRATOR__H
-#define AYA_CORE_INTEGRATOR_S_H
+#define AYA_CORE_INTEGRATOR__H
 
 #include "Config.h"
 #include "Camera.h"
