@@ -1,6 +1,12 @@
 #include "Intersection.h"
 
+#include "../Lights/AreaLight.h"
+
 namespace Aya {
+	Spectrum SurfaceIntersection::emit(const Vector3 & dir) const {
+		return arealight ? arealight->emit(dir, gn) : Spectrum(0.f);
+	}
+
 	void SurfaceIntersection::computeDifferentials(const RayDifferential& ray) const {
 		do {
 			if (!ray.m_has_differentials) break;
