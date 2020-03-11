@@ -11,7 +11,7 @@ namespace Aya {
 
 #define FREAD_BUF_SIZE 131072
 		char buf[FREAD_BUF_SIZE], *p1 = buf, *p2 = buf;
-		auto getChar = [&buf, &fp, &p1, &p2]() -> char {
+		auto getChar = [&]() -> char {
 			if (p1 == p2) {
 				p2 = (p1 = buf) + fread(buf, 1, FREAD_BUF_SIZE, fp);
 				if (p1 == p2)
@@ -64,9 +64,7 @@ namespace Aya {
 		int current_mtl = 0;
 		char mtl_filename[AYA_MAX_PATH] = { 0 };
 
-		parserFramework(path, [this, force_compute_normal, left_handed,
-		&position_buff, &normal_buff, &uv_buff,
-		&smoothing_group, &has_smooth_group, &current_mtl, &mtl_filename] (char *cmd_header, char *cmd_para) {
+		parserFramework(path, [&] (char *cmd_header, char *cmd_para) {
 			if (0 == std::strcmp(cmd_header, "#")) {
 				// Comment
 			}
