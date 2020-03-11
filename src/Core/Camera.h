@@ -49,7 +49,7 @@ namespace Aya {
 			Vector3 offset = rd.x() * m_u + rd.y() * m_v;
 			float time = Lerp(rng.drand48(), m_t0, m_t1);
 
-			return Ray(m_origin + offset, m_lower_left_corner + s * m_horizontal + t * m_vertical - m_origin - offset);
+			return Ray(m_origin + offset, (m_lower_left_corner + s * m_horizontal + t * m_vertical - m_origin - offset).normalize());
 		}
 	};
 }
