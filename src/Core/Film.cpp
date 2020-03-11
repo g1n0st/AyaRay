@@ -1,7 +1,5 @@
 #include "Film.h"
 
-using namespace concurrency;
-
 namespace Aya {
 
 	const float Film::INV_GAMMA = .454545f;
@@ -60,7 +58,7 @@ namespace Aya {
 
 		float splat_scale = ss > 0.f ? ss : m_sample_count;
 
-		parallel_for(0, m_height, [this, splat_scale](int y) {
+		concurrency::parallel_for(0, m_height, [this, splat_scale](int y) {
 			for (int x = 0; x < m_width; x++) {
 				Pixel pixel = m_accumulate_buffer(x, y);
 				pixel.color.clamp();
