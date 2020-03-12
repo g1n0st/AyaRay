@@ -49,7 +49,7 @@ namespace Aya {
 	public:
 		IsotropicMaterial(Texture *albedo) : m_albedo(albedo) {}
 		virtual bool scatter(const Ray &r_in, const SurfaceInteraction &si, Spectrum &attenuation, Ray &scattered) const {
-			scattered = Ray(si.p, (Vector3)rng.randomInUnitSphere(), nullptr, r_in.m_time);
+			scattered = Ray(si.p, (Vector3)rng.randomInUnitSphere(), nullptr);
 			attenuation = m_albedo->value(si.u, si.v, si.p);
 			return true;
 		}
@@ -67,7 +67,7 @@ namespace Aya {
 
 		virtual bool scatter(const Ray &r_in, const SurfaceInteraction &si, Spectrum &attenuation, Ray &scattered) const {
 			Vector3 target = si.p + si.n + rng.randomInUnitSphere();
-			scattered = Ray(si.p, target - si.p, nullptr, r_in.m_time);
+			scattered = Ray(si.p, target - si.p, nullptr);
 			attenuation = m_albedo->value(si.u, si.v, si.p);
 			return true;
 		}
@@ -88,7 +88,7 @@ namespace Aya {
 			Vector3 nd = r_in.m_dir.normalize();
 			if (nd.dot(si.n) < 0) nd = -nd;
 			Vector3 reflected = reflect(nd, si.n);
-			scattered = Ray(si.p, reflected + rng.randomInUnitSphere() * m_fuzz, nullptr, r_in.m_time);
+			scattered = Ray(si.p, reflected + rng.randomInUnitSphere() * m_fuzz, nullptr);
 			attenuation = m_albedo;
 			return scattered.m_dir.dot(si.n) > 0;
 		}
@@ -140,15 +140,15 @@ namespace Aya {
 				reflect_prob = schlick(cosine, m_refractive_idx);
 			}
 			else {
-				scattered = Ray(si.p, reflected, nullptr, r_in.m_time);
+				scattered = Ray(si.p, reflected, nullptr);
 				reflect_prob = 1.f;
 			}
 
 			if (rng.drand48() < reflect_prob) {
-				scattered = Ray(si.p, reflected, nullptr, r_in.m_time);
+				scattered = Ray(si.p, reflected, nullptr);
 			}
 			else {
-				scattered = Ray(si.p, refracted, nullptr, r_in.m_time);
+				scattered = Ray(si.p, refracted, nullptr);
 			}
 
 			return true;
