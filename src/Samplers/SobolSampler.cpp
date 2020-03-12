@@ -40,8 +40,8 @@ namespace Aya {
 		int dim = m_dim;
 		Sample ret;
 		ret.u = sobolSample(m_dim);
-		ret.u = sobolSample(m_dim + 1);
-		ret.u = sobolSample(m_dim + 2);
+		ret.v = sobolSample(m_dim + 1);
+		ret.w = sobolSample(m_dim + 2);
 		m_dim += 3;
 
 		return ret;
