@@ -364,7 +364,7 @@ namespace Aya {
 			Cache *list = m_caches[hash];
 			while (list != NULL) {
 				MeshVertex *cache_vertex = m_vertices.data() + list->idx;
-				if (0 == std::memcmp(cache_vertex, vertex, sizeof(MeshVertex))) {
+				if (*cache_vertex == *vertex) {
 					is_found = true;
 					idx = list->idx;
 					break;
@@ -436,7 +436,7 @@ namespace Aya {
 			const MeshFace &face = m_faces[i];
 			for (auto j = 0; j < 3; j++) {
 				int face_count = 0;
-				Normal3 normal;
+				Normal3 normal = ZERO_NORMAL;
 				for (auto k = 0; k < vertex_face_list[face.idx[j]].list.size(); k++) {
 					int face_idx = vertex_face_list[face.idx[j]].list[k];
 					if (face.smoothing_group & m_faces[face_idx].smoothing_group) {
@@ -460,7 +460,7 @@ namespace Aya {
 					vert.n = normal;
 				else if (vert.n != normal) {
 					MeshVertex new_vert = vert;
-					vert.n = normal;
+					new_vert.n = normal;
 					auto idx = addVertex(face.idx[j], &new_vert);
 					m_indices[3 * i + j] = idx;
 				}

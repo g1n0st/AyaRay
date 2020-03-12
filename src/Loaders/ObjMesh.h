@@ -20,9 +20,17 @@ namespace Aya {
 		Normal3 n;
 		Vector2f uv;
 
-		MeshVertex() = default;
+		MeshVertex() {
+			p = Point3(0.f, 0.f, 0.f);
+			n = Normal3(0.f, 0.f, 0.f);
+			uv = Vector2f(0.f, 0.f);
+		}
 		MeshVertex(const Point3 &pp, const Normal3 &nn, const float uu, const float vv) :
 			p(pp), n(nn), uv(uu, vv) {}
+
+		friend bool operator == (const MeshVertex &a, const MeshVertex &b) {
+			return (a.p == b.p) && (a.n == b.n) && (a.uv == b.uv);
+		}
 	};
 	struct MeshFace {
 		int idx[3];
