@@ -6,8 +6,10 @@ namespace Aya {
 			int tiles_count = m_task.getTilesCount();
 			int height = m_task.getX();
 			int width = m_task.getY();
-
+			std::cout << spp << std::endl;
+			
 			concurrency::parallel_for(0, tiles_count, [&](int i) {
+			//for (int i = 0; i < tiles_count; i++) {
 				const RenderTile& tile = m_task.getTile(i);
 
 				UniquePtr<Sampler> tile_sampler(sampler->clone(spp * tiles_count + i));
@@ -35,6 +37,7 @@ namespace Aya {
 						memory.freeAll();
 					}
 				}
+			//}
 			});
 
 			sampler->advanceSampleIndex();
@@ -135,7 +138,7 @@ namespace Aya {
 						scene->worldBound().boundingSphere(&center, &radius);
 
 						SurfaceIntersection intersection;
-						Ray ray_light = Ray(pos, light_dir, scatter.m_medium_interface.getMedium(light_dir, norm), 2.f * radius);
+						Ray ray_light = Ray(pos, light_dir, scatter.m_medium_interface.getMedium(light_dir, norm), 0, 2.f * radius);
 						Spectrum Li;
 
 						if (scene->intersect(ray_light, &intersection)) {
@@ -164,11 +167,90 @@ namespace Aya {
 
 	Spectrum Integrator::specularReflect(const TiledIntegrator *integrator, const Scene *scene, Sampler *sampler, const RayDifferential &ray,
 		const SurfaceIntersection &intersection, RNG &rng, MemoryPool &memory) {
-		return Spectrum();
+		const Point3 &pos = intersection.p;
+		const Normal3 &norm = intersection.n;
+		const BSDF *bsdf = intersection.bsdf;
+		Vector3 out = -ray.m_dir, in;
+		float pdf;
+
+		Spectrum f = bsdf->sample_f(out, Sample(), intersection, &in, &pdf, ScatterType(BSDF_REFLECTION | BSDF_SPECULAR));
+
+		Spectrum color;
+		if (pdf > 0.f && !f.isBlack() && Abs(in.dot(norm)) != 0.f) {
+			RayDifferential rd(pos, in, intersection.m_medium_interface.getMedium(in, norm), 0.f, float(INFINITY), ray.m_depth + 1);
+			if (ray.m_has_differentials) {
+				rd.m_has_differentials = true;
+				rd.m_rx_ori = pos + intersection.dpdx;
+				rd.m_ry_ori = pos + intersection.dpdy;
+
+				Vector3 dndx = intersection.dndu * intersection.dudx +
+					intersection.dndv * intersection.dvdx;
+				Vector3 dndy = intersection.dndu * intersection.dudy +
+					intersection.dndv * intersection.dvdy;
+
+				Vector3 doutdx = -ray.m_rx_dir - out;
+				Vector3 doutdy = -ray.m_ry_dir - out;
+
+				float dcosdx = doutdx.dot(norm) + out.dot(dndx);
+				float dcosdy = doutdy.dot(norm) + out.dot(dndy);
+
+				rd.m_rx_dir = in - doutdx + 2.0f * (out.dot(norm) * dndx + dcosdx * norm);
+				rd.m_ry_dir = in - doutdy + 2.0f * (out.dot(norm) * dndy + dcosdy * norm);
+			}
+
+			Spectrum L = integrator->li(rd, scene, sampler, rng, memory);
+			color = f * L * Abs(in.dot(norm)) / pdf;
+		}
+
+		return color;
 	}
 
 	Spectrum Integrator::specularTransmit(const TiledIntegrator *integrator, const Scene *scene, Sampler *sampler, const RayDifferential &ray,
 		const SurfaceIntersection &intersection, RNG &rng, MemoryPool &memory) {
-		return Spectrum();
+		const Point3 &pos = intersection.p;
+		const Normal3 &norm = intersection.n;
+		const BSDF *bsdf = intersection.bsdf;
+		Vector3 out = -ray.m_dir, in;
+		float pdf;
+
+		Spectrum f = bsdf->sample_f(out, Sample(), intersection, &in, &pdf, ScatterType(BSDF_TRANSMISSION | BSDF_SPECULAR));
+
+		Spectrum color;
+		if (pdf > 0.f && !f.isBlack() && Abs(in.dot(norm)) != 0.f) {
+			RayDifferential rd(pos, in, intersection.m_medium_interface.getMedium(in, norm), 0.f, float(INFINITY), ray.m_depth + 1);
+			if (ray.m_has_differentials) {
+				rd.m_has_differentials = true;
+				rd.m_rx_ori = pos + intersection.dpdx;
+				rd.m_ry_ori = pos + intersection.dpdy;
+
+				float eta = 1.5f;
+				Vector3 d = -out;
+				if (out.dot(norm) < 0.0f)
+					eta = 1.0f / eta;
+
+				Vector3 dndx = intersection.dndu * intersection.dudx +
+					intersection.dndv * intersection.dvdx;
+				Vector3 dndy = intersection.dndu * intersection.dudy +
+					intersection.dndv * intersection.dvdy;
+
+				Vector3 doutdx = -ray.m_rx_dir - out;
+				Vector3 doutdy = -ray.m_ry_dir - out;
+
+				float dcosdx = doutdx.dot(norm) + out.dot(dndx);
+				float dcosdy = doutdy.dot(norm) + out.dot(dndy);
+
+				float mu = eta * d.dot(norm) - in.dot(norm);
+				float dmudx = (eta - (eta * eta * d.dot(norm)) / in.dot(norm)) * dcosdx;
+				float dmudy = (eta - (eta * eta * d.dot(norm)) / in.dot(norm)) * dcosdy;
+
+				rd.m_rx_dir = in + eta * doutdx - (mu * dndx + dmudx * norm);
+				rd.m_ry_dir = in + eta * doutdy - (mu * dndy + dmudy * norm);
+			}
+
+			Spectrum L = integrator->li(rd, scene, sampler, rng, memory);
+			color = f * L * Abs(in.dot(norm)) / pdf;
+		}
+
+		return color;
 	}
 }
