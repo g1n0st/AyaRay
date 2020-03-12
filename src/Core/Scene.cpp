@@ -1,7 +1,9 @@
 #include "Scene.h"
 
+#include "../Lights/AreaLight.h"
+
 namespace Aya {
-	bool Scene::intersect(const Ray &ray0, Intersection * isect) const {
+	bool Scene::intersect(const Ray &ray0, Intersection *isect) const {
 		Ray ray = m_scene_scale(ray0);
 		if (!mp_accel->intersect(ray, isect))
 			return false;
@@ -9,7 +11,7 @@ namespace Aya {
 		ray0.m_maxt = isect->dist;
 		return true;
 	}
-	void Scene::postIntersect(const Ray & ray, SurfaceIntersection * intersection) const {
+	void Scene::postIntersect(const Ray &ray, SurfaceIntersection *intersection) const {
 		assert(intersection);
 		m_primitves[intersection->prim_id]->postIntersect(ray, intersection);
 
@@ -23,7 +25,7 @@ namespace Aya {
 		intersection->dndu = m_scene_scale(intersection->dndu);
 		intersection->dndv = m_scene_scale(intersection->dndv);
 	}
-	bool Scene::occluded(const Ray & ray0) const {
+	bool Scene::occluded(const Ray &ray0) const {
 		Ray ray = m_scene_scale(ray0);
 		return mp_accel->occluded(ray);
 	}
@@ -34,8 +36,7 @@ namespace Aya {
 		m_primitves.resize(m_primitves.size() + 1);
 		m_primitves[m_primitves.size() - 1] = UniquePtr<Primitive>(prim);
 	}
-	void Scene::addLight(Light * light) {
-		/*
+	void Scene::addLight(Light *light) {
 		if (light->isEnvironmentLight()) {
 			bool found_light = false;
 			for (auto& it : m_lights) {
@@ -49,8 +50,12 @@ namespace Aya {
 
 			mp_env_light = light;
 		}
-		*/
-		// More Things Need To Be Done
+		else if (light->isAreaLight()) {
+			m_primitves.emplace_back(UniquePtr<Primitive>(((AreaLight*)light)->getPrimitive()));
+			m_lights.emplace_back(UniquePtr<Light>(light));
+		}
+		else
+			m_lights.emplace_back(UniquePtr<Light>(light));
 	}
 
 	void Scene::initAccelerator() {
