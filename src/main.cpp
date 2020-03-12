@@ -1,18 +1,22 @@
 #include "Core/Scene_.h"
 #include "Core/Parser.h"
-
+#include "Core/integrator.h"
 #include "Core/Medium.h"
+#include <array>
 #include "Media/Homogeneous.h"
 #include "Core\BSDF.h"
 #include "BSDFs\LambertianDiffuse.h"
 #include "BSDFs\Glass.h"
+#include "Core/Memory.h"
 #include "BSDFs\Mirror.h"
 
 #include "Accelerators\BVH.h"
-#include "Core/Scene.h"
+#include "Core\Scene.h"
 
 #include "Lights\AreaLight.h"
 #include "Lights\EnvironmentLight.h"
+#include "Integrators\DirectLighting.h"
+
 void ayaInit() {
 	Aya::SampledSpectrum::init();
 }
@@ -39,32 +43,35 @@ void ayaMain(int argc, char **argv) {
 using namespace Aya;
 
 int main(int argc, char **argv) {
-	Transform o2w = Transform().setEulerZYX(-1.3, 1.4, -1.8) * Transform().setScale(0.44, 0.44, 0.44);
-	Primitive primitive;
-	primitive.loadMesh(o2w, "teapot.obj");
-	std::vector<Primitive*> prims;
-	prims.push_back(&primitive);
+	Transform o2w = Transform().setEulerZYX(-0.3, 1.1, -1.1) * Transform().setScale(0.44, 0.44, 0.44);
+	Primitive * primitive = new Primitive();
+	//primitive->loadMesh(o2w, "teapot.obj", true);
+	primitive->loadMesh(o2w, "teapot.obj", true, MakeUnique<Glass>(Spectrum::fromRGB(1.f, 0.7529f, 0.796f), 1.f, 1.5f));
+	//primitive->loadMesh(o2w, "teapot.obj", true, MakeUnique<Mirror>(Spectrum::fromRGB(0.95f, 0.95f, 0.95f)));
+	//primitive->loadSphere(o2w, 3, MakeUnique<Glass>(Spectrum::fromRGB(1.f, 1.f, 1.f)));
+	Scene *scene = new Scene();
+	scene->addPrimitive(primitive);
+	scene->initAccelerator();
 
-	Scene scene;
-	scene.addPrimitive(&primitive);
-	scene.initAccelerator();
+	scene->addLight(new EnvironmentLight("uffizi-large.hdr", scene));
 
 	MitchellNetravaliFilter *filter = new MitchellNetravaliFilter();
-	ProjectiveCamera cam(Point3(-5, 0, 0), Vector3(0, 0, 0), Vector3(0, 0, 1),
-		40, 1, 0, 1, 0, 0);
-	int testnum = 1000;
-	Film film(testnum, testnum, filter);
-	SurfaceIntersection si;
-	for (int i = 0; i < testnum; i++)
-		for (int j = 0; j < testnum; j++) {
-			Ray r = cam.getRay(float(i) / float(testnum), float(j) / float(testnum));
-			r.m_dir.normalized();
-			if (scene.intersect(r, &si)) film.addSample(i, j, Spectrum::fromRGB(1.f, 1.f, 1.f));
-			else film.addSample(i, j, Spectrum::fromRGB(0.f, 0.f, 0.f));
-		}
-	film.addSampleCount();
-	film.updateDisplay();
-	const RGBSpectrum * offset = film.getPixelBuffer();
-	Bitmap::save("unittest.bmp", (float*)film.getPixelBuffer(), testnum, testnum, RGBA_32);
-	return 0;
+	ProjectiveCamera *cam = new ProjectiveCamera(Point3(-5, 0, 0), Vector3(0, 0, 0), Vector3(0, 0, 1), 40, 1, 0, 1000000, 0, 0);
+
+	int testnumx = 600;
+	int testnumy = 600;
+	RandomSampler *random_sampler = new RandomSampler();
+	SobolSampler *sobol_sampler = new SobolSampler(testnumx, testnumy);
+
+	Film *film = new Film(testnumx, testnumy, filter);
+
+	TaskSynchronizer task(testnumx, testnumy);
+	int spp = 40;
+	DirectLightingIntegrator *integrator = new DirectLightingIntegrator(task, spp, 5);
+
+	integrator->render(scene, cam, sobol_sampler, film);
+
+	const RGBSpectrum * offset = film->getPixelBuffer();
+	Bitmap::save("unittest.bmp", (float*)film->getPixelBuffer(), testnumx, testnumy, RGBA_32);
+		return 0;
 }
