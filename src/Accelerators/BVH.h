@@ -38,19 +38,22 @@ namespace Aya {
 			Vector3 C = v0 - ori;
 			Vector3 R = dir.cross(C);
 			float det = n.dot(dir);
-			float absdot = Abs(det);
+			float absdet = Abs(det);
 			float U = R.dot(e2);
 			if (det < 0) U = -U;
 			float V = R.dot(e1);
 			if (det < 0) V = -V;
-			bool valid = (det != 0) & (U >= 0.0f) & (V >= 0.0f) & (U + V <= absdot);
+			bool valid = (det != 0) & (U >= 0.0f) & (V >= 0.0f) & (U + V <= absdet);
 			if (!valid)
 				return false;
 
 			float T = n.dot(C);
 			if (det < 0) T = -T;
+			valid &= (T > absdet * ray.m_mint) & (T < absdet * isect->dist);
+			if (!valid)
+				return false;
 
-			const float inv = 1.f / det;
+			const float inv = 1.f / absdet;
 			const float u = U * inv;
 			const float v = V * inv;
 			const float t = T * inv;
@@ -70,12 +73,18 @@ namespace Aya {
 			Vector3 C = v0 - ori;
 			Vector3 R = dir.cross(C);
 			float det = n.dot(dir);
-			float absdot = Abs(det);
+			float absdet = Abs(det);
 			float U = R.dot(e2);
 			if (det < 0) U = -U;
 			float V = R.dot(e1);
 			if (det < 0) V = -V;
-			bool valid = (det != 0) & (U >= 0.0f) & (V >= 0.0f) & (U + V <= absdot);
+			bool valid = (det != 0) & (U >= 0.0f) & (V >= 0.0f) & (U + V <= absdet);
+			if (!valid)
+				return false;
+
+			float T = n.dot(C);
+			if (det < 0) T = -T;
+			valid &= (T > absdet * ray.m_mint) & (T < absdet * ray.m_maxt);
 			if (!valid)
 				return false;
 
