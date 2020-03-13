@@ -14,14 +14,14 @@ namespace Aya {
 		Point3 m_ori;
 		Vector3 m_dir;
 		mutable float m_mint, m_maxt;
-		int m_depth;
+		uint32_t m_depth;
 
 		const Medium *mp_medium;
 
 		Ray() : m_mint(AYA_RAY_EPS), m_maxt(INFINITY), mp_medium(nullptr), m_depth(0) {}
 		inline Ray(const Point3 &ori, const Vector3 &dir,
 			const Medium *medium = nullptr,
-			float start = AYA_RAY_EPS, float end = INFINITY, int depth = 0)
+			float start = AYA_RAY_EPS, float end = INFINITY, uint32_t depth = 0)
 			: m_ori(ori), m_dir(dir), mp_medium(medium), m_mint(start + AYA_RAY_EPS), m_maxt(end - AYA_RAY_EPS), m_depth(depth) {}
 
 		inline Point3 operator() (const float &t) const {
@@ -44,7 +44,7 @@ namespace Aya {
 		RayDifferential() { m_has_differentials = false; }
 		RayDifferential(const Point3 &ori, const Vector3 &dir,
 			const Medium *medium = nullptr,
-			float start = AYA_RAY_EPS, float end = INFINITY, int depth = 0) : Ray(ori, dir, medium, start, end, depth){
+			float start = AYA_RAY_EPS, float end = INFINITY, uint32_t depth = 0) : Ray(ori, dir, medium, start, end, depth){
 			m_has_differentials = false;
 		}
 		RayDifferential(const Ray &ray) : Ray(ray) {
