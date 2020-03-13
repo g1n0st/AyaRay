@@ -1,7 +1,7 @@
 #ifndef AYA_CORE_CONFIG_H
 #define AYA_CORE_CONFIG_H
 
-#define AYA_DEBUG
+//#define AYA_DEBUG
 #include <iostream>
 
 #ifdef _WIN32
