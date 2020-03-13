@@ -283,8 +283,10 @@ namespace Aya {
 	template class Mipmap2D<Spectrum>;
 	template class Mipmap2D<byteSpectrum>;
 	template class Mipmap2D<float>;
-	template class ImageTexture2D<Spectrum, byteSpectrum>;
-	template class ImageTexture2D<Spectrum, Spectrum>;
+	template class ImageTexture2D<RGBSpectrum, byteSpectrum>;
+	template class ImageTexture2D<RGBSpectrum, RGBSpectrum>;
+	template class ImageTexture2D<SampledSpectrum, byteSpectrum>;
+	template class ImageTexture2D<SampledSpectrum, SampledSpectrum>;
 	template class ImageTexture2D<float, float>;
 	
 }

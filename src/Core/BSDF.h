@@ -108,10 +108,10 @@ namespace Aya {
 			mp_normal_map = MakeUnique<ImageTexture2D<RGBSpectrum, byteSpectrum>>(normal_file, 1.f);
 		}
 		void setTexture(const char *image_file) {
-			mp_texture = MakeUnique<ImageTexture2D<RGBSpectrum, byteSpectrum>>(image_file);
+			mp_texture = MakeUnique<ImageTexture2D<Spectrum, byteSpectrum>>(image_file);
 		}
 		void setTexture(const Spectrum &color) {
-			mp_texture = MakeUnique<ConstantTexture2D<RGBSpectrum>>(color);
+			mp_texture = MakeUnique<ConstantTexture2D<Spectrum>>(color);
 		}
 
 		virtual Spectrum f(const Vector3 &v_out, const Vector3 &v_in, const SurfaceIntersection &intersection, ScatterType types = BSDF_ALL) const;

@@ -8,7 +8,7 @@ namespace Aya {
 	public:
 		Mirror(const Spectrum &color = RGBSpectrum().toSpectrum())
 			: BSDF(ScatterType(BSDF_REFLECTION | BSDF_SPECULAR), BSDFType::Mirror, color) {}
-		Mirror(UniquePtr<Texture2D<Spectrum>> tex, UniquePtr<Texture2D<Spectrum>> normal)
+		Mirror(UniquePtr<Texture2D<Spectrum>> tex, UniquePtr<Texture2D<RGBSpectrum>> normal)
 			: BSDF(ScatterType(BSDF_REFLECTION | BSDF_SPECULAR), BSDFType::Mirror, std::move(tex), std::move(normal)) {}
 		Mirror(const char *texture_file)
 			: BSDF(ScatterType(BSDF_REFLECTION | BSDF_SPECULAR), BSDFType::Mirror, texture_file) {}

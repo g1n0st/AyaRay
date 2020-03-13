@@ -138,10 +138,10 @@ namespace Aya {
 			return s.pow(gamma);
 		}
 		static SampledSpectrum gammaCorrect(SampledSpectrum s, const float gamma) {
-			return s.pow(gamma);
+			return SampledSpectrum(RGBSpectrum(s).pow(gamma));
 		}
 		static byteSpectrum gammaCorrect(byteSpectrum s, const float gamma) {
-			return (Spectrum)Spectrum(s).pow(gamma);
+			return (byteSpectrum)RGBSpectrum(s).pow(gamma);
 		}
 		static float gammaCorrect(float s, const float gamma) {
 			return std::pow(s, gamma);

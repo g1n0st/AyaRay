@@ -8,7 +8,7 @@ namespace Aya {
 	public:
 		LambertianDiffuse(const Spectrum &color = RGBSpectrum().toSpectrum())
 			: BSDF(ScatterType(BSDF_REFLECTION | BSDF_DIFFUSE), BSDFType::LambertianDiffuse, color) {}
-		LambertianDiffuse(UniquePtr<Texture2D<Spectrum>> tex, UniquePtr<Texture2D<Spectrum>> normal)
+		LambertianDiffuse(UniquePtr<Texture2D<Spectrum>> tex, UniquePtr<Texture2D<RGBSpectrum>> normal)
 			: BSDF(ScatterType(BSDF_REFLECTION | BSDF_DIFFUSE), BSDFType::LambertianDiffuse, std::move(tex), std::move(normal)) {}
 		LambertianDiffuse(const char *texture_file)
 			: BSDF(ScatterType(BSDF_REFLECTION | BSDF_DIFFUSE), BSDFType::LambertianDiffuse, texture_file) {}

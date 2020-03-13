@@ -414,7 +414,7 @@ namespace Aya {
 		SampledSpectrum(const CoefficientSpectrum<n_spectral_samples> &s) noexcept :
 			CoefficientSpectrum<n_spectral_samples>(s) {}
 
-		__forceinline SampledSpectrum(const byteSpectrum &bs) noexcept;
+		SampledSpectrum(const byteSpectrum &bs) noexcept;
 		__forceinline SampledSpectrum& operator = (const byteSpectrum &c) noexcept;
 
 		static SampledSpectrum fromSampled(const float *lambda, const float *v, int n) {
