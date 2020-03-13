@@ -75,7 +75,7 @@ namespace Aya {
 		m_medium_interface.emplace_back(medium_interface);
 
 		mp_material_idx = new uint32_t[mp_mesh->getTriangleCount()];
-		memset(mp_material_idx, 0, sizeof(mp_material_idx));
+		memset(mp_material_idx, 0, sizeof(uint32_t) * mp_mesh->getTriangleCount());
 
 		m_subset_count = 1;
 		mp_subset_material_idx = new uint32_t[1];
@@ -94,7 +94,7 @@ namespace Aya {
 		m_medium_interface.emplace_back(medium_interface);
 
 		mp_material_idx = new uint32_t[mp_mesh->getTriangleCount()];
-		memset(mp_material_idx, 0, sizeof(mp_material_idx));
+		memset(mp_material_idx, 0, sizeof(uint32_t) * mp_mesh->getTriangleCount());
 
 		m_subset_count = 1;
 		mp_subset_material_idx = new uint32_t[1];
