@@ -4,7 +4,6 @@
 #include "../Core/Intersection.h"
 #include "../Core/Ray.h"
 #include "../Math/Vector3.h"
-#include "../Core/Scene_.h"
 #include "../Core/Sampler.h"
 
 namespace Aya {
