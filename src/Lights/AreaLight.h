@@ -23,6 +23,7 @@ namespace Aya {
 			const uint32_t sample_count) :
 			Light(sample_count), mp_prim(prim), m_intensity(intens) {
 			m_triangle_count = mp_prim->getMesh()->getTriangleCount();
+			m_area = 0.f;
 			for (uint32_t i = 0; i < m_triangle_count; i++) {
 				float area = triangleArea(i);
 				m_area += area;
