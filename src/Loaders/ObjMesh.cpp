@@ -19,7 +19,7 @@ namespace Aya {
 			}
 			return *p1++;
 		};
-		auto fEOF = [&fp, &p1, &p2]() -> bool {
+		auto fEOF = [&]() -> bool {
 			return feof(fp) && (p1 == p2);
 		};
 
