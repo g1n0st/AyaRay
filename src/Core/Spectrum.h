@@ -63,11 +63,10 @@ namespace Aya {
 
 	template<int n_samples>
 	class CoefficientSpectrum {
-#if defined(AYA_USE_SIMD)
 	public:
 		const static int nChips = (n_samples + 3) / 4;
 		const static int nSamples = n_samples;
-
+#if defined(AYA_USE_SIMD)
 	protected:
 		union Chip {
 			float m_val[4];
