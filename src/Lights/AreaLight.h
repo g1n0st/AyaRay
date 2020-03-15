@@ -66,9 +66,9 @@ namespace Aya {
 			if (cos < 1e-6f)
 				return Spectrum(0.f);
 
-			if (cos_at_light != nullptr)
+			if (cos_at_light)
 				*cos_at_light = cos;
-			if (emit_pdf_w != nullptr)
+			if (emit_pdf_w)
 				*emit_pdf_w = CosineHemispherePDF(cos) * m_area_inv;
 
 			return m_intensity;
