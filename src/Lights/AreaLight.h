@@ -20,7 +20,7 @@ namespace Aya {
 	public:
 		AreaLight(Primitive *prim,
 			const Spectrum &intens,
-			const uint32_t sample_count) :
+			const uint32_t sample_count = 1) :
 			Light(sample_count), mp_prim(prim), m_intensity(intens) {
 			m_triangle_count = mp_prim->getMesh()->getTriangleCount();
 			m_area = 0.f;
