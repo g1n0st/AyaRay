@@ -8,7 +8,7 @@
 #include <vector>
 
 namespace Aya {
-	
+
 	// Spectrum Utility Declarations
 	static const float sampled_lambda_start = 400;
 	static const float sampled_lambda_end = 700;
@@ -302,20 +302,8 @@ namespace Aya {
 		bool operator != (const CoefficientSpectrum &s) const {
 			return !(*this == s);
 		}
-		bool isBlack() const {
-#if defined(AYA_USE_SIMD)
-			__m128 v0 = _mm_set_ps(0.f, 0.f, 0.f, 0.f);
-			for (int i = 0; i < nChips; i++) {
-				if (0xf != _mm_movemask_ps((__m128)_mm_cmpeq_ps(c[i].m_val128, v0))) return false;
-			}
-#else
-			for (int i = 0; i < nSamples; i++) {
-				if (c[i] != 0.f) return false;
-			}
-#endif
-			return true;
-		}
-		CoefficientSpectrum sqrt() const{
+
+		CoefficientSpectrum sqrt() const {
 			CoefficientSpectrum ret;
 
 #if defined(AYA_USE_SIMD)
@@ -452,7 +440,7 @@ namespace Aya {
 				float wl1 = Lerp(float(i + 1) / float(n_spectral_samples),
 					sampled_lambda_start, sampled_lambda_end);
 
-				rgb_refl_2spect_white[i] = 
+				rgb_refl_2spect_white[i] =
 					AverageSpectrumSamples(RGB_2spect_lambda, RGB_refl_2spect_white, n_RGB_2spect_samples, wl0, wl1);
 				rgb_refl_2spect_cyan[i] =
 					AverageSpectrumSamples(RGB_2spect_lambda, RGB_refl_2spect_cyan, n_RGB_2spect_samples, wl0, wl1);
@@ -528,6 +516,21 @@ namespace Aya {
 			return yy * scale;
 #endif
 		}
+
+		bool isBlack() const {
+#if defined(AYA_USE_SIMD)
+			__m128 v0 = _mm_set_ps(0.f, 0.f, 0.f, 0.f);
+			for (int i = 0; i < nChips; i++) {
+				if (0xf != _mm_movemask_ps((__m128)_mm_cmpeq_ps(c[i].m_val128, v0))) return false;
+			}
+#else
+			for (int i = 0; i < nSamples; i++) {
+				if (c[i] != 0.f) return false;
+			}
+#endif
+			return true;
+		}
+
 		void toRGB(float rgb[3]) const {
 			float xyz[3];
 			toXYZ(xyz);
@@ -645,6 +648,10 @@ namespace Aya {
 			return yy[0] * (*this)[0] + yy[1] * (*this)[1] + yy[2] * (*this)[2];
 		}
 
+		bool isBlack() const {
+			return (*this)[0] == 0.f && (*this)[1] == 0.f && (*this)[2] == 0.f;
+		}
+
 		friend inline std::ostream &operator << (std::ostream &os, const RGBSpectrum &s) {
 			os << "(" << 3 << ")[ " << s[0] << ", " << s[1] << ", " << s[2] << " ]";
 			return os;
@@ -667,7 +674,7 @@ namespace Aya {
 		byteSpectrum() : r(0), g(0), b(0), a(255) {}
 		byteSpectrum(Byte R, Byte G, Byte B, Byte A = 255) : r(R), g(G), b(G), a(A) {}
 		byteSpectrum(Byte val) : r(val), g(val), b(val), a(255) {}
-		byteSpectrum(const RGBSpectrum &c) noexcept{
+		byteSpectrum(const RGBSpectrum &c) noexcept {
 			float rgb[3];
 			c.toRGB(rgb);
 			r = Clamp((int)(rgb[0] * 255), 0, 255);
