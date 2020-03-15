@@ -1,6 +1,7 @@
 #ifndef AYA_CORE_CONFIG_H
 #define AYA_CORE_CONFIG_H
 
+// Enable Debug Mode
 //#define AYA_DEBUG
 #include <iostream>
 
@@ -36,20 +37,20 @@
 
 #if (defined(_WIN32) && (_MSC_VER) && _MSC_VER >= 1400)
 #if _MSC_VER > 1400
-/**@brief use simd acceleration */
+// Enable SIMD acceleration option (suggested)
 #define AYA_USE_SIMD
 #endif
 #endif
 
-// math library only
-/**@brief use sqrt approximation*/
+// Math library only
+// Enable sqrt approximation
 #define AYA_USE_SQRT_APPROXIMATION
-/**@brief use debug output scalar approximation*/
+// Enable debug output scalar approximation
 #define AYA_SCALAR_OUTPUT_APPROXIMATION
 
-// core/spectrum
+// Core/Spectrum
 //#define AYA_SAMPLED_SPECTRUM
 
-// core/memory
+// Core/Memory
 #define AYA_L1_CACHE_LINE_SIZE 64
 #endif
