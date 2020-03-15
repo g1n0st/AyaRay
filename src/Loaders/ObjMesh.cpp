@@ -72,7 +72,10 @@ namespace Aya {
 				// Vertex Position
 				float x, y, z;
 				sscanf_s(cmd_para, "%f %f %f", &x, &y, &z);
-				position_buff.emplace_back(x, y, z);
+				if (left_handed)
+					position_buff.emplace_back(-x, y, z);
+				else
+					position_buff.emplace_back(x, y, z);
 			}
 			else if (0 == std::strcmp(cmd_header, "vt")) {
 				// Vertex TexCoord
@@ -85,7 +88,10 @@ namespace Aya {
 				// Vertex Normal
 				float x, y, z;
 				sscanf_s(cmd_para, "%f %f %f", &x, &y, &z);
-				normal_buff.emplace_back(x, y, z);
+				if (left_handed)
+					normal_buff.emplace_back(-x, y, z);
+				else
+					normal_buff.emplace_back(x, y, z);
 			}
 			else if (0 == std::strcmp(cmd_header, "s")) {
 				// smoothing group for normal computation

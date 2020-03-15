@@ -20,8 +20,8 @@ namespace Aya {
 		else
 			types = ScatterType(types & ~BSDF_REFLECTION);
 
-		//if (!matchesTypes(types))
-		//	return Spectrum(0.f);
+		if (!matchesTypes(types))
+			return Spectrum(0.f);
 
 		Vector3 l_out = intersection.worldToLocal(v_out);
 		Vector3 l_in = intersection.worldToLocal(v_in);
