@@ -36,11 +36,11 @@ namespace Aya {
 			Intersection l_si, r_si;
 			bool hit_l = false;
 			if (node->l_l) {
-				hit_l = intersect(node->l_l, ray, &l_si);
+				hit_l = occluded(node->l_l, ray);
 			}
 			bool hit_r = false;
 			if (node->r_l) {
-				hit_r = intersect(node->r_l, ray, &r_si);
+				hit_r = occluded(node->r_l, ray);
 			}
 
 			if (hit_l || hit_r) return true;

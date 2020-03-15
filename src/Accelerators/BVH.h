@@ -78,7 +78,7 @@ namespace Aya {
 			if (det < 0) U = -U;
 			float V = R.dot(e1);
 			if (det < 0) V = -V;
-			bool valid = (det != 0) & (U >= 0.0f) & (V >= 0.0f) & (U + V <= absdet);
+			bool valid = (absdet > 1e-7) & (U >= 0.0f) & (V >= 0.0f) & (U + V <= absdet);
 			if (!valid)
 				return false;
 
