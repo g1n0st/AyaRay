@@ -2,13 +2,13 @@
 
 namespace Aya {
 	float LambertianDiffuse::evalInner(const Vector3 &wo, const Vector3 &wi, const SurfaceIntersection &intersection, ScatterType types) const {
-		if (CosTheta(wo) <= 0.f || !sameHemisphere(wo, wi))
-			return 0.0f;
+		//if (CosTheta(wo) <= 0.f || !sameHemisphere(wo, wi))
+		//	return 0.0f;
 		return float(M_1_PI);
 	}
 	float LambertianDiffuse::pdfInner(const Vector3 &wo, const Vector3 &wi, const SurfaceIntersection &intersection, ScatterType types) const {
-		if (CosTheta(wo) <= 0.f || !sameHemisphere(wo, wi))
-			return 0.0f;
+		//if (CosTheta(wo) <= 0.f || !sameHemisphere(wo, wi))
+		//	return 0.0f;
 		return Abs(CosTheta(wi)) * float(M_1_PI);
 	}
 	Spectrum LambertianDiffuse::sample_f(const Vector3 &v_out, const Sample &sample, 
@@ -29,7 +29,7 @@ namespace Aya {
 
 		*v_in = intersection.localToWorld(wi);
 
-		if (v_out.dot(intersection.n) * v_in->dot(intersection.n) > 0.f)
+		if (v_out.dot(intersection.gn) * v_in->dot(intersection.gn) > 0.f)
 			types = ScatterType(types & ~BSDF_TRANSMISSION);
 		else
 			types = ScatterType(types & ~BSDF_REFLECTION);

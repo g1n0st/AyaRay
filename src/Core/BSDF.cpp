@@ -15,13 +15,13 @@ namespace Aya {
 		mp_normal_map(new ImageTexture2D<RGBSpectrum, byteSpectrum>(normal_file, 1.f)) {}
 
 	Spectrum BSDF::f(const Vector3 & v_out, const Vector3 & v_in, const SurfaceIntersection & intersection, ScatterType types) const {
-		if (v_out.dot(intersection.n) * v_in.dot(intersection.n) > 0.f)
+		if (v_out.dot(intersection.gn) * v_in.dot(intersection.gn) > 0.f)
 			types = ScatterType(types & ~BSDF_TRANSMISSION);
 		else
 			types = ScatterType(types & ~BSDF_REFLECTION);
 
-		if (!matchesTypes(types))
-			return Spectrum(0.f);
+		//if (!matchesTypes(types))
+		//	return Spectrum(0.f);
 
 		Vector3 l_out = intersection.worldToLocal(v_out);
 		Vector3 l_in = intersection.worldToLocal(v_in);
@@ -31,7 +31,7 @@ namespace Aya {
 	}
 	float BSDF::pdf(const Vector3 & v_out, const Vector3 & v_in, const SurfaceIntersection & intersection, ScatterType types) const
 	{
-		if (v_out.dot(intersection.n) * v_in.dot(intersection.n) > 0.f)
+		if (v_out.dot(intersection.gn) * v_in.dot(intersection.gn) > 0.f)
 			types = ScatterType(types & ~BSDF_TRANSMISSION);
 		else
 			types = ScatterType(types & ~BSDF_REFLECTION);
