@@ -29,7 +29,7 @@ namespace Aya {
 			char c;
 			do {
 				c = getChar();
-			} while (c == '\t' || c == '\n' || c == '\r');
+			} while (c == '\t' || c == '\n' || c == '\r' || c == ' ');
 			do {
 				command[cmd_len++] = c;
 				c = getChar();
@@ -41,7 +41,7 @@ namespace Aya {
 
 			// Header Part
 			header_len = 0;
-			while (command[header_len] != ' ' && header_len < cmd_len) {
+			while (command[header_len] != ' ' && command[header_len] != '\t' && header_len < cmd_len) {
 				cmd_header[header_len] = command[header_len];
 				header_len++;
 			}
@@ -49,7 +49,6 @@ namespace Aya {
 
 			// Parameter Part
 			char *cmd_para = command + header_len + 1;
-			
 			callback(cmd_header, cmd_para);
 		}
 
