@@ -565,6 +565,9 @@ namespace Aya {
 	class RGBSpectrum : public CoefficientSpectrum<4> {
 	public:
 		RGBSpectrum(const float val = 0.f) noexcept : CoefficientSpectrum<4>(val) {
+			(*this)[0] = val;
+			(*this)[1] = val;
+			(*this)[2] = val;
 			(*this)[3] = 1.f;
 		}
 		RGBSpectrum(const float &r, const float &g, const float &b) noexcept {
