@@ -218,12 +218,12 @@ namespace Aya {
 				m_trans.setZero();
 			}
 			__forceinline Transform& setEulerZYX(const float &e_x, const float &e_y, const float &e_z) {
-				float ci(cosf(e_x));
-				float cj(cosf(e_y));
-				float ch(cosf(e_z));
-				float si(sinf(e_x));
-				float sj(sinf(e_y));
-				float sh(sinf(e_z));
+				float ci(cosf(Radian(e_x)));
+				float cj(cosf(Radian(e_y)));
+				float ch(cosf(Radian(e_z)));
+				float si(sinf(Radian(e_x)));
+				float sj(sinf(Radian(e_y)));
+				float sh(sinf(Radian(e_z)));
 				float cc = ci * ch;
 				float cs = ci * sh;
 				float sc = si * ch;
