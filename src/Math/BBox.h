@@ -118,7 +118,7 @@ namespace Aya {
 						(m_pmax[a] - r.m_ori[a]) / r.m_dir[a]);
 					tmin = Max(t0, tmin);
 					tmax = Min(t1, tmax);
-					if (tmax <= tmin) {
+					if (tmax < tmin) {
 						return false;
 					}
 				}
