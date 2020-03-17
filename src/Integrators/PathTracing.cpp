@@ -9,7 +9,7 @@ namespace Aya {
 		RayDifferential path_ray = ray;
 		for (uint32_t bounce = 0; ; bounce++) {
 			SurfaceIntersection intersection;
-			bool intersected = scene->intersect(ray, &intersection);
+			bool intersected = scene->intersect(path_ray, &intersection);
 
 			MediumIntersection medium;
 			if (path_ray.mp_medium)
