@@ -3,15 +3,6 @@
 
 #include "../Core/Primitive.h"
 
-#include "../BSDFs/Glass.h"
-#include "../BSDFs/LambertianDiffuse.h"
-#include "../BSDFs/Mirror.h"
-
-#include "../Media/Homogeneous.h"
-
-#include "../Samplers/RandomSampler.h"
-#include "../Samplers/SobolSampler.h"
-
 namespace Aya {
 	class BVHTriangle {
 		uint32_t mesh_id, tri_id;

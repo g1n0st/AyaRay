@@ -1,7 +1,7 @@
-#ifndef AYA_SPECTRUM_H
-#define AYA_SPECTRUM_H
+#ifndef AYA_CORE_SPECTRUM_H
+#define AYA_CORE_SPECTRUM_H
 
-#include "Config.h"
+#include "../Core/Config.h"
 #include "../Math/Vector3.h"
 
 #include <algorithm>

@@ -88,10 +88,10 @@ namespace Aya {
 		SurfaceIntersection()
 			: dudx(0.f), dudy(0.f), dvdx(0.f), dvdy(0.f) {}
 
-		AYA_FORCE_INLINE Vector3 worldToLocal(const Vector3 &vec) const {
+		inline Vector3 worldToLocal(const Vector3 &vec) const {
 			return frame.worldToLocal(vec);
 		}
-		AYA_FORCE_INLINE Vector3 localToWorld(const Vector3 &vec) const {
+		inline Vector3 localToWorld(const Vector3 &vec) const {
 			return frame.localToWorld(vec);
 		}
 

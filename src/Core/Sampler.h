@@ -1,10 +1,9 @@
-#ifndef AYA_CORE_SAMPLER
-#define AYA_CORE_SAMPLER
+#ifndef AYA_CORE_SAMPLER_H
+#define AYA_CORE_SAMPLER_H
 
-#include "Config.h"
-#include "Memory.h"
-#include "RNG.h"
-
+#include "../Core/Config.h"
+#include "../Core/Memory.h"
+#include "../Core/RNG.h"
 #include "../Math/Vector2.h"
 
 namespace Aya {

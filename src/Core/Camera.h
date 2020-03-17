@@ -1,9 +1,9 @@
-#ifndef AYA_CAMERA_H
-#define AYA_CAMERA_H
+#ifndef AYA_CORE_CAMERA_H
+#define AYA_CORE_CAMERA_H
 
-#include "Config.h"
-#include "Ray.h"
-#include "Rng.h"
+#include "../Core/Config.h"
+#include "../Core/Ray.h"
+#include "../Core/RNG.h"
 
 namespace Aya {
 	class Camera {

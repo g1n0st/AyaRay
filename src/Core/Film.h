@@ -1,9 +1,9 @@
 #ifndef AYA_CORE_FILM_H
 #define AYA_CORE_FILM_H
 
-#include "Filter.h"
-#include "Memory.h"
-#include "Spectrum.h"
+#include "../Core/Filter.h"
+#include "../Core/Memory.h"
+#include "../Core/Spectrum.h"
 
 #include <ppl.h>
 #include <thread>
