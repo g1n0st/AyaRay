@@ -1,9 +1,8 @@
 ﻿#ifndef AYA_CORE_RNG_H
 #define AYA_CORE_RNG_H
 
-#include "Config.h"
-
-#include "..\Math\Vector3.h"
+#include "../Core/Config.h"
+#include "../Math/Vector3.h"
 
 #include <stdint.h>
 
@@ -30,21 +29,6 @@ namespace Aya {
 		virtual inline uint32_t rand32() = 0;
 		virtual inline float drand48() = 0 {
 			return Min(FLOAT_ONE_MINUS_EPSILON, rand32() * 2.3283064365386963e-10f);
-		}
-
-		Point3 randomInUnitDisk() {
-			Point3 p;
-			do {
-				p = (Point3(drand48(), drand48(), 0.f) * 2 - Point3(1.f, 1.f, 0.f));
-			} while (p.length2() >= 1.f);
-			return p;
-		}
-		Point3 randomInUnitSphere() {
-			Point3 p;
-			do {
-				p = (Point3(drand48(), drand48(), drand48()) * 2 - Point3(1.f, 1.f, 1.f));
-			} while (p.length2() >= 1.f);
-			return p;
 		}
 	};
 

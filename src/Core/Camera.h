@@ -4,6 +4,7 @@
 #include "../Core/Config.h"
 #include "../Core/Ray.h"
 #include "../Core/RNG.h"
+#include "../Core/Sampling.h"
 
 namespace Aya {
 	class Camera {
@@ -45,7 +46,9 @@ namespace Aya {
 		}
 
 		Ray getRay(const float &s, const float &t) const {
-			Point3 rd = m_lens_radius * rng.randomInUnitDisk();
+			float dx, dy;
+			ConcentricSampleDisk(rng.drand48(), rng.drand48(), &dx, &dy);
+			Point3 rd = m_lens_radius * Point3(dx, dy, 0.f);
 			Vector3 offset = rd.x() * m_u + rd.y() * m_v;
 			float time = Lerp(rng.drand48(), m_t0, m_t1);
 
