@@ -33,19 +33,19 @@ namespace Aya {
 		void addPrimitive(Primitive *prim);
 		void addLight(Light *light);
 
-		__forceinline const std::vector<UniquePtr<Primitive>>& getPrimitives() const {
+		inline const std::vector<UniquePtr<Primitive>>& getPrimitives() const {
 			return m_primitves;
 		}
-		__forceinline const std::vector<UniquePtr<Light>>& getLights() const {
+		inline const std::vector<UniquePtr<Light>>& getLights() const {
 			return m_lights;
 		}
-		__forceinline const Light* getLight(const uint32_t idx) const {
+		inline const Light* getLight(const uint32_t idx) const {
 			return m_lights[idx].get();
 		}
-		__forceinline const Light* getEnviromentLight() const {
+		inline const Light* getEnviromentLight() const {
 			return mp_env_light;
 		}
-		__forceinline uint32_t getLightCount() const {
+		inline uint32_t getLightCount() const {
 			return uint32_t(m_lights.size());
 		}
 
@@ -64,14 +64,14 @@ namespace Aya {
 
 		void initAccelerator();
 
-		__forceinline void setScale(const float scale) {
+		inline void setScale(const float scale) {
 			assert(scale > 0.f);
 			m_scene_scale.setScale(scale, scale, scale);
 			
 			float inv = 1.f / scale;
 			m_scene_scale_inv.setScale(inv, inv, inv);
 		}
-		__forceinline const Transform& getScale() const {
+		inline const Transform& getScale() const {
 			return m_scene_scale;
 		}
 	};

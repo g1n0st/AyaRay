@@ -104,51 +104,51 @@ namespace Aya {
 		uint32_t addVertex(uint32_t hash, const MeshVertex *vertex);
 		void computeVertexNormals();
 		
-		__forceinline const uint32_t* getIndexAt(int num) const {
+		inline const uint32_t* getIndexAt(int num) const {
 			return m_indices.data() + 3 * num;
 		}
-		__forceinline const MeshFace& getFaceAt(int idx) const {
+		inline const MeshFace& getFaceAt(int idx) const {
 			return m_faces[idx];
 		}
-		__forceinline const std::vector<MeshFace>& getFacesBuff() const {
+		inline const std::vector<MeshFace>& getFacesBuff() const {
 			return m_faces;
 		}
-		__forceinline const MeshVertex& getVertexAt(int idx) const {
+		inline const MeshVertex& getVertexAt(int idx) const {
 			return m_vertices[idx];
 		}
-		__forceinline const std::vector<MeshVertex>& getVerticesBuff() const {
+		inline const std::vector<MeshVertex>& getVerticesBuff() const {
 			return m_vertices;
 		}
-		__forceinline uint32_t getVertexCount() const {
+		inline uint32_t getVertexCount() const {
 			return m_vertex_count;
 		}
-		__forceinline uint32_t getTriangleCount() const {
+		inline uint32_t getTriangleCount() const {
 			return m_triangle_count;
 		}
-		__forceinline bool isNormaled() const {
+		inline bool isNormaled() const {
 			return m_normaled;
 		}
-		__forceinline bool isTextured() const {
+		inline bool isTextured() const {
 			return m_textured;
 		}
 
-		__forceinline const std::vector<ObjMaterial>& getMaterialBuff() const {
+		inline const std::vector<ObjMaterial>& getMaterialBuff() const {
 			return m_materials;
 		}
-		__forceinline const std::vector<uint32_t>& getMaterialIdxBuff() const {
+		inline const std::vector<uint32_t>& getMaterialIdxBuff() const {
 			return m_material_idx;
 		}
-		__forceinline uint32_t getMaterialIdx(int idx) const {
+		inline uint32_t getMaterialIdx(int idx) const {
 			return m_material_idx[idx];
 		}
 
-		__forceinline const uint32_t getSubsetCount() const {
+		inline const uint32_t getSubsetCount() const {
 			return m_subset_count;
 		}
-		__forceinline const uint32_t getSubsetStartIdx(int idx) const {
+		inline const uint32_t getSubsetStartIdx(int idx) const {
 			return m_subset_start_idx[idx];
 		}
-		__forceinline const uint32_t getSubsetMtlIdx(int idx) const {
+		inline const uint32_t getSubsetMtlIdx(int idx) const {
 			return m_subset_mtl_idx[idx];
 		}
 

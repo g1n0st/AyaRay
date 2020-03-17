@@ -1112,7 +1112,7 @@ namespace Aya {
 		float rgb[3] = { float(bs.r / 255.f), float(bs.g / 255.f), float(bs.b / 255.f) };
 		(*this) = fromRGB(rgb);
 	}
-	__forceinline SampledSpectrum& SampledSpectrum::operator = (const byteSpectrum &c) noexcept {
+	AYA_FORCE_INLINE SampledSpectrum& SampledSpectrum::operator = (const byteSpectrum &c) noexcept {
 		float rgb[3] = { float(c.r / 255.f), float(c.g / 255.f), float(c.b / 255.f) };
 		(*this) = fromRGB(rgb);
 		return *this;
@@ -1123,7 +1123,7 @@ namespace Aya {
 		(*this)[1] = float(bs.g / 255.f);
 		(*this)[2] = float(bs.b / 255.f);
 	}
-	__forceinline RGBSpectrum& RGBSpectrum::operator = (const byteSpectrum &c) noexcept {
+	AYA_FORCE_INLINE RGBSpectrum& RGBSpectrum::operator = (const byteSpectrum &c) noexcept {
 		(*this)[0] = float(c.r / 255.f);
 		(*this)[1] = float(c.g / 255.f);
 		(*this)[2] = float(c.b / 255.f);

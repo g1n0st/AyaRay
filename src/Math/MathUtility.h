@@ -32,40 +32,40 @@
 
 namespace Aya {
 	template<class T>
-	__forceinline T Abs(const T &a) {
+	AYA_FORCE_INLINE T Abs(const T &a) {
 		return a < 0 ? -a : a;
 	}
 	template<class T>
-	__forceinline T Min(const T &a, const T &b) {
+	AYA_FORCE_INLINE T Min(const T &a, const T &b) {
 		return a < b ? a : b;
 	}
 	template<class T>
-	__forceinline T Max(const T &a, const T &b) {
+	AYA_FORCE_INLINE T Max(const T &a, const T &b) {
 		return a > b ? a : b;
 	}
 	template<class T>
-	__forceinline void SetMax(T &a, const T &b) {
+	AYA_FORCE_INLINE void SetMax(T &a, const T &b) {
 		if (b > a) a = b;
 	}
 	template<class T>
-	__forceinline void SetMin(T &a, const T &b) {
+	AYA_FORCE_INLINE void SetMin(T &a, const T &b) {
 		if (b < a) a = b;
 	}
 
-	__forceinline float Radian(const float &deg) {
+	AYA_FORCE_INLINE float Radian(const float &deg) {
 		return (float)(M_PI / 180.f) * deg;
 	}
-	__forceinline float Degree(const float &rad) {
+	AYA_FORCE_INLINE float Degree(const float &rad) {
 		return (float)(180.f / M_PI) * rad;
 	}
 
 	template<class T>
-	__forceinline T Lerp(const float &t, const T &a, const T &b) {
+	AYA_FORCE_INLINE T Lerp(const float &t, const T &a, const T &b) {
 		return a + t * (b - a);
 	}
 
 	template<class T, class T1, class T2>
-	__forceinline T Clamp(const T &t, const T1  &low, const T2 &high) {
+	AYA_FORCE_INLINE T Clamp(const T &t, const T1  &low, const T2 &high) {
 		if (t < T(low)) return low;
 		if (t > T(high)) return high;
 		return t;
@@ -87,7 +87,7 @@ namespace Aya {
 		return Clamp(first - 1, 0, size - 2);
 	}
 
-	__forceinline float RSqrt(const float &x)
+	AYA_FORCE_INLINE float RSqrt(const float &x)
 	{
 #if defined(AYA_USE_SIMD) && defined(AYA_USE_SQRT_APPROXIMATION)
 		const __m128 a = _mm_set_ss(x);
@@ -99,7 +99,7 @@ namespace Aya {
 		return 1.f / sqrtf(x);
 #endif
 	}
-	__forceinline float Sqrt(const float &x) {
+	AYA_FORCE_INLINE float Sqrt(const float &x) {
 		if (x == 0.f)
 			return 0.f;
 #if defined(AYA_USE_SIMD) && defined(AYA_USE_SQRT_APPROXIMATION)
@@ -109,7 +109,7 @@ namespace Aya {
 #endif
 	}
 
-	__forceinline uint32_t RoundUpToPowerOfTwo(uint32_t val) {
+	AYA_FORCE_INLINE uint32_t RoundUpToPowerOfTwo(uint32_t val) {
 		--val;
 		val |= val >> 1;
 		val |= val >> 2;
@@ -118,12 +118,12 @@ namespace Aya {
 		val |= val >> 16;
 		return val + 1;
 	}
-	__forceinline uint32_t CountLeadingZeros(uint32_t value) {
+	AYA_FORCE_INLINE uint32_t CountLeadingZeros(uint32_t value) {
 		unsigned long log2;
 		if (_BitScanReverse(&log2, value)) return 31 - log2;
 		return 32;
 	}
-	__forceinline uint32_t CountTrailingZeros(uint32_t value) {
+	AYA_FORCE_INLINE uint32_t CountTrailingZeros(uint32_t value) {
 		if (value == 0) {
 			return 32;
 		}
@@ -131,27 +131,27 @@ namespace Aya {
 		_BitScanForward((unsigned long *)&bitidx, value);
 		return bitidx;
 	}
-	__forceinline uint32_t FloorLog2(uint32_t value) {
+	AYA_FORCE_INLINE uint32_t FloorLog2(uint32_t value) {
 		unsigned long log2;
 		if (_BitScanReverse(&log2, value)) return log2;
 		return 0;
 	}
-	__forceinline uint32_t CeilLog2(uint32_t value) {
+	AYA_FORCE_INLINE uint32_t CeilLog2(uint32_t value) {
 		int bitmask = ((int)(CountLeadingZeros(value) << 26)) >> 31;
 		return (32 - CountLeadingZeros(value - 1)) & (~bitmask);
 	}
 
-	__forceinline int TruncToInt(float val) {
+	AYA_FORCE_INLINE int TruncToInt(float val) {
 		return _mm_cvtt_ss2si(_mm_set_ss(val));
 	}
 
-	__forceinline int FloorToInt(const float val) {
+	AYA_FORCE_INLINE int FloorToInt(const float val) {
 		return _mm_cvt_ss2si(_mm_set_ss(val + val - .5f)) >> 1;
 	}
-	__forceinline int CeilToInt(const float val) {
+	AYA_FORCE_INLINE int CeilToInt(const float val) {
 		return -(_mm_cvt_ss2si(_mm_set_ss(-0.5f - (val + val))) >> 1);
 	}
-	__forceinline int RoundToInt(const float val) {
+	AYA_FORCE_INLINE int RoundToInt(const float val) {
 		return _mm_cvt_ss2si(_mm_set_ss(val + val + .5f)) >> 1;
 	}
 }

@@ -21,48 +21,48 @@ namespace Aya {
 				m_mat = m_inv = Matrix3x3().getIdentity();
 				m_trans = Vector3(0, 0, 0);
 			}
-			explicit __forceinline Transform(const Matrix3x3& m, const Vector3 &t) :
+			explicit AYA_FORCE_INLINE Transform(const Matrix3x3& m, const Vector3 &t) :
 				m_mat(m), m_inv(m.inverse()), m_trans(t) {}
-			explicit __forceinline Transform(const Matrix3x3& m) :
+			explicit AYA_FORCE_INLINE Transform(const Matrix3x3& m) :
 				m_mat(m), m_inv(m.inverse()), m_trans(Vector3()) {}
-			explicit __forceinline Transform(const Matrix3x3& m, const Matrix3x3& inv, const Vector3 &t) :
+			explicit AYA_FORCE_INLINE Transform(const Matrix3x3& m, const Matrix3x3& inv, const Vector3 &t) :
 				m_mat(m), m_inv(inv), m_trans(t) {}
-			explicit __forceinline Transform(const Matrix3x3& m, const Matrix3x3& inv) :
+			explicit AYA_FORCE_INLINE Transform(const Matrix3x3& m, const Matrix3x3& inv) :
 				m_mat(m), m_inv(inv), m_trans(Vector3()) {}
-			explicit __forceinline Transform(const Quaternion& q) { setRotation(q); }
-			explicit __forceinline Transform(const Quaternion& q, const BaseVector3 &v) { setRotation(q); m_trans = v; }
-			explicit __forceinline Transform(const Vector3& t) :
+			explicit AYA_FORCE_INLINE Transform(const Quaternion& q) { setRotation(q); }
+			explicit AYA_FORCE_INLINE Transform(const Quaternion& q, const BaseVector3 &v) { setRotation(q); m_trans = v; }
+			explicit AYA_FORCE_INLINE Transform(const Vector3& t) :
 				m_mat(Matrix3x3().getIdentity()), m_inv(Matrix3x3().getIdentity()), m_trans(t) {}
-			__forceinline Transform(const Transform &rhs) :
+			AYA_FORCE_INLINE Transform(const Transform &rhs) :
 				m_mat(rhs.m_mat), m_inv(rhs.m_mat), m_trans(rhs.m_trans) {}
-			__forceinline Transform& operator = (const Transform &rhs) {
+			AYA_FORCE_INLINE Transform& operator = (const Transform &rhs) {
 				m_mat = rhs.m_mat;
 				m_inv = rhs.m_inv;
 				m_trans = rhs.m_trans;
 				return *this;
 			}
 #if defined(AYA_USE_SIMD)
-			__forceinline void  *operator new(size_t i) {
+			AYA_FORCE_INLINE void  *operator new(size_t i) {
 				return _mm_malloc(i, 16);
 			}
 
-			__forceinline void operator delete(void *p) {
+			AYA_FORCE_INLINE void operator delete(void *p) {
 				_mm_free(p);
 			}
 #endif
 
-			__forceinline Transform inverse() const {
+			AYA_FORCE_INLINE Transform inverse() const {
 				return Transform(m_inv,
 					m_mat,
 					-(m_inv * m_trans));
 			}
 
-			__forceinline Transform operator * (const Transform &t) const {
+			AYA_FORCE_INLINE Transform operator * (const Transform &t) const {
 				return Transform(m_mat * t.m_mat,
 					t.m_inv * m_inv,
 					(m_mat * t.m_trans) + m_trans);
 			}
-			__forceinline Transform& operator *= (const Transform &t) {
+			AYA_FORCE_INLINE Transform& operator *= (const Transform &t) {
 				m_mat *= t.m_mat;
 				m_inv = t.m_inv * m_inv;
 				m_trans = (m_mat * t.m_trans) + m_trans;
@@ -71,21 +71,21 @@ namespace Aya {
 			}
 
 
-			__forceinline Transform& setTranslate(const Vector3 &delta) {
+			AYA_FORCE_INLINE Transform& setTranslate(const Vector3 &delta) {
 				m_trans = delta;
 				m_mat.setIdentity();
 				m_inv.setIdentity();
 
 				return *this;
 			}
-			__forceinline Transform& setTranslate(const float &x, const float &y, const float &z) {
+			AYA_FORCE_INLINE Transform& setTranslate(const float &x, const float &y, const float &z) {
 				m_trans.setValue(x, y, z);
 				m_mat.setIdentity();
 				m_inv.setIdentity();
 
 				return *this;
 			}
-			__forceinline Transform& setScale(const float &x, const float &y, const float &z) {
+			AYA_FORCE_INLINE Transform& setScale(const float &x, const float &y, const float &z) {
 				assert(x != 0 && y != 0 && z != 0);
 				m_mat.setValue(x, 0, 0,
 					0, y, 0,
@@ -97,7 +97,7 @@ namespace Aya {
 
 				return *this;
 			}
-			__forceinline Transform& setRotateX(const float &angle) {
+			AYA_FORCE_INLINE Transform& setRotateX(const float &angle) {
 				float sin_t = sinf(Radian(angle));
 				float cos_t = cosf(Radian(angle));
 				m_mat.setValue(1, 0, 0,
@@ -108,7 +108,7 @@ namespace Aya {
 
 				return *this;
 			}
-			__forceinline Transform& setRotateY(const float &angle) {
+			AYA_FORCE_INLINE Transform& setRotateY(const float &angle) {
 				float sin_t = sinf(Radian(angle));
 				float cos_t = cosf(Radian(angle));
 				m_mat.setValue(cos_t, -sin_t, 0,
@@ -119,7 +119,7 @@ namespace Aya {
 
 				return *this;
 			}
-			__forceinline Transform& setRotateZ(const float &angle) {
+			AYA_FORCE_INLINE Transform& setRotateZ(const float &angle) {
 				float sin_t = sinf(Radian(angle));
 				float cos_t = cosf(Radian(angle));
 				m_mat.setValue(cos_t, -sin_t, 0,
@@ -130,7 +130,7 @@ namespace Aya {
 
 				return *this;
 			}
-			__forceinline Transform& setRotation(const Vector3 &axis, const float &angle) {
+			AYA_FORCE_INLINE Transform& setRotation(const Vector3 &axis, const float &angle) {
 				Vector3 a = axis.normalize();
 				float x = a.x();
 				float y = a.y();
@@ -217,7 +217,7 @@ namespace Aya {
 				m_inv = m_mat.transpose();
 				m_trans.setZero();
 			}
-			__forceinline Transform& setEulerZYX(const float &e_x, const float &e_y, const float &e_z) {
+			AYA_FORCE_INLINE Transform& setEulerZYX(const float &e_x, const float &e_y, const float &e_z) {
 				float ci(cosf(Radian(e_x)));
 				float cj(cosf(Radian(e_y)));
 				float ch(cosf(Radian(e_z)));
@@ -237,20 +237,20 @@ namespace Aya {
 
 				return *this;
 			}
-			__forceinline Transform& setEulerYPR(const float &yaw, const float &pitch, const float &roll) {
+			AYA_FORCE_INLINE Transform& setEulerYPR(const float &yaw, const float &pitch, const float &roll) {
 				return setEulerZYX(roll, pitch, yaw);
 			}
 
-			__forceinline Vector3 operator() (const Vector3 &v) const {
+			AYA_FORCE_INLINE Vector3 operator() (const Vector3 &v) const {
 				return m_mat * v;
 			}
-			__forceinline Point3 operator() (const Point3 &p) const {
+			AYA_FORCE_INLINE Point3 operator() (const Point3 &p) const {
 				return m_mat * p + m_trans;
 			}
-			__forceinline Normal3 operator() (const Normal3 &n) const {
+			AYA_FORCE_INLINE Normal3 operator() (const Normal3 &n) const {
 				return m_inv.transpose() * n;
 			}
-			__forceinline BBox operator() (const BBox &b) const {
+			AYA_FORCE_INLINE BBox operator() (const BBox &b) const {
 
 				// const Transform &M = *this;
 				// BBox ret(M(Point3(b.m_pmin.x(), b.m_pmin.y(), b.m_pmin.z())));
@@ -291,14 +291,14 @@ namespace Aya {
 #endif
 				return ret;
 			}
-			__forceinline Ray operator() (const Ray &r) const {
+			AYA_FORCE_INLINE Ray operator() (const Ray &r) const {
 				Ray ret = r;
 				ret.m_ori = (*this)(ret.m_ori);
 				ret.m_dir = (*this)(ret.m_dir);
 
 				return ret;
 			}
-			__forceinline RayDifferential operator() (const RayDifferential &r) const {
+			AYA_FORCE_INLINE RayDifferential operator() (const RayDifferential &r) const {
 				RayDifferential ret = r;
 				ret.m_ori = (*this)(ret.m_ori);
 				ret.m_dir = (*this)(ret.m_dir);
@@ -310,7 +310,7 @@ namespace Aya {
 				return ret;
 			}
 
-			friend __forceinline std::ostream &operator<<(std::ostream &os, const Transform &t) {
+			friend inline std::ostream &operator<<(std::ostream &os, const Transform &t) {
 				os << t.m_mat << ",\n";
 				os << t.m_inv << ",\n";
 				os << t.m_trans;

@@ -11,46 +11,46 @@
 #include "../Math/Vector3.h"
 
 namespace Aya {
-	__forceinline float CosTheta(const Vector3 &v) {
+	AYA_FORCE_INLINE float CosTheta(const Vector3 &v) {
 		return v.z();
 	}
-	__forceinline float CosTheta2(const Vector3 &v) {
+	AYA_FORCE_INLINE float CosTheta2(const Vector3 &v) {
 		return v.z() * v.z();
 	}
-	__forceinline float AbsCosTheta(const Vector3 &v) {
+	AYA_FORCE_INLINE float AbsCosTheta(const Vector3 &v) {
 		return Abs(v.z());
 	}
-	__forceinline float SinTheta2(const Vector3 &v) {
+	AYA_FORCE_INLINE float SinTheta2(const Vector3 &v) {
 		return Max(0.f, 1.f - CosTheta2(v));
 	}
-	__forceinline float SinTheta(const Vector3 &v) {
+	AYA_FORCE_INLINE float SinTheta(const Vector3 &v) {
 		return Sqrt(SinTheta2(v));
 	}
-	__forceinline float CosPhi(const Vector3 &v) {
+	AYA_FORCE_INLINE float CosPhi(const Vector3 &v) {
 		float sint = SinTheta(v);
 		if (sint == 0.f)
 			return 1.f;
 		return Clamp(v.x() / sint, -1.f, 1.f);
 	}
-	__forceinline float SinPhi(const Vector3 &v) {
+	AYA_FORCE_INLINE float SinPhi(const Vector3 &v) {
 		float sint = SinTheta(v);
 		if (sint == 0.f)
 			return 0.f;
 		return Clamp(v.y() / sint, -1.f, 1.f);
 	}
-	__forceinline float TanTheta(const Vector3 &v) {
+	AYA_FORCE_INLINE float TanTheta(const Vector3 &v) {
 		float tmp = 1.f - v.z() * v.z();
 		if (tmp <= 0.f)
 			return 0.f;
 		return Sqrt(tmp) / v.z();
 	}
-	__forceinline float TanTheta2(const Vector3 &v) {
+	AYA_FORCE_INLINE float TanTheta2(const Vector3 &v) {
 		float tmp = 1.f - v.z() * v.z();
 		if (tmp <= 0.f)
 			return 0.f;
 		return tmp / (v.z() * v.z());
 	}
-	__forceinline bool sameHemisphere(const Vector3 &v1, const Vector3 &v2) {
+	AYA_FORCE_INLINE bool sameHemisphere(const Vector3 &v1, const Vector3 &v2) {
 		return v1.z() * v2.z() > 0.f;
 	}
 
@@ -120,7 +120,7 @@ namespace Aya {
 			const SurfaceIntersection &intersection, Vector3 *v_in, float* pdf, ScatterType types = BSDF_ALL, ScatterType *sample_types = nullptr) const = 0;
 
 		template<typename T>
-		__forceinline const T getValue(const Texture2D<T> *tex,
+		AYA_FORCE_INLINE const T getValue(const Texture2D<T> *tex,
 			const SurfaceIntersection &intersection,
 			const TextureFilter filter = TextureFilter::TriLinear) const {
 			Vector2f diffs[2] = {

@@ -402,7 +402,7 @@ namespace Aya {
 			CoefficientSpectrum<n_spectral_samples>(s) {}
 
 		SampledSpectrum(const byteSpectrum &bs) noexcept;
-		__forceinline SampledSpectrum& operator = (const byteSpectrum &c) noexcept;
+		AYA_FORCE_INLINE SampledSpectrum& operator = (const byteSpectrum &c) noexcept;
 
 		static SampledSpectrum fromSampled(const float *lambda, const float *v, int n) {
 			if (!SpectrumSamplesSorted(lambda, v, n)) {
@@ -584,7 +584,7 @@ namespace Aya {
 		}
 
 		RGBSpectrum(const byteSpectrum &bs) noexcept;
-		__forceinline RGBSpectrum& operator = (const byteSpectrum &c) noexcept;
+		AYA_FORCE_INLINE RGBSpectrum& operator = (const byteSpectrum &c) noexcept;
 
 		static RGBSpectrum fromRGB(const float rgb[3], SpectrumType type = SpectrumType::Reflectance) {
 			RGBSpectrum s;
@@ -693,7 +693,7 @@ namespace Aya {
 			b = Clamp((int)(rgb[2] * 255), 0, 255);
 			a = 255;
 		}
-		__forceinline byteSpectrum& operator = (const RGBSpectrum &c) noexcept {
+		AYA_FORCE_INLINE byteSpectrum& operator = (const RGBSpectrum &c) noexcept {
 			float rgb[3];
 			c.toRGB(rgb);
 			r = Clamp((int)(rgb[0] * 255), 0, 255);
@@ -702,7 +702,7 @@ namespace Aya {
 			a = 255;
 			return *this;
 		}
-		__forceinline byteSpectrum& operator = (const SampledSpectrum &c) noexcept {
+		AYA_FORCE_INLINE byteSpectrum& operator = (const SampledSpectrum &c) noexcept {
 			float rgb[3];
 			c.toRGB(rgb);
 			r = Clamp((int)(rgb[0] * 255), 0, 255);
@@ -712,33 +712,33 @@ namespace Aya {
 			return *this;
 		}
 
-		__forceinline byteSpectrum operator * (float val) const {
+		AYA_FORCE_INLINE byteSpectrum operator * (float val) const {
 			return byteSpectrum(Byte(val * r), Byte(val * g), Byte(val * b));
 		}
-		__forceinline friend byteSpectrum operator * (float val, const byteSpectrum &s) {
+		AYA_FORCE_INLINE friend byteSpectrum operator * (float val, const byteSpectrum &s) {
 			return s * val;
 		}
-		__forceinline byteSpectrum operator / (float val) const {
+		AYA_FORCE_INLINE byteSpectrum operator / (float val) const {
 			assert(val);
 			float inv = 1.f / val;
 			return byteSpectrum(Byte(inv * r), Byte(inv * g), Byte(inv * b));
 		}
-		__forceinline byteSpectrum operator >> (const int shift) const {
+		AYA_FORCE_INLINE byteSpectrum operator >> (const int shift) const {
 			return byteSpectrum(r >> shift, g >> shift, b >> shift);
 		}
-		__forceinline byteSpectrum operator + (const byteSpectrum &c) const {
+		AYA_FORCE_INLINE byteSpectrum operator + (const byteSpectrum &c) const {
 			return byteSpectrum(c.r + r, c.g + g, c.b + b);
 		}
-		__forceinline byteSpectrum& operator += (const byteSpectrum &c) {
+		AYA_FORCE_INLINE byteSpectrum& operator += (const byteSpectrum &c) {
 			r += c.r;
 			b += c.b;
 			g += c.g;
 			return *this;
 		}
-		__forceinline byteSpectrum operator - (const byteSpectrum &c) const {
+		AYA_FORCE_INLINE byteSpectrum operator - (const byteSpectrum &c) const {
 			return byteSpectrum(c.r - r, c.g - g, c.b - b);
 		}
-		__forceinline byteSpectrum& operator -= (const byteSpectrum &c) {
+		AYA_FORCE_INLINE byteSpectrum& operator -= (const byteSpectrum &c) {
 			r -= c.r;
 			b -= c.b;
 			g -= c.g;

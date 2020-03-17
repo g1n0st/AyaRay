@@ -7,7 +7,7 @@
 
 #ifdef _WIN32
 #if  defined(__GNUC__)	// it should handle both MINGW and CYGWIN
-#define SIMD_FORCE_INLINE        __inline__ __attribute__((always_inline))
+#define AYA_FORCE_INLINE        __inline__ __attribute__((always_inline))
 #define ATTRIBUTE_ALIGNED16(a)   a __attribute__((aligned(16)))
 #define ATTRIBUTE_ALIGNED64(a)   a __attribute__((aligned(64)))
 #define ATTRIBUTE_ALIGNED128(a)  a __attribute__((aligned(128)))
@@ -17,7 +17,7 @@
 #define ATTRIBUTE_ALIGNED64(a) a
 #define ATTRIBUTE_ALIGNED128(a) a
 #elif defined(_M_ARM)
-#define SIMD_FORCE_INLINE inline
+#define AYA_FORCE_INLINE inline
 #define ATTRIBUTE_ALIGNED16(a) __declspec() a
 #define ATTRIBUTE_ALIGNED64(a) __declspec() a
 #define ATTRIBUTE_ALIGNED128(a) __declspec () a
@@ -28,7 +28,7 @@
 #pragma warning(disable:4996) //Turn off warnings about deprecated C routines
 //			#pragma warning(disable:4786) // Disable the "debug name too long" warning
 
-#define SIMD_FORCE_INLINE inline
+#define AYA_FORCE_INLINE __forceinline
 #define ATTRIBUTE_ALIGNED16(a) __declspec(align(16)) a
 #define ATTRIBUTE_ALIGNED64(a) __declspec(align(64)) a
 #define ATTRIBUTE_ALIGNED128(a) __declspec (align(128)) a

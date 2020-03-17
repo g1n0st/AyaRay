@@ -28,22 +28,22 @@ namespace Aya {
 			}
 
 #if defined(AYA_USE_SIMD)
-			__forceinline Matrix3x3(const __m128  &v0, const __m128  &v1, const __m128  &v2) {
+			AYA_FORCE_INLINE Matrix3x3(const __m128  &v0, const __m128  &v1, const __m128  &v2) {
 				m_el[0].m_val128 = v0;
 				m_el[1].m_val128 = v1;
 				m_el[2].m_val128 = v2;
 			}
-			__forceinline Matrix3x3(const BaseVector3 &v0, const BaseVector3 &v1, const BaseVector3 &v2) {
+			AYA_FORCE_INLINE Matrix3x3(const BaseVector3 &v0, const BaseVector3 &v1, const BaseVector3 &v2) {
 				m_el[0] = v0;
 				m_el[1] = v1;
 				m_el[2] = v2;
 			}
-			__forceinline Matrix3x3(const Matrix3x3 &rhs) {
+			AYA_FORCE_INLINE Matrix3x3(const Matrix3x3 &rhs) {
 				m_el[0].m_val128 = rhs.m_el[0].m_val128;
 				m_el[1].m_val128 = rhs.m_el[1].m_val128;
 				m_el[2].m_val128 = rhs.m_el[2].m_val128;
 			}
-			__forceinline Matrix3x3& operator = (const Matrix3x3 &rhs) {
+			AYA_FORCE_INLINE Matrix3x3& operator = (const Matrix3x3 &rhs) {
 				m_el[0].m_val128 = rhs.m_el[0].m_val128;
 				m_el[1].m_val128 = rhs.m_el[1].m_val128;
 				m_el[2].m_val128 = rhs.m_el[2].m_val128;
@@ -51,27 +51,27 @@ namespace Aya {
 				return *this;
 			}
 #if defined(AYA_USE_SIMD)
-			__forceinline void  *operator new(size_t i) {
+			AYA_FORCE_INLINE void  *operator new(size_t i) {
 				return _mm_malloc(i, 16);
 			}
 
-			__forceinline void operator delete(void *p) {
+			AYA_FORCE_INLINE void operator delete(void *p) {
 				_mm_free(p);
 			}
 #endif
 
 #else
-			__forceinline Matrix3x3(const BaseVector3 &v0, const BaseVector3 &v1, const BaseVector3 &v2) {
+			AYA_FORCE_INLINE Matrix3x3(const BaseVector3 &v0, const BaseVector3 &v1, const BaseVector3 &v2) {
 				m_el[0] = v0;
 				m_el[1] = v1;
 				m_el[2] = v2;
 			}
-			__forceinline Matrix3x3(const Matrix3x3 &rhs) {
+			AYA_FORCE_INLINE Matrix3x3(const Matrix3x3 &rhs) {
 				m_el[0] = rhs.m_el[0];
 				m_el[1] = rhs.m_el[1];
 				m_el[2] = rhs.m_el[2];
 			}
-			__forceinline Matrix3x3& operator = (const Matrix3x3 &rhs) {
+			AYA_FORCE_INLINE Matrix3x3& operator = (const Matrix3x3 &rhs) {
 				m_el[0] = rhs.m_el[0];
 				m_el[1] = rhs.m_el[1];
 				m_el[2] = rhs.m_el[2];
@@ -79,19 +79,19 @@ namespace Aya {
 				return *this;
 			}
 #endif
-			__forceinline BaseVector3 getColumn(int x) const {
+			AYA_FORCE_INLINE BaseVector3 getColumn(int x) const {
 				assert(x >= 0 && x < 3);
 				return BaseVector3(m_el[0][x], m_el[1][x], m_el[2][x]);
 			}
-			__forceinline BaseVector3 getRow(int x) const {
+			AYA_FORCE_INLINE BaseVector3 getRow(int x) const {
 				assert(x >= 0 && x < 3);
 				return m_el[x];
 			}
-			__forceinline BaseVector3& operator [](int x) {
+			AYA_FORCE_INLINE BaseVector3& operator [](int x) {
 				assert(x >= 0 && x < 3);
 				return m_el[x];
 			}
-			__forceinline const BaseVector3& operator [](int x) const {
+			AYA_FORCE_INLINE const BaseVector3& operator [](int x) const {
 				assert(x >= 0 && x < 3);
 				return m_el[x];
 			}
@@ -126,7 +126,7 @@ namespace Aya {
 #endif
 			}
 
-			__forceinline Matrix3x3 operator + (const Matrix3x3& m1) const {
+			AYA_FORCE_INLINE Matrix3x3 operator + (const Matrix3x3& m1) const {
 #if defined(AYA_USE_SIMD)
 				return Matrix3x3(_mm_add_ps(m_el[0].m_val128, m1.m_el[0].m_val128),
 					_mm_add_ps(m_el[1].m_val128, m1.m_el[1].m_val128),
@@ -147,7 +147,7 @@ namespace Aya {
 				);
 #endif
 			}
-			__forceinline Matrix3x3& operator += (const Matrix3x3& m) {
+			AYA_FORCE_INLINE Matrix3x3& operator += (const Matrix3x3& m) {
 #if defined(AYA_USE_SIMD)
 				m_el[0].m_val128 = _mm_add_ps(m_el[0].m_val128, m.m_el[0].m_val128);
 				m_el[1].m_val128 = _mm_add_ps(m_el[1].m_val128, m.m_el[1].m_val128);
@@ -167,7 +167,7 @@ namespace Aya {
 #endif
 				return *this;
 			}
-			__forceinline Matrix3x3 operator - (const Matrix3x3& m1) const {
+			AYA_FORCE_INLINE Matrix3x3 operator - (const Matrix3x3& m1) const {
 #if defined(AYA_USE_SIMD)
 				return Matrix3x3(_mm_sub_ps(m_el[0].m_val128, m1.m_el[0].m_val128),
 					_mm_sub_ps(m_el[1].m_val128, m1.m_el[1].m_val128),
@@ -188,7 +188,7 @@ namespace Aya {
 				);
 #endif
 			}
-			__forceinline Matrix3x3& operator -= (const Matrix3x3& m) {
+			AYA_FORCE_INLINE Matrix3x3& operator -= (const Matrix3x3& m) {
 #if defined(AYA_USE_SIMD)
 				m_el[0].m_val128 = _mm_sub_ps(m_el[0].m_val128, m.m_el[0].m_val128);
 				m_el[1].m_val128 = _mm_sub_ps(m_el[1].m_val128, m.m_el[1].m_val128);
@@ -208,7 +208,7 @@ namespace Aya {
 #endif
 				return *this;
 			}
-			__forceinline Matrix3x3 operator * (const float &s) const {
+			AYA_FORCE_INLINE Matrix3x3 operator * (const float &s) const {
 #if defined(AYA_USE_SIMD)
 				__m128 vk = _mm_splat_ps(_mm_load_ss((float*)&s), 0x80);
 				return Matrix3x3(_mm_mul_ps(m_el[0].m_val128, vk),
@@ -230,7 +230,7 @@ namespace Aya {
 				);
 #endif
 			}
-			__forceinline Matrix3x3& operator *= (const float &s) {
+			AYA_FORCE_INLINE Matrix3x3& operator *= (const float &s) {
 #if defined(AYA_USE_SIMD)
 				__m128 vk = _mm_splat_ps(_mm_load_ss((float*)&s), 0x80);
 				m_el[0].m_val128 = _mm_mul_ps(m_el[0].m_val128, vk);
@@ -251,18 +251,18 @@ namespace Aya {
 #endif
 				return *this;
 			}
-			__forceinline friend Matrix3x3 operator * (const float &s, const Matrix3x3 &v) {
+			AYA_FORCE_INLINE friend Matrix3x3 operator * (const float &s, const Matrix3x3 &v) {
 				return v * s;
 			}
-			__forceinline Matrix3x3 operator / (const float &s) const {
+			AYA_FORCE_INLINE Matrix3x3 operator / (const float &s) const {
 				assert(s != 0);
 				return (*this) * (1.f / s);
 			}
-			__forceinline Matrix3x3& operator /= (const float &s) {
+			AYA_FORCE_INLINE Matrix3x3& operator /= (const float &s) {
 				assert(s != 0);
 				return (*this) *= (1.f / s);
 			}
-			__forceinline Matrix3x3 operator * (const Matrix3x3 &m) const {
+			AYA_FORCE_INLINE Matrix3x3 operator * (const Matrix3x3 &m) const {
 #if defined(AYA_USE_SIMD)
 				__m128 m10 = m_el[0].m_val128;
 				__m128 m11 = m_el[1].m_val128;
@@ -314,7 +314,7 @@ namespace Aya {
 					m.tdotx(m_el[2]), m.tdoty(m_el[2]), m.tdotz(m_el[2]));
 #endif
 			}
-			__forceinline Matrix3x3& operator *= (const Matrix3x3 &m) {
+			AYA_FORCE_INLINE Matrix3x3& operator *= (const Matrix3x3 &m) {
 #if defined(AYA_USE_SIMD)
 				__m128 rv00, rv01, rv02;
 				__m128 rv10, rv11, rv12;
@@ -371,14 +371,14 @@ namespace Aya {
 #endif
 				return *this;
 			}
-			__forceinline BaseVector3 operator * (const BaseVector3 &v) const {
+			AYA_FORCE_INLINE BaseVector3 operator * (const BaseVector3 &v) const {
 #if defined(AYA_USE_SIMD)
 				return v.dot3(m_el[0], m_el[1], m_el[2]);
 #else
 				return BaseVector3(m_el[0].dot(v), m_el[1].dot(v), m_el[2].dot(v));
 #endif
 			}
-			friend __forceinline BaseVector3 operator * (const BaseVector3 &v, const Matrix3x3 &m) {
+			friend AYA_FORCE_INLINE BaseVector3 operator * (const BaseVector3 &v, const Matrix3x3 &m) {
 #if defined(AYA_USE_SIMD)
 				const __m128 vv = v.m_val128;
 
@@ -397,7 +397,7 @@ namespace Aya {
 #endif
 			}
 
-			__forceinline Matrix3x3 transpose() const {
+			AYA_FORCE_INLINE Matrix3x3 transpose() const {
 #if defined(AYA_USE_SIMD)
 				__m128 v0 = m_el[0].m_val128;
 				__m128 v1 = m_el[1].m_val128;
@@ -421,7 +421,7 @@ namespace Aya {
 #endif
 			}
 
-			__forceinline Matrix3x3 absolute() const {
+			AYA_FORCE_INLINE Matrix3x3 absolute() const {
 #if defined(AYA_USE_SIMD)
 				return Matrix3x3(_mm_and_ps(m_el[0].m_val128, vAbsfMask),
 					_mm_and_ps(m_el[1].m_val128, vAbsfMask),
@@ -433,12 +433,12 @@ namespace Aya {
 					abs(m_el[2].x()), abs(m_el[2].y()), abs(m_el[2].z()));
 #endif
 			}
-			__forceinline Matrix3x3 adjoin() const {
+			AYA_FORCE_INLINE Matrix3x3 adjoin() const {
 				return Matrix3x3(cofac(1, 1, 2, 2), cofac(0, 2, 2, 1), cofac(0, 1, 1, 2),
 					cofac(1, 2, 2, 0), cofac(0, 0, 2, 2), cofac(0, 2, 1, 0),
 					cofac(1, 0, 2, 1), cofac(0, 1, 2, 0), cofac(0, 0, 1, 1));
 			}
-			__forceinline Matrix3x3 inverse() const {
+			AYA_FORCE_INLINE Matrix3x3 inverse() const {
 				BaseVector3 co(cofac(1, 1, 2, 2), cofac(1, 2, 2, 0), cofac(1, 0, 2, 1));
 				float det = (*this)[0].dot(co);
 
@@ -450,7 +450,7 @@ namespace Aya {
 					co.z() * s, cofac(0, 1, 2, 0) * s, cofac(0, 0, 1, 1) * s);
 			}
 
-			__forceinline bool operator == (const Matrix3x3 &m) const {
+			AYA_FORCE_INLINE bool operator == (const Matrix3x3 &m) const {
 #if defined(AYA_USE_SIMD)
 				__m128 c0 = _mm_cmpeq_ps(m_el[0].m_val128, m[0].m_val128);
 				__m128 c1 = _mm_cmpeq_ps(m_el[1].m_val128, m[1].m_val128);
@@ -466,25 +466,25 @@ namespace Aya {
 					m_el[0][2] == m[0][2] && m_el[1][2] == m[1][2] && m_el[2][2] == m[2][2]);
 #endif
 			}
-			__forceinline bool operator != (const Matrix3x3 &m) const {
+			AYA_FORCE_INLINE bool operator != (const Matrix3x3 &m) const {
 				return !((*this) == m);
 			}
 
-			__forceinline float tdotx(const BaseVector3 &v) const {
+			AYA_FORCE_INLINE float tdotx(const BaseVector3 &v) const {
 				return m_el[0].x() * v.x() + m_el[1].x() * v.y() + m_el[2].x() * v.z();
 			}
-			__forceinline float tdoty(const BaseVector3 &v) const {
+			AYA_FORCE_INLINE float tdoty(const BaseVector3 &v) const {
 				return m_el[0].y() * v.x() + m_el[1].y() * v.y() + m_el[2].y() * v.z();
 			}
-			__forceinline float tdotz(const BaseVector3 &v) const {
+			AYA_FORCE_INLINE float tdotz(const BaseVector3 &v) const {
 				return m_el[0].z() * v.x() + m_el[1].z() * v.y() + m_el[2].z() * v.z();
 			}
-			__forceinline float cofac(const int &r1, const int &c1,
+			AYA_FORCE_INLINE float cofac(const int &r1, const int &c1,
 				const int &r2, const int &c2) const {
 				return m_el[r1][c1] * m_el[r2][c2] - m_el[r1][c2] * m_el[r2][c1];
 			}
 
-			friend __forceinline std::ostream &operator<<(std::ostream &os, const Matrix3x3 &v) {
+			friend inline std::ostream &operator<<(std::ostream &os, const Matrix3x3 &v) {
 				os << "[" << v.m_el[0] << ",\n";
 				os << " " << v.m_el[1] << ",\n";
 				os << " " << v.m_el[2] << "]";

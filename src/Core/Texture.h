@@ -53,10 +53,10 @@ namespace Aya {
 
 	public:
 		ConstantTexture2D(const T &val) : m_val(val) {}
-		__forceinline T sample(const Vector2f &coord, const Vector2f diffs[2]) const {
+		inline T sample(const Vector2f &coord, const Vector2f diffs[2]) const {
 			return m_val;
 		}
-		__forceinline T sample(const Vector2f &coord, const Vector2f diffs[2], TextureFilter filter) const {
+		inline T sample(const Vector2f &coord, const Vector2f diffs[2], TextureFilter filter) const {
 			return m_val;
 		}
 		bool isConstant() const {
@@ -118,16 +118,16 @@ namespace Aya {
 		TRet sample(const Vector2f &coord, const Vector2f diffs[2], TextureFilter filter) const;
 		TRet anisotropicSample(const Vector2f &coord, const Vector2f diffs[2], const int max_rate) const;
 
-		__forceinline void setFilter(const TextureFilter filter) {
+		inline void setFilter(const TextureFilter filter) {
 			m_filter = filter;
 		}
-		__forceinline int width() const {
+		inline int width() const {
 			return m_width;
 		}
-		__forceinline int height() const {
+		inline int height() const {
 			return m_height;
 		}
-		__forceinline bool has_alpha() const {
+		inline bool has_alpha() const {
 			return m_has_alpha;
 		}
 		const TMem* getLevelData(const int level = 0) const {

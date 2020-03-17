@@ -45,10 +45,10 @@ namespace Aya {
 				__m128 m_val128;
 			};
 
-			__forceinline __m128 get128() const {
+			AYA_FORCE_INLINE __m128 get128() const {
 				return m_val128;
 			}
-			__forceinline void set128(const __m128 &v128) {
+			AYA_FORCE_INLINE void set128(const __m128 &v128) {
 				m_val128 = v128;
 			}
 #else
@@ -56,14 +56,14 @@ namespace Aya {
 
 			float m_val[4];
 
-			__forceinline const __m128& get128() const {
+			AYA_FORCE_INLINE const __m128& get128() const {
 				return *((const __m128*)&m_val[0]);
 			}
 #endif
 
 #if defined(AYA_DEBUG)
 		private:
-			__forceinline void numericValid(int x) {
+			AYA_FORCE_INLINE void numericValid(int x) {
 				assert(!isnan(m_val[0]) && !isnan(m_val[1]) && !isnan(m_val[2]));
 			}
 #else
@@ -72,7 +72,7 @@ namespace Aya {
 
 		public:
 			BaseVector3() {}
-			__forceinline BaseVector3(const float &x, const float &y, const float &z) {
+			AYA_FORCE_INLINE BaseVector3(const float &x, const float &y, const float &z) {
 				m_val[0] = x;
 				m_val[1] = y;
 				m_val[2] = z;
@@ -80,47 +80,47 @@ namespace Aya {
 				numericValid(1);
 			}
 #if defined(AYA_USE_SIMD)
-			__forceinline void  *operator new(size_t i) {
+			AYA_FORCE_INLINE void  *operator new(size_t i) {
 				return _mm_malloc(i, 16);
 			}
 
-			__forceinline void operator delete(void *p) {
+			AYA_FORCE_INLINE void operator delete(void *p) {
 				_mm_free(p);
 			}
 #endif
 
 #if defined(AYA_USE_SIMD)
-			__forceinline BaseVector3(const __m128 &v128) {
+			AYA_FORCE_INLINE BaseVector3(const __m128 &v128) {
 				m_val128 = v128;
 			}
-			__forceinline BaseVector3(const BaseVector3 &rhs) {
+			AYA_FORCE_INLINE BaseVector3(const BaseVector3 &rhs) {
 				m_val128 = rhs.m_val128;
 			}
-			__forceinline BaseVector3& operator =(const BaseVector3 &rhs) {
+			AYA_FORCE_INLINE BaseVector3& operator =(const BaseVector3 &rhs) {
 				m_val128 = rhs.m_val128;
 				return *this;
 			}
 #endif
-			__forceinline void setValue(const float &x, const float &y, const float &z) {
+			AYA_FORCE_INLINE void setValue(const float &x, const float &y, const float &z) {
 				m_val[0] = x;
 				m_val[1] = y;
 				m_val[2] = z;
 				m_val[3] = .0f;
 				numericValid(1);
 			}
-			__forceinline void setX(const float &x) { m_val[0] = x; numericValid(1); }
-			__forceinline void setY(const float &y) { m_val[1] = y; numericValid(1); }
-			__forceinline void setZ(const float &z) { m_val[2] = z; numericValid(1); }
-			__forceinline void setW(const float &w) { m_val[3] = w; numericValid(1); }
-			__forceinline const float& getX() const { return m_val[0]; }
-			__forceinline const float& getY() const { return m_val[1]; }
-			__forceinline const float& getZ() const { return m_val[2]; }
-			__forceinline const float& x() const { return m_val[0]; }
-			__forceinline const float& y() const { return m_val[1]; }
-			__forceinline const float& z() const { return m_val[2]; }
-			__forceinline const float& w() const { return m_val[3]; }
+			AYA_FORCE_INLINE void setX(const float &x) { m_val[0] = x; numericValid(1); }
+			AYA_FORCE_INLINE void setY(const float &y) { m_val[1] = y; numericValid(1); }
+			AYA_FORCE_INLINE void setZ(const float &z) { m_val[2] = z; numericValid(1); }
+			AYA_FORCE_INLINE void setW(const float &w) { m_val[3] = w; numericValid(1); }
+			AYA_FORCE_INLINE const float& getX() const { return m_val[0]; }
+			AYA_FORCE_INLINE const float& getY() const { return m_val[1]; }
+			AYA_FORCE_INLINE const float& getZ() const { return m_val[2]; }
+			AYA_FORCE_INLINE const float& x() const { return m_val[0]; }
+			AYA_FORCE_INLINE const float& y() const { return m_val[1]; }
+			AYA_FORCE_INLINE const float& z() const { return m_val[2]; }
+			AYA_FORCE_INLINE const float& w() const { return m_val[3]; }
 
-			__forceinline bool operator == (const BaseVector3 &v) const {
+			AYA_FORCE_INLINE bool operator == (const BaseVector3 &v) const {
 #if defined(AYA_USE_SIMD)
 				return (0xf == _mm_movemask_ps((__m128)_mm_cmpeq_ps(m_val128, v.m_val128)));
 #else
@@ -130,11 +130,11 @@ namespace Aya {
 					(m_val[3] == v.m_val[3]));
 #endif
 			}
-			__forceinline bool operator != (const BaseVector3 &v) const {
+			AYA_FORCE_INLINE bool operator != (const BaseVector3 &v) const {
 				return !((*this) == v);
 			}
 
-			__forceinline void setMax(const BaseVector3 &v) {
+			AYA_FORCE_INLINE void setMax(const BaseVector3 &v) {
 #if defined(AYA_USE_SIMD)
 				m_val128 = _mm_max_ps(m_val128, v.m_val128);
 #else
@@ -143,7 +143,7 @@ namespace Aya {
 				SetMax(m_val[2], v.m_val[2]);
 #endif
 			}
-			__forceinline void setMin(const BaseVector3 &v) {
+			AYA_FORCE_INLINE void setMin(const BaseVector3 &v) {
 #if defined(AYA_USE_SIMD)
 				m_val128 = _mm_min_ps(m_val128, v.m_val128);
 #else
@@ -152,7 +152,7 @@ namespace Aya {
 				SetMin(m_val[2], v.m_val[2]);
 #endif
 			}
-			__forceinline void setZero() {
+			AYA_FORCE_INLINE void setZero() {
 #if defined(AYA_USE_SIMD)
 				m_val128 = _mm_xor_ps(m_val128, m_val128);
 #else
@@ -163,14 +163,14 @@ namespace Aya {
 #endif
 			}
 
-			__forceinline bool isZero() const {
+			AYA_FORCE_INLINE bool isZero() const {
 				return (m_val[0] == 0.f && m_val[1] == 0.f && m_val[2] == 0.f);
 			}
-			__forceinline bool fuzzyZero() const {
+			AYA_FORCE_INLINE bool fuzzyZero() const {
 				return length2() < AYA_EPSILON * AYA_EPSILON;
 			}
 
-			__forceinline BaseVector3 operator + (const BaseVector3 &v) const {
+			AYA_FORCE_INLINE BaseVector3 operator + (const BaseVector3 &v) const {
 #if defined(AYA_USE_SIMD)
 				return BaseVector3(_mm_add_ps(m_val128, v.m_val128));
 #else
@@ -179,7 +179,7 @@ namespace Aya {
 					m_val[2] + v.m_val[2]);
 #endif
 			}
-			__forceinline BaseVector3 & operator += (const BaseVector3 &v) {
+			AYA_FORCE_INLINE BaseVector3 & operator += (const BaseVector3 &v) {
 #if defined(AYA_USE_SIMD)
 				m_val128 = _mm_add_ps(m_val128, v.m_val128);
 #else
@@ -190,7 +190,7 @@ namespace Aya {
 				numericValid(1);
 				return *this;
 			}
-			__forceinline BaseVector3 operator - (const BaseVector3 &v) const {
+			AYA_FORCE_INLINE BaseVector3 operator - (const BaseVector3 &v) const {
 #if defined(AYA_USE_SIMD)
 				return BaseVector3(_mm_sub_ps(m_val128, v.m_val128));
 #else
@@ -199,7 +199,7 @@ namespace Aya {
 					m_val[2] - v.m_val[2]);
 #endif
 			}
-			__forceinline BaseVector3 & operator -= (const BaseVector3 &v) {
+			AYA_FORCE_INLINE BaseVector3 & operator -= (const BaseVector3 &v) {
 #if defined(AYA_USE_SIMD)
 				m_val128 = _mm_sub_ps(m_val128, v.m_val128);
 #else
@@ -210,7 +210,7 @@ namespace Aya {
 				numericValid(1);
 				return *this;
 			}
-			__forceinline BaseVector3 operator- () const {
+			AYA_FORCE_INLINE BaseVector3 operator- () const {
 #if defined(AYA_USE_SIMD)
 				__m128 r = _mm_xor_ps(m_val128, vMzeroMask);
 				return BaseVector3(_mm_and_ps(r, vFFF0fMask));
@@ -218,7 +218,7 @@ namespace Aya {
 				return BaseVector3(-m_val[0], -m_val[1], -m_val[2]);
 #endif
 			}
-			__forceinline BaseVector3 operator * (const float &s) const {
+			AYA_FORCE_INLINE BaseVector3 operator * (const float &s) const {
 #if defined(AYA_USE_SIMD)
 				__m128 vs = _mm_load_ss(&s);
 				vs = _mm_pshufd_ps(vs, 0x80);
@@ -230,10 +230,10 @@ namespace Aya {
 #endif
 
 			}
-			__forceinline friend BaseVector3 operator * (const float &s, const BaseVector3 &v) {
+			AYA_FORCE_INLINE friend BaseVector3 operator * (const float &s, const BaseVector3 &v) {
 				return v * s;
 			}
-			__forceinline BaseVector3 & operator *= (const float &s) {
+			AYA_FORCE_INLINE BaseVector3 & operator *= (const float &s) {
 #if defined(AYA_USE_SIMD)
 				__m128 vs = _mm_load_ss(&s);
 				vs = _mm_pshufd_ps(vs, 0x80);
@@ -246,13 +246,13 @@ namespace Aya {
 				numericValid(1);
 				return *this;
 			}
-			__forceinline BaseVector3 operator / (const float &s) const {
+			AYA_FORCE_INLINE BaseVector3 operator / (const float &s) const {
 				assert(s != 0.f);
 				BaseVector3 ret;
 				ret = (*this) * (1.f / s);
 				return ret;
 			}
-			__forceinline BaseVector3 & operator /= (const float &s) {
+			AYA_FORCE_INLINE BaseVector3 & operator /= (const float &s) {
 				assert(s != 0.f);
 				return *this *= (1.f / s);
 			}
@@ -266,7 +266,7 @@ namespace Aya {
 				return m_val[p];
 			}
 
-			__forceinline float dot(const BaseVector3 &v) const {
+			AYA_FORCE_INLINE float dot(const BaseVector3 &v) const {
 #if defined(AYA_USE_SIMD)
 				__m128 vd = _mm_mul_ps(m_val128, v.m_val128);
 				__m128 z = _mm_movehl_ps(vd, vd);
@@ -282,25 +282,25 @@ namespace Aya {
 #endif
 			}
 
-			__forceinline float length2() const {
+			AYA_FORCE_INLINE float length2() const {
 				return dot(*this);
 			}
-			__forceinline float length() const {
+			AYA_FORCE_INLINE float length() const {
 				return Sqrt(length2());
 			}
-			__forceinline float safeLength() const {
+			AYA_FORCE_INLINE float safeLength() const {
 				float d = length2();
 				if (d > AYA_EPSILON) return Sqrt(d);
 				return 0.f;
 			}
-			__forceinline float distance2(const BaseVector3 &p) const {
+			AYA_FORCE_INLINE float distance2(const BaseVector3 &p) const {
 				return (p - (*this)).length2();
 			}
-			__forceinline float distance(const BaseVector3 &p) const {
+			AYA_FORCE_INLINE float distance(const BaseVector3 &p) const {
 				return (p - (*this)).length();
 			}
 
-			__forceinline BaseVector3 normalize() const {
+			AYA_FORCE_INLINE BaseVector3 normalize() const {
 				BaseVector3 ret;
 #if defined(AYA_USE_SIMD)
 				__m128 vd = _mm_mul_ps(m_val128, m_val128);
@@ -325,7 +325,7 @@ namespace Aya {
 				return *this / length();
 #endif
 			}
-			__forceinline void normalized() {
+			AYA_FORCE_INLINE void normalized() {
 #if defined(AYA_USE_SIMD)
 				__m128 vd = _mm_mul_ps(m_val128, m_val128);
 				__m128 z = _mm_movehl_ps(vd, vd);
@@ -348,7 +348,7 @@ namespace Aya {
 #endif
 			}
 
-			__forceinline BaseVector3 cross(const BaseVector3 &v) const {
+			AYA_FORCE_INLINE BaseVector3 cross(const BaseVector3 &v) const {
 #if defined(AYA_USE_SIMD)
 				__m128 T, V;
 
@@ -369,7 +369,7 @@ namespace Aya {
 #endif
 			}
 
-			__forceinline BaseVector3 dot3(const BaseVector3 &v0, const BaseVector3 &v1, const BaseVector3 &v2) const {
+			AYA_FORCE_INLINE BaseVector3 dot3(const BaseVector3 &v0, const BaseVector3 &v1, const BaseVector3 &v2) const {
 #if defined(AYA_USE_SIMD)
 				__m128 a0 = _mm_mul_ps(v0.m_val128, m_val128);
 				__m128 a1 = _mm_mul_ps(v1.m_val128, m_val128);
@@ -386,12 +386,12 @@ namespace Aya {
 #endif
 			}
 
-			static __forceinline BaseVector3 sphericalDirection(float sin_theta, float cos_theta, float phi) {
+			static AYA_FORCE_INLINE BaseVector3 sphericalDirection(float sin_theta, float cos_theta, float phi) {
 				return BaseVector3(sin_theta * std::cosf(phi),
 					cos_theta,
 					sin_theta * std::sinf(phi));
 			}
-			static __forceinline BaseVector3 sphericalDirection(float sin_theta, float cos_theta,
+			static AYA_FORCE_INLINE BaseVector3 sphericalDirection(float sin_theta, float cos_theta,
 				float phi, const BaseVector3& vX,
 				const BaseVector3& vY, const BaseVector3& vZ)
 			{
@@ -399,14 +399,14 @@ namespace Aya {
 					cos_theta * vY + 
 					sin_theta * std::sinf(phi) * vZ;
 			}
-			static __forceinline float sphericalTheta(const BaseVector3& v) {
+			static AYA_FORCE_INLINE float sphericalTheta(const BaseVector3& v) {
 				return std::acosf(Clamp(v.y(), -1.f, 1.f));
 			}
-			static __forceinline float sphericalPhi(const BaseVector3& v) {
+			static AYA_FORCE_INLINE float sphericalPhi(const BaseVector3& v) {
 				float p = std::atan2f(v.z(), v.x());
 				return (p < 0.f) ? p + float(M_PI) * 2.f : p;
 			}
-			static __forceinline void coordinateSystem(const BaseVector3 &x, BaseVector3 *y, BaseVector3 *z) {
+			static AYA_FORCE_INLINE void coordinateSystem(const BaseVector3 &x, BaseVector3 *y, BaseVector3 *z) {
 				if (Abs(x.x()) > Abs(x.y())) {
 					float inv = 1.f / Sqrt(x.x() * x.x() + x.z() * x.z());
 					*y = BaseVector3(-x.z() * inv, 0.f, x.x() * inv);
@@ -418,7 +418,7 @@ namespace Aya {
 				*z = x.cross(*y);
 			}
 
-			friend __forceinline std::ostream &operator<<(std::ostream &os, const BaseVector3 &v) {
+			friend inline std::ostream &operator<<(std::ostream &os, const BaseVector3 &v) {
 				os << "[ " << AYA_SCALAR_OUTPUT(v.m_val[0])
 					<< ", " << AYA_SCALAR_OUTPUT(v.m_val[1])
 					<< ", " << AYA_SCALAR_OUTPUT(v.m_val[2])
@@ -433,40 +433,40 @@ namespace Aya {
 		class Vector3 : public BaseVector3 {
 		public:
 			Vector3() {}
-			__forceinline Vector3(const float &x, const float &y, const float &z) {
+			AYA_FORCE_INLINE Vector3(const float &x, const float &y, const float &z) {
 				m_val[0] = x;
 				m_val[1] = y;
 				m_val[2] = z;
 				m_val[3] = .0f;
 			}
 #if defined(AYA_USE_SIMD)
-			__forceinline void  *operator new(size_t i) {
+			AYA_FORCE_INLINE void  *operator new(size_t i) {
 				return _mm_malloc(i, 16);
 			}
 
-			__forceinline void operator delete(void *p) {
+			AYA_FORCE_INLINE void operator delete(void *p) {
 				_mm_free(p);
 			}
 #endif
 
 #if defined(AYA_USE_SIMD)
-			__forceinline Vector3(const __m128 &v128) {
+			AYA_FORCE_INLINE Vector3(const __m128 &v128) {
 				m_val128 = v128;
 			}
-			__forceinline Vector3(const BaseVector3 &rhs) {
+			AYA_FORCE_INLINE Vector3(const BaseVector3 &rhs) {
 				m_val128 = rhs.m_val128;
 			}
-			__forceinline Vector3& operator =(const BaseVector3 &rhs) {
+			AYA_FORCE_INLINE Vector3& operator =(const BaseVector3 &rhs) {
 				m_val128 = rhs.m_val128;
 				return *this;
 			}
 #else
-			__forceinline Vector3(const BaseVector3 &rhs) {
+			AYA_FORCE_INLINE Vector3(const BaseVector3 &rhs) {
 				m_val[0] = rhs.m_val[0];
 				m_val[1] = rhs.m_val[1];
 				m_val[2] = rhs.m_val[2];
 			}
-			__forceinline Vector3& operator =(const BaseVector3 &rhs) {
+			AYA_FORCE_INLINE Vector3& operator =(const BaseVector3 &rhs) {
 				m_val[0] = rhs.m_val[0];
 				m_val[1] = rhs.m_val[1];
 				m_val[2] = rhs.m_val[2];
@@ -481,40 +481,40 @@ namespace Aya {
 		class Point3 : public BaseVector3 {
 		public:
 			Point3() {}
-			__forceinline Point3(const float &x, const float &y, const float &z) {
+			AYA_FORCE_INLINE Point3(const float &x, const float &y, const float &z) {
 				m_val[0] = x;
 				m_val[1] = y;
 				m_val[2] = z;
 				m_val[3] = .0f;
 			}
 #if defined(AYA_USE_SIMD)
-			__forceinline void  *operator new(size_t i) {
+			AYA_FORCE_INLINE void  *operator new(size_t i) {
 				return _mm_malloc(i, 16);
 			}
 
-			__forceinline void operator delete(void *p) {
+			AYA_FORCE_INLINE void operator delete(void *p) {
 				_mm_free(p);
 			}
 #endif
 
 #if defined(AYA_USE_SIMD)
-			__forceinline Point3(const __m128 &v128) {
+			AYA_FORCE_INLINE Point3(const __m128 &v128) {
 				m_val128 = v128;
 			}
-			__forceinline Point3(const BaseVector3 &rhs) {
+			AYA_FORCE_INLINE Point3(const BaseVector3 &rhs) {
 				m_val128 = rhs.m_val128;
 			}
-			__forceinline Point3& operator =(const BaseVector3 &rhs) {
+			AYA_FORCE_INLINE Point3& operator =(const BaseVector3 &rhs) {
 				m_val128 = rhs.m_val128;
 				return *this;
 			}
 #else
-			__forceinline Point3(const BaseVector3 &rhs) {
+			AYA_FORCE_INLINE Point3(const BaseVector3 &rhs) {
 				m_val[0] = rhs.m_val[0];
 				m_val[1] = rhs.m_val[1];
 				m_val[2] = rhs.m_val[2];
 			}
-			__forceinline Point3& operator =(const BaseVector3 &rhs) {
+			AYA_FORCE_INLINE Point3& operator =(const BaseVector3 &rhs) {
 				m_val[0] = rhs.m_val[0];
 				m_val[1] = rhs.m_val[1];
 				m_val[2] = rhs.m_val[2];
@@ -529,40 +529,40 @@ namespace Aya {
 		class Normal3 : public BaseVector3 {
 		public:
 			Normal3() {}
-			__forceinline Normal3(const float &x, const float &y, const float &z) {
+			AYA_FORCE_INLINE Normal3(const float &x, const float &y, const float &z) {
 				m_val[0] = x;
 				m_val[1] = y;
 				m_val[2] = z;
 				m_val[3] = .0f;
 			}
 #if defined(AYA_USE_SIMD)
-			__forceinline void  *operator new(size_t i) {
+			AYA_FORCE_INLINE void  *operator new(size_t i) {
 				return _mm_malloc(i, 16);
 			}
 
-			__forceinline void operator delete(void *p) {
+			AYA_FORCE_INLINE void operator delete(void *p) {
 				_mm_free(p);
 			}
 #endif
 
 #if defined(AYA_USE_SIMD)
-			__forceinline Normal3(const __m128 &v128) {
+			AYA_FORCE_INLINE Normal3(const __m128 &v128) {
 				m_val128 = v128;
 			}
-			__forceinline Normal3(const BaseVector3 &rhs) {
+			AYA_FORCE_INLINE Normal3(const BaseVector3 &rhs) {
 				m_val128 = rhs.m_val128;
 			}
-			__forceinline Normal3& operator =(const BaseVector3 &rhs) {
+			AYA_FORCE_INLINE Normal3& operator =(const BaseVector3 &rhs) {
 				m_val128 = rhs.m_val128;
 				return *this;
 			}
 #else
-			__forceinline Normal3(const BaseVector3 &rhs) {
+			AYA_FORCE_INLINE Normal3(const BaseVector3 &rhs) {
 				m_val[0] = rhs.m_val[0];
 				m_val[1] = rhs.m_val[1];
 				m_val[2] = rhs.m_val[2];
 			}
-			__forceinline Normal3& operator =(const BaseVector3 &rhs) {
+			AYA_FORCE_INLINE Normal3& operator =(const BaseVector3 &rhs) {
 				m_val[0] = rhs.m_val[0];
 				m_val[1] = rhs.m_val[1];
 				m_val[2] = rhs.m_val[2];

@@ -138,23 +138,23 @@ namespace Aya {
 	};
 
 	template <typename T, typename... TArgs>
-	__forceinline SharedPtr<T> MakeShared(TArgs&&... Args)
+	AYA_FORCE_INLINE SharedPtr<T> MakeShared(TArgs&&... Args)
 	{
 		return SharedPtr<T>(new T(std::forward<TArgs>(Args)...));
 	}
 	template <typename T, typename... TArgs>
-	__forceinline UniquePtr<T> MakeUnique(TArgs&&... Args)
+	AYA_FORCE_INLINE UniquePtr<T> MakeUnique(TArgs&&... Args)
 	{
 		return UniquePtr<T>(new T(std::forward<TArgs>(Args)...));
 	}
 
-	template<typename T> __forceinline T *AllocAligned(uint32_t count) {
+	template<typename T> AYA_FORCE_INLINE T *AllocAligned(uint32_t count) {
 		return (T *)_aligned_malloc(count * sizeof(T), AYA_L1_CACHE_LINE_SIZE);
 	}
 	void FreeAligned(void *ptr);
 
 	template<class T>
-	static __forceinline void SafeDelete(T*& ptr) {
+	static AYA_FORCE_INLINE void SafeDelete(T*& ptr) {
 		if (ptr != NULL) {
 			delete ptr;
 			ptr = NULL;
@@ -162,7 +162,7 @@ namespace Aya {
 	}
 
 	template<class T>
-	static __forceinline void SafeDeleteArray(T*& ptr) {
+	static AYA_FORCE_INLINE void SafeDeleteArray(T*& ptr) {
 		if (ptr != NULL) {
 			delete[] ptr;
 			ptr = NULL;
@@ -206,28 +206,28 @@ namespace Aya {
 				m_data[i].~T();
 			FreeAligned(m_data);
 		}
-		__forceinline uint32_t linearSize() const {
+		AYA_FORCE_INLINE uint32_t linearSize() const {
 			return v_res * u_res;
 		}
-		__forceinline T &operator()(uint32_t u, uint32_t v) {
+		AYA_FORCE_INLINE T &operator()(uint32_t u, uint32_t v) {
 			return m_data[u * v_res + v];
 		}
-		__forceinline const T &operator()(uint32_t u, uint32_t v) const {
+		AYA_FORCE_INLINE const T &operator()(uint32_t u, uint32_t v) const {
 			return m_data[u * v_res + v];
 		}
-		__forceinline const T* data() const {
+		AYA_FORCE_INLINE const T* data() const {
 			return m_data;
 		}
-		__forceinline int x() const {
+		AYA_FORCE_INLINE int x() const {
 			return u_res;
 		}
-		__forceinline int y() const {
+		AYA_FORCE_INLINE int y() const {
 			return v_res;
 		}
-		__forceinline int u() const {
+		AYA_FORCE_INLINE int u() const {
 			return u_res;
 		}
-		__forceinline int v() const {
+		AYA_FORCE_INLINE int v() const {
 			return v_res;
 		}
 	};

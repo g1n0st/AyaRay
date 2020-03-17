@@ -38,39 +38,39 @@ namespace Aya {
 		void postIntersect(const Ray &ray, SurfaceIntersection *intersection) const;
 
 		// Data Interface
-		__forceinline const Point3& getPositionAt(uint32_t idx) const {
+		inline const Point3& getPositionAt(uint32_t idx) const {
 			assert(idx < 3 * m_tris);
 			assert(mp_vertices);
 			assert(mp_vert_idx);
 			return mp_vertices[mp_vert_idx[idx]].p;
 		}
-		__forceinline const Normal3& getNormalAt(uint32_t idx) const {
+		inline const Normal3& getNormalAt(uint32_t idx) const {
 			assert(idx < 3 * m_tris);
 			assert(mp_vertices);
 			assert(mp_vert_idx);
 			return mp_vertices[mp_vert_idx[idx]].n;
 		}
-		__forceinline const Vector2f& getUVAt(uint32_t idx) const {
+		inline const Vector2f& getUVAt(uint32_t idx) const {
 			assert(idx < 3 * m_tris);
 			assert(mp_vertices);
 			assert(mp_vert_idx);
 			return mp_vertices[mp_vert_idx[idx]].uv;
 		}
-		__forceinline const uint32_t *getIndexAt(uint32_t idx) const {
+		inline const uint32_t *getIndexAt(uint32_t idx) const {
 			assert(idx < 3 * m_tris);
 			assert(mp_vertices);
 			assert(mp_vert_idx);
 			return &mp_vert_idx[3 * idx];
 		}
 
-		__forceinline const uint32_t* getIndexBuffer() const {
+		inline const uint32_t* getIndexBuffer() const {
 			return mp_vert_idx;
 		}
 
-		__forceinline uint32_t getTriangleCount() const {
+		inline uint32_t getTriangleCount() const {
 			return m_tris;
 		}
-		__forceinline uint32_t getVertexCount() const {
+		inline uint32_t getVertexCount() const {
 			return m_verts;
 		}
 	};

@@ -16,8 +16,8 @@ namespace Aya {
 				m_pmin = Point3(INFINITY, INFINITY, INFINITY);
 				m_pmax = Point3(-INFINITY, -INFINITY, -INFINITY);
 			}
-			__forceinline BBox(const Point3 &p) : m_pmin(p), m_pmax(p) {}
-			__forceinline BBox(const Point3 &p1, const Point3 &p2) {
+			AYA_FORCE_INLINE BBox(const Point3 &p) : m_pmin(p), m_pmax(p) {}
+			AYA_FORCE_INLINE BBox(const Point3 &p1, const Point3 &p2) {
 #if defined(AYA_USE_SIMD)
 				m_pmax.m_val128 = _mm_max_ps(p1.m_val128, p2.m_val128);
 				m_pmin.m_val128 = _mm_min_ps(p1.m_val128, p2.m_val128);
@@ -27,15 +27,15 @@ namespace Aya {
 #endif
 			}
 #if defined(AYA_USE_SIMD)
-			__forceinline void  *operator new(size_t i) {
+			AYA_FORCE_INLINE void  *operator new(size_t i) {
 				return _mm_malloc(i, 16);
 			}
 
-			__forceinline void operator delete(void *p) {
+			AYA_FORCE_INLINE void operator delete(void *p) {
 				_mm_free(p);
 			}
 #endif
-			__forceinline bool overlaps(const BBox &b) const {
+			AYA_FORCE_INLINE bool overlaps(const BBox &b) const {
 #if defined(AYA_USE_SIMD)
 				bool b1 = (0xf == _mm_movemask_ps((__m128)_mm_cmpeq_ps(
 					_mm_min_ps(b.m_pmax.m_val128, m_pmin.m_val128), m_pmin.m_val128)));
@@ -51,7 +51,7 @@ namespace Aya {
 				return x && y && z;
 #endif
 			}
-			__forceinline bool inside(const Point3 &p) const {
+			AYA_FORCE_INLINE bool inside(const Point3 &p) const {
 #if defined(AYA_USE_SIMD)
 				bool b1 = (0xf == _mm_movemask_ps((__m128)_mm_cmpeq_ps(
 					_mm_max_ps(p.m_val128, m_pmin.m_val128), p.m_val128)));
@@ -65,7 +65,7 @@ namespace Aya {
 					(p.z() >= m_pmin.z() && p.z() <= m_pmax.z());
 #endif
 			}
-			__forceinline void expand(const float &d) {
+			AYA_FORCE_INLINE void expand(const float &d) {
 #if defined(AYA_USE_SIMD)
 				__m128 vd = _mm_load_ss(&d);
 				vd = _mm_pshufd_ps(vd, 0x80);
@@ -77,7 +77,7 @@ namespace Aya {
 				m_pmin -= Point3(d, d, d);
 #endif
 			}
-			__forceinline BBox unity(const Point3 &p) {
+			AYA_FORCE_INLINE BBox unity(const Point3 &p) {
 #if defined(AYA_USE_SIMD)
 				m_pmax.m_val128 = _mm_max_ps(m_pmax.m_val128, p.m_val128);
 				m_pmin.m_val128 = _mm_min_ps(m_pmin.m_val128, p.m_val128);
@@ -93,7 +93,7 @@ namespace Aya {
 
 				return *this;
 			}
-			__forceinline BBox unity(const BBox &b) {
+			AYA_FORCE_INLINE BBox unity(const BBox &b) {
 #if defined(AYA_USE_SIMD)
 				m_pmax.m_val128 = _mm_max_ps(m_pmax.m_val128, b.m_pmax.m_val128);
 				m_pmin.m_val128 = _mm_min_ps(m_pmin.m_val128, b.m_pmin.m_val128);
@@ -108,7 +108,7 @@ namespace Aya {
 #endif
 				return *this;
 			}
-			__forceinline bool intersect(const Ray &r) const {
+			AYA_FORCE_INLINE bool intersect(const Ray &r) const {
 				float t0, t1;
 				float tmin = 0.f, tmax = r.m_maxt;
 				for (int a = 0; a < 3; a++) {
@@ -124,12 +124,12 @@ namespace Aya {
 				}
 				return true;
 			}
-			__forceinline void boundingSphere(Point3 *center, float *radius) {
+			AYA_FORCE_INLINE void boundingSphere(Point3 *center, float *radius) {
 				*center = (m_pmin + m_pmax) * .5f;
 				*radius = inside(*center) ? center->distance(m_pmax) : 0.f;
 			}
 
-			friend __forceinline std::ostream &operator<<(std::ostream &os, const BBox &b) {
+			friend inline std::ostream &operator<<(std::ostream &os, const BBox &b) {
 				os << "[pmin = " << b.m_pmin << ", pmax = " << b.m_pmax << "]";
 				return os;
 			}

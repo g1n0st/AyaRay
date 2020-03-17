@@ -32,7 +32,7 @@ namespace Aya {
 			n = e1.cross(e2);
 		}
 
-		__forceinline bool intersect(const Ray &ray, Intersection *isect) const {
+		AYA_FORCE_INLINE bool intersect(const Ray &ray, Intersection *isect) const {
 			Point3 ori = ray.m_ori;
 			Vector3 dir = ray.m_dir;
 			Vector3 C = v0 - ori;
@@ -67,7 +67,7 @@ namespace Aya {
 			
 			return true;
 		}
-		__forceinline bool occluded(const Ray &ray) const {
+		AYA_FORCE_INLINE bool occluded(const Ray &ray) const {
 			Point3 ori = ray.m_ori;
 			Vector3 dir = ray.m_dir;
 			Vector3 C = v0 - ori;

@@ -28,7 +28,7 @@ namespace Aya {
 			return m_ori + m_dir * t;
 		}
 
-		friend __forceinline std::ostream &operator<<(std::ostream &os, const Ray &r) {
+		friend inline std::ostream &operator<<(std::ostream &os, const Ray &r) {
 			os << "[ ori = " << r.m_ori << ", dir = " << r.m_dir << ", maxt = " << r.m_maxt
 				<< ", depth = " << r.m_depth << "]";
 			return os;
