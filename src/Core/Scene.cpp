@@ -45,17 +45,17 @@ namespace Aya {
 					it.reset(light);
 				}
 			}
-			if (!found_light)
-				m_lights.push_back(UniquePtr<Light>(light));
 
 			mp_env_light = light;
+			if (found_light) return;
 		}
 		else if (light->isAreaLight()) {
-			m_primitves.emplace_back(UniquePtr<Primitive>(((AreaLight*)light)->getPrimitive()));
-			m_lights.emplace_back(UniquePtr<Light>(light));
+			m_primitves.resize(m_primitves.size() + 1);
+			m_primitves[m_primitves.size() - 1] = UniquePtr<Primitive>(((AreaLight*)light)->getPrimitive());
 		}
-		else
-			m_lights.emplace_back(UniquePtr<Light>(light));
+		
+		m_lights.resize(m_lights.size() + 1);
+		m_lights[m_lights.size() - 1] = UniquePtr<Light>(light);
 	}
 
 	void Scene::initAccelerator() {
