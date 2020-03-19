@@ -1,5 +1,5 @@
-#ifndef AYA_CORE_VECTOR3_H
-#define AYA_CORE_VECTOR3_H
+#ifndef AYA_MATH_VECTOR3_H
+#define AYA_MATH_VECTOR3_H
 
 #include "MathUtility.h"
 
@@ -28,16 +28,27 @@
 #define vAbsMask (_mm_set_epi32(0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF))
 
 #define vxyzMaskf vFFF0fMask
+#define vxyzwMaskf vFFFFfMask
 #define vAbsfMask _mm_castsi128_ps(vAbsMask)
 #define vMzeroMask (_mm_set_ps(-0.0f, -0.0f, -0.0f, -0.0f))
 
+#define vMPPP (_mm_set_ps(+0.0f, +0.0f, +0.0f, -0.0f))
+#define v1000 (_mm_set_ps(0.0f, 0.0f, 0.0f, 1.0f))
+#define v0100 (_mm_set_ps(0.0f, 0.0f, 1.0f, 0.0f))
+#define v0010 (_mm_set_ps(0.0f, 1.0f, 0.0f, 0.0f))
+#define v0001 (_mm_set_ps(1.0f, 0.0f, 0.0f, 0.0f))
+
+#define _mm_swizzle_mask(_a, _mask) _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(_a), _mask))
+#define _mm_swizzle(_a, x, y, z, w) _mm_swizzle_mask(_a, __MM_SHUFFLE(x, y, z, w))
+#define _mm_swizzle1(_a, x) _mm_swizzle_mask(_a, __MM_SHUFFLE(x, x, x, x))
+#define _mm_shuffle2(_a, _b, x, y, z, w)    _mm_shuffle_ps(_a, _b, __MM_SHUFFLE(x, y, z, w))
 #endif
 
 namespace Aya {
 #if defined(AYA_USE_SIMD)
 	__declspec(align(16))
 #endif
-		class BaseVector3 {
+		class QuadWord {
 #if defined(AYA_USE_SIMD)
 		public:
 			union {
@@ -61,6 +72,73 @@ namespace Aya {
 			}
 #endif
 
+		public:
+			QuadWord() {}
+			AYA_FORCE_INLINE QuadWord(const float &x, const float &y, const float &z, const float &w) {
+				m_val[0] = x;
+				m_val[1] = y;
+				m_val[2] = z;
+				m_val[3] = w;
+			}
+
+#if defined(AYA_USE_SIMD)
+			AYA_FORCE_INLINE void  *operator new(size_t i) {
+				return _mm_malloc(i, 16);
+			}
+
+			AYA_FORCE_INLINE void operator delete(void *p) {
+				_mm_free(p);
+			}
+#endif
+
+#if defined(AYA_USE_SIMD)
+			AYA_FORCE_INLINE QuadWord(const __m128 &v128) {
+				m_val128 = v128;
+			}
+			AYA_FORCE_INLINE QuadWord(const QuadWord &rhs) {
+				m_val128 = rhs.m_val128;
+			}
+			AYA_FORCE_INLINE QuadWord& operator = (const QuadWord &rhs) {
+				m_val128 = rhs.m_val128;
+				return *this;
+			}
+#endif
+
+			AYA_FORCE_INLINE void setX(const float &x) { m_val[0] = x; }
+			AYA_FORCE_INLINE void setY(const float &y) { m_val[1] = y; }
+			AYA_FORCE_INLINE void setZ(const float &z) { m_val[2] = z; }
+			AYA_FORCE_INLINE void setW(const float &w) { m_val[3] = w; }
+			AYA_FORCE_INLINE const float& getX() const { return m_val[0]; }
+			AYA_FORCE_INLINE const float& getY() const { return m_val[1]; }
+			AYA_FORCE_INLINE const float& getZ() const { return m_val[2]; }
+			AYA_FORCE_INLINE const float& x() const { return m_val[0]; }
+			AYA_FORCE_INLINE const float& y() const { return m_val[1]; }
+			AYA_FORCE_INLINE const float& z() const { return m_val[2]; }
+			AYA_FORCE_INLINE const float& w() const { return m_val[3]; }
+
+			AYA_FORCE_INLINE float operator [](const int &p) const {
+				assert(p >= 0 && p <= 3);
+				return m_val[p];
+			}
+			AYA_FORCE_INLINE float &operator [](const int &p) {
+				assert(p >= 0 && p <= 3);
+				return m_val[p];
+			}
+
+			friend inline std::ostream &operator<<(std::ostream &os, const QuadWord &v) {
+				os << "[ " << AYA_SCALAR_OUTPUT(v.m_val[0])
+					<< ", " << AYA_SCALAR_OUTPUT(v.m_val[1])
+					<< ", " << AYA_SCALAR_OUTPUT(v.m_val[2])
+					<< ", " << AYA_SCALAR_OUTPUT(v.m_val[3])
+					<< " ]";
+				return os;
+			}
+	};
+
+#if defined(AYA_USE_SIMD)
+	__declspec(align(16))
+#endif
+		class BaseVector3 : public QuadWord {
 #if defined(AYA_DEBUG)
 		private:
 			AYA_FORCE_INLINE void numericValid(int x) {
@@ -79,15 +157,6 @@ namespace Aya {
 				m_val[3] = .0f;
 				numericValid(1);
 			}
-#if defined(AYA_USE_SIMD)
-			AYA_FORCE_INLINE void  *operator new(size_t i) {
-				return _mm_malloc(i, 16);
-			}
-
-			AYA_FORCE_INLINE void operator delete(void *p) {
-				_mm_free(p);
-			}
-#endif
 
 #if defined(AYA_USE_SIMD)
 			AYA_FORCE_INLINE BaseVector3(const __m128 &v128) {
@@ -96,7 +165,7 @@ namespace Aya {
 			AYA_FORCE_INLINE BaseVector3(const BaseVector3 &rhs) {
 				m_val128 = rhs.m_val128;
 			}
-			AYA_FORCE_INLINE BaseVector3& operator =(const BaseVector3 &rhs) {
+			AYA_FORCE_INLINE BaseVector3& operator = (const BaseVector3 &rhs) {
 				m_val128 = rhs.m_val128;
 				return *this;
 			}
@@ -108,17 +177,6 @@ namespace Aya {
 				m_val[3] = .0f;
 				numericValid(1);
 			}
-			AYA_FORCE_INLINE void setX(const float &x) { m_val[0] = x; numericValid(1); }
-			AYA_FORCE_INLINE void setY(const float &y) { m_val[1] = y; numericValid(1); }
-			AYA_FORCE_INLINE void setZ(const float &z) { m_val[2] = z; numericValid(1); }
-			AYA_FORCE_INLINE void setW(const float &w) { m_val[3] = w; numericValid(1); }
-			AYA_FORCE_INLINE const float& getX() const { return m_val[0]; }
-			AYA_FORCE_INLINE const float& getY() const { return m_val[1]; }
-			AYA_FORCE_INLINE const float& getZ() const { return m_val[2]; }
-			AYA_FORCE_INLINE const float& x() const { return m_val[0]; }
-			AYA_FORCE_INLINE const float& y() const { return m_val[1]; }
-			AYA_FORCE_INLINE const float& z() const { return m_val[2]; }
-			AYA_FORCE_INLINE const float& w() const { return m_val[3]; }
 
 			AYA_FORCE_INLINE bool operator == (const BaseVector3 &v) const {
 #if defined(AYA_USE_SIMD)
@@ -255,15 +313,6 @@ namespace Aya {
 			AYA_FORCE_INLINE BaseVector3 & operator /= (const float &s) {
 				assert(s != 0.f);
 				return *this *= (1.f / s);
-			}
-
-			float operator [](const int &p) const {
-				assert(p >= 0 && p <= 2);
-				return m_val[p];
-			}
-			float &operator [](const int &p) {
-				assert(p >= 0 && p <= 2);
-				return m_val[p];
 			}
 
 			AYA_FORCE_INLINE float dot(const BaseVector3 &v) const {
