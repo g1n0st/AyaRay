@@ -78,6 +78,10 @@ namespace Aya {
 		void setAreaLight(const AreaLight *light) {
 			mp_light = light;
 		}
+
+	private:
+		void setBSDF(UniquePtr<BSDF> bsdf,
+			const MediumInterface &medium_interface = MediumInterface());
 	};
 }
 

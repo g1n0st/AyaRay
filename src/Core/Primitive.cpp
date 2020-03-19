@@ -21,11 +21,12 @@ namespace Aya {
 		mp_mesh = MakeUnique<TriangleMesh>();
 		mp_mesh->loadMesh(o2w, mesh);
 
-		const auto& mtl_info = mesh->getMaterialBuff();
-		mp_BSDFs.resize(mtl_info.size());
-;		for (auto i = 0; i < mtl_info.size(); i++) {
-			auto &mtl = mtl_info[i];
-			if (bsdf.get() == nullptr) {
+		if (bsdf.get() == nullptr) {
+			const auto& mtl_info = mesh->getMaterialBuff();
+			mp_BSDFs.resize(mtl_info.size());
+
+			for (auto i = 0; i < mtl_info.size(); i++) {
+				auto &mtl = mtl_info[i];
 				if (mtl.texture_path[0]) {
 					if (mtl.bump_path[0])
 						mp_BSDFs[i] = MakeUnique<LambertianDiffuse>(mtl.texture_path, mtl.bump_path);
@@ -43,25 +44,24 @@ namespace Aya {
 					if (mtl.bump_path[0])
 						mp_BSDFs.back()->setNormalMap(mtl.bump_path);
 				}
+				m_medium_interface.emplace_back(medium_interface);
 			}
-			else
-				mp_BSDFs[i] = std::move(bsdf);
 
-			m_medium_interface.emplace_back(medium_interface);
+			mp_material_idx = new uint32_t[mesh->getTriangleCount()];
+
+			for (uint32_t i = 0; i < mesh->getTriangleCount(); i++)
+				mp_material_idx[i] = mesh->getMaterialIdx(i);
+
+			m_subset_count = mesh->getSubsetCount();
+			mp_subset_material_idx = new uint32_t[m_subset_count];
+			mp_subset_start_idx = new uint32_t[m_subset_count];
+			for (uint32_t i = 0; i < m_subset_count; i++) {
+				mp_subset_material_idx[i] = mesh->getSubsetMtlIdx(i);
+				mp_subset_start_idx[i] = mesh->getSubsetStartIdx(i);
+			}
 		}
-
-		mp_material_idx = new uint32_t[mesh->getTriangleCount()];
-		
-		for (uint32_t i = 0; i < mesh->getTriangleCount(); i++)
-			mp_material_idx[i] = mesh->getMaterialIdx(i);
-
-		m_subset_count = mesh->getSubsetCount();
-		mp_subset_material_idx = new uint32_t[m_subset_count];
-		mp_subset_start_idx = new uint32_t[m_subset_count];
-		for (uint32_t i = 0; i < m_subset_count; i++) {
-			mp_subset_material_idx[i] = mesh->getSubsetMtlIdx(i);
-			mp_subset_start_idx[i] = mesh->getSubsetStartIdx(i);
-		}
+		else
+			setBSDF(std::move(bsdf), medium_interface);
 	}
 	void Primitive::loadSphere(const Transform &o2w,
 		const float radius,
@@ -70,17 +70,7 @@ namespace Aya {
 		mp_mesh = MakeUnique<TriangleMesh>();
 		mp_mesh->loadSphere(o2w, radius);
 
-		mp_BSDFs.resize(1);
-		mp_BSDFs[0] = std::move(bsdf);
-		m_medium_interface.emplace_back(medium_interface);
-
-		mp_material_idx = new uint32_t[mp_mesh->getTriangleCount()];
-		memset(mp_material_idx, 0, sizeof(uint32_t) * mp_mesh->getTriangleCount());
-
-		m_subset_count = 1;
-		mp_subset_material_idx = new uint32_t[1];
-		mp_subset_start_idx = new uint32_t[1];
-		mp_subset_material_idx[0] = mp_subset_start_idx[0] = 0;
+		setBSDF(std::move(bsdf), medium_interface);
 	}
 	void Primitive::loadPlane(const Transform &o2w,
 		const float length,
@@ -89,6 +79,17 @@ namespace Aya {
 		mp_mesh = MakeUnique<TriangleMesh>();
 		mp_mesh->loadPlane(o2w, length);
 
+		setBSDF(std::move(bsdf), medium_interface);
+	}
+
+	void Primitive::postIntersect(const Ray &ray, SurfaceIntersection *intersection) const {
+		intersection->bsdf = mp_BSDFs[mp_material_idx[intersection->tri_id]].get();
+		// BSSRDF Part
+		intersection->arealight = mp_light;
+		intersection->m_medium_interface = m_medium_interface[mp_material_idx[intersection->tri_id]];
+		mp_mesh->postIntersect(ray, intersection);
+	}
+	void Primitive::setBSDF(UniquePtr<BSDF> bsdf, const MediumInterface &medium_interface) {
 		mp_BSDFs.resize(1);
 		mp_BSDFs[0] = std::move(bsdf);
 		m_medium_interface.emplace_back(medium_interface);
@@ -100,13 +101,5 @@ namespace Aya {
 		mp_subset_material_idx = new uint32_t[1];
 		mp_subset_start_idx = new uint32_t[1];
 		mp_subset_material_idx[0] = mp_subset_start_idx[0] = 0;
-	}
-
-	void Primitive::postIntersect(const Ray &ray, SurfaceIntersection *intersection) const {
-		intersection->bsdf = mp_BSDFs[mp_material_idx[intersection->tri_id]].get();
-		// BSSRDF Part
-		intersection->arealight = mp_light;
-		intersection->m_medium_interface = m_medium_interface[mp_material_idx[intersection->tri_id]];
-		mp_mesh->postIntersect(ray, intersection);
 	}
 }
