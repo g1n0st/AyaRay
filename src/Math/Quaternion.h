@@ -14,31 +14,7 @@ namespace Aya {
 #if defined(AYA_USE_SIMD)
 	__declspec(align(16))
 #endif
-		class Quaternion {
-#if defined(AYA_USE_SIMD)
-		public:
-
-			union {
-				float m_val[4];
-				__m128 m_val128;
-			};
-
-			AYA_FORCE_INLINE __m128 get128() const {
-				return m_val128;
-			}
-			AYA_FORCE_INLINE void set128(const __m128 &v128) {
-				m_val128 = v128;
-			}
-#else
-		public:
-
-			float m_val[4];
-
-			AYA_FORCE_INLINE const __m128& get128() const {
-				return *((const __m128*)&m_val[0]);
-			}
-#endif
-
+		class Quaternion : public QuadWord {
 #if defined(AYA_DEBUG)
 		private:
 			AYA_FORCE_INLINE void numericValid(int x) {
@@ -98,19 +74,6 @@ namespace Aya {
 				m_val[3] = w;
 				numericValid(1);
 			}
-
-			AYA_FORCE_INLINE void setX(const float &x) { m_val[0] = x; numericValid(1); }
-			AYA_FORCE_INLINE void setY(const float &y) { m_val[1] = y; numericValid(1); }
-			AYA_FORCE_INLINE void setZ(const float &z) { m_val[2] = z; numericValid(1); }
-			AYA_FORCE_INLINE void setW(const float &w) { m_val[3] = w; numericValid(1); }
-			AYA_FORCE_INLINE const float& getX() const { return m_val[0]; }
-			AYA_FORCE_INLINE const float& getY() const { return m_val[1]; }
-			AYA_FORCE_INLINE const float& getZ() const { return m_val[2]; }
-			AYA_FORCE_INLINE const float& getW() const { return m_val[3]; }
-			AYA_FORCE_INLINE const float& x() const { return m_val[0]; }
-			AYA_FORCE_INLINE const float& y() const { return m_val[1]; }
-			AYA_FORCE_INLINE const float& z() const { return m_val[2]; }
-			AYA_FORCE_INLINE const float& w() const { return m_val[3]; }
 
 			AYA_FORCE_INLINE bool operator == (const Quaternion &q) const {
 #if defined(AYA_USE_SIMD)
@@ -466,15 +429,6 @@ namespace Aya {
 			AYA_FORCE_INLINE Quaternion & operator /= (const float &s) {
 				assert(s != 0.f);
 				return *this *= (1.f / s);
-			}
-
-			float operator [](const int &p) const {
-				assert(p >= 0 && p <= 3);
-				return m_val[p];
-			}
-			float &operator [](const int &p) {
-				assert(p >= 0 && p <= 3);
-				return m_val[p];
 			}
 
 			AYA_FORCE_INLINE float dot(const Quaternion &q) const {
