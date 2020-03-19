@@ -3,13 +3,6 @@
 
 #include "Vector3.h"
 
-#if defined(AYA_USE_SIMD)
-#define vMPPP (_mm_set_ps(+0.0f, +0.0f, +0.0f, -0.0f))
-#define v1000 (_mm_set_ps(0.0f, 0.0f, 0.0f, 1.0f))
-#define v0100 (_mm_set_ps(0.0f, 0.0f, 1.0f, 0.0f))
-#define v0010 (_mm_set_ps(0.0f, 1.0f, 0.0f, 0.0f))
-#endif
-
 namespace Aya {
 #if defined(AYA_USE_SIMD)
 	__declspec(align(16))
@@ -428,9 +421,9 @@ namespace Aya {
 					_mm_and_ps(m_el[2].m_val128, vAbsfMask));
 #else
 				return Matrix3x3(
-					abs(m_el[0].x()), abs(m_el[0].y()), abs(m_el[0].z()),
-					abs(m_el[1].x()), abs(m_el[1].y()), abs(m_el[1].z()),
-					abs(m_el[2].x()), abs(m_el[2].y()), abs(m_el[2].z()));
+					Abs(m_el[0].x()), Abs(m_el[0].y()), Abs(m_el[0].z()),
+					Abs(m_el[1].x()), Abs(m_el[1].y()), Abs(m_el[1].z()),
+					Abs(m_el[2].x()), Abs(m_el[2].y()), Abs(m_el[2].z()));
 #endif
 			}
 			AYA_FORCE_INLINE Matrix3x3 adjoin() const {
