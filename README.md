@@ -1,15 +1,15 @@
-## AyaRay
+# AyaRay
 Last update: 2020/3/20
+
 g1n0st
-___
 
 **AyaRay** is a physically based cross-platform renderer  developing by [Chang Yu]( https://github.com/g1n0st ),  for the purpose of learning global illumination and Ray Tracing. AyaRay is written in modern C ++ and integrates multi-threading and SIMD at the bottom to optimize high-performance computing. The ultimate goal of AyaRay is to have a complete offline rendering procedure,  and provide the corresponding workflow for the artist.
 
 Welcome to use any part of the code or the application in any place, but it should be warned that for now the code is just a demo. And it has no enough ability in any commercial occasions.
 
-##Build
 
-___
+
+##Build
 
 Because the project is still building and need fast iteration, so it has not provide project file yet, you can include all files to build the current version.
 
@@ -22,12 +22,10 @@ Because the project is still building and need fast iteration, so it has not pro
 ## Features
 
 ### Integrators
-
 + Direct Lighting Integrator
 + Path Tracing
 
 ### Materials
-
 + Bump Map
 + Texture Map
 + BSDFs
@@ -35,12 +33,12 @@ Because the project is still building and need fast iteration, so it has not pro
 	+ Mirror (Smooth Conductor)
 	+ Glass (Smooth Dielectric)
 
-###Acceleration Structures
 
+###Acceleration Structures
 + BVH
 
-###Lights
 
+###Lights
 + Point Light
 + Area Light
 + Environmental Light
@@ -48,16 +46,13 @@ Because the project is still building and need fast iteration, so it has not pro
 + Directional Light
 
 ### Media
-
 + Homogenous
 
 ### Samplers
-
 + Independent Sampler
 + Sobol Sequence with Screen Space Index Enumeration
 
 ### Cameras
-
 + Perspective Camera
 
 ### Filters
