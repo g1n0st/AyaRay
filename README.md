@@ -7,7 +7,13 @@ g1n0st
 
 Welcome to use any part of the code or the application in any place, but it should be warned that for now the code is just a demo. And it has no enough ability in any commercial occasions.
 
+## Demos
 
+![Sphere with Bump Map](https://img-blog.csdnimg.cn/20200320203849616.bmp?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2cxbjBzdA==,size_16,color_FFFFFF,t_70#pic_center)
+
+![Alucy Obj Model With Environmental Light](https://img-blog.csdnimg.cn/20200320204048561.bmp?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2cxbjBzdA==,size_16,color_FFFFFF,t_70#pic_center)
+
+![Cornell-Box with Path Tracing](https://img-blog.csdnimg.cn/20200320203948770.bmp?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2cxbjBzdA==,size_16,color_FFFFFF,t_70#pic_center)
 
 ## Build
 
