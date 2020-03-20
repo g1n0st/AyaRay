@@ -9,7 +9,7 @@ Welcome to use any part of the code or the application in any place, but it shou
 
 
 
-##Build
+## Build
 
 Because the project is still building and need fast iteration, so it has not provide project file yet, you can include all files to build the current version.
 
@@ -34,11 +34,11 @@ Because the project is still building and need fast iteration, so it has not pro
 	+ Glass (Smooth Dielectric)
 
 
-###Acceleration Structures
+### Acceleration Structures
 + BVH
 
 
-###Lights
+### Lights
 + Point Light
 + Area Light
 + Environmental Light
