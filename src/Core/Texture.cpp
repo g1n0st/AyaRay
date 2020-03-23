@@ -202,8 +202,7 @@ namespace Aya {
 	}
 
 	template<class TRet, class TMem>
-	TRet ImageTexture2D<TRet, TMem>::anisotropicSample(const Vector2f & coord, const Vector2f diffs[2], const int max_rate) const
-	{
+	TRet ImageTexture2D<TRet, TMem>::anisotropicSample(const Vector2f & coord, const Vector2f diffs[2], const int max_rate) const {
 		float dudx = diffs[0].u;
 		float dvdx = diffs[0].v;
 		float dudy = diffs[1].u;
