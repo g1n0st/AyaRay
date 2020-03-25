@@ -1,16 +1,16 @@
 #include "Glass.h"
 
 namespace Aya {
-	Spectrum Glass::f(const Vector3 & v_out, const Vector3 & v_in, const SurfaceIntersection & intersection, ScatterType types) const {
+	Spectrum Glass::f(const Vector3 &v_out, const Vector3 &v_in, const SurfaceIntersection &intersection, ScatterType types) const {
 		return Spectrum(0.f);
 	}
-	float Glass::pdf(const Vector3 & v_out, const Vector3 & v_in, const SurfaceIntersection & intersection, ScatterType types) const {
+	float Glass::pdf(const Vector3 &v_out, const Vector3 &v_in, const SurfaceIntersection &intersection, ScatterType types) const {
 		return 0.f;
 	}
-	float Glass::evalInner(const Vector3 & v_out, const Vector3 & v_in, const SurfaceIntersection & intersection, ScatterType types) const {
+	float Glass::evalInner(const Vector3 &v_out, const Vector3 &v_in, const SurfaceIntersection &intersection, ScatterType types) const {
 		return 0.f;
 	}
-	float Glass::pdfInner(const Vector3 & v_out, const Vector3 & v_in, const SurfaceIntersection & intersection, ScatterType types) const {
+	float Glass::pdfInner(const Vector3 &v_out, const Vector3 &v_in, const SurfaceIntersection &intersection, ScatterType types) const {
 		return 0.f;
 	}
 

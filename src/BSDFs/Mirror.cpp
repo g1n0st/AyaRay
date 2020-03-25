@@ -1,16 +1,16 @@
 #include "Mirror.h"
 
 namespace Aya {
-	Spectrum Mirror::f(const Vector3 & v_out, const Vector3 & v_in, const SurfaceIntersection & intersection, ScatterType types) const {
+	Spectrum Mirror::f(const Vector3 &v_out, const Vector3 &v_in, const SurfaceIntersection &intersection, ScatterType types) const {
 		return Spectrum(0.f);
 	}
-	float Mirror::pdf(const Vector3 & v_out, const Vector3 & v_in, const SurfaceIntersection & intersection, ScatterType types) const {
+	float Mirror::pdf(const Vector3 &v_out, const Vector3 &v_in, const SurfaceIntersection &intersection, ScatterType types) const {
 		return 0.f;
 	}
-	float Mirror::evalInner(const Vector3 & v_out, const Vector3 & v_in, const SurfaceIntersection & intersection, ScatterType types) const {
+	float Mirror::evalInner(const Vector3 &v_out, const Vector3 &v_in, const SurfaceIntersection &intersection, ScatterType types) const {
 		return 0.f;
 	}
-	float Mirror::pdfInner(const Vector3 & v_out, const Vector3 & v_in, const SurfaceIntersection & intersection, ScatterType types) const {
+	float Mirror::pdfInner(const Vector3 &v_out, const Vector3 &v_in, const SurfaceIntersection &intersection, ScatterType types) const {
 		return 0.f;
 	}
 

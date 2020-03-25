@@ -1,20 +1,20 @@
 #include "BSDF.h"
 
 namespace Aya {
-	BSDF::BSDF(ScatterType t1, BSDFType t2, const Spectrum & color)
+	BSDF::BSDF(ScatterType t1, BSDFType t2, const Spectrum &color)
 		: m_scatter_type(t1), m_BSDF_type(t2), mp_texture(new ConstantTexture2D<Spectrum>(color)) {}
 	BSDF::BSDF(ScatterType t1, BSDFType t2, UniquePtr<Texture2D<Spectrum>> tex, UniquePtr<Texture2D<RGBSpectrum>> normal)
 		: m_scatter_type(t1), m_BSDF_type(t2), 
 		mp_texture(std::move(tex)), mp_normal_map(std::move(normal)) {}
-	BSDF::BSDF(ScatterType t1, BSDFType t2, const char * texture_file)
+	BSDF::BSDF(ScatterType t1, BSDFType t2, const char *texture_file)
 		: m_scatter_type(t1), m_BSDF_type(t2),
 		mp_texture(new ImageTexture2D<Spectrum, byteSpectrum>(texture_file)) {}
-	BSDF::BSDF(ScatterType t1, BSDFType t2, const char * texture_file, const char * normal_file)
+	BSDF::BSDF(ScatterType t1, BSDFType t2, const char *texture_file, const char *normal_file)
 		: m_scatter_type(t1), m_BSDF_type(t2) , 
 		mp_texture(new ImageTexture2D<Spectrum, byteSpectrum>(texture_file)), 
 		mp_normal_map(new ImageTexture2D<RGBSpectrum, byteSpectrum>(normal_file, 1.f)) {}
 
-	Spectrum BSDF::f(const Vector3 & v_out, const Vector3 & v_in, const SurfaceIntersection & intersection, ScatterType types) const {
+	Spectrum BSDF::f(const Vector3 &v_out, const Vector3 &v_in, const SurfaceIntersection &intersection, ScatterType types) const {
 		if (v_out.dot(intersection.gn) * v_in.dot(intersection.gn) > 0.f)
 			types = ScatterType(types & ~BSDF_TRANSMISSION);
 		else
@@ -29,7 +29,7 @@ namespace Aya {
 		return getValue(mp_texture.get(), intersection) * 
 			evalInner(l_out, l_in, intersection, types);
 	}
-	float BSDF::pdf(const Vector3 & v_out, const Vector3 & v_in, const SurfaceIntersection & intersection, ScatterType types) const
+	float BSDF::pdf(const Vector3 &v_out, const Vector3 &v_in, const SurfaceIntersection &intersection, ScatterType types) const
 	{
 		if (v_out.dot(intersection.gn) * v_in.dot(intersection.gn) > 0.f)
 			types = ScatterType(types & ~BSDF_TRANSMISSION);
@@ -183,7 +183,7 @@ namespace Aya {
 		return slope;
 	}
 
-	Vector3 BSDF::GGX_SampleVisibleNormal(const Vector3 &_wi, float u1, float u2, float * pdf, float alpha) {
+	Vector3 BSDF::GGX_SampleVisibleNormal(const Vector3 &_wi, float u1, float u2, float *pdf, float alpha) {
 		// Stretch wi
 		Vector3 wi = Vector3(
 			alpha * wi.x(),
