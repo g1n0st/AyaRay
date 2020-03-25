@@ -6,7 +6,7 @@
 namespace Aya {
 	class Mirror : public BSDF {
 	public:
-		Mirror(const Spectrum &color = RGBSpectrum().toSpectrum())
+		Mirror(const Spectrum &color = Spectrum())
 			: BSDF(ScatterType(BSDF_REFLECTION | BSDF_SPECULAR), BSDFType::Mirror, color) {}
 		Mirror(UniquePtr<Texture2D<Spectrum>> tex, UniquePtr<Texture2D<RGBSpectrum>> normal)
 			: BSDF(ScatterType(BSDF_REFLECTION | BSDF_SPECULAR), BSDFType::Mirror, std::move(tex), std::move(normal)) {}

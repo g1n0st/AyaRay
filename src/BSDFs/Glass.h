@@ -9,7 +9,7 @@ namespace Aya {
 		float m_etai, m_etat;
 
 	public:
-		Glass(const Spectrum &color = RGBSpectrum().toSpectrum(), float etai = 1.0f, float etat = 1.5f)
+		Glass(const Spectrum &color = Spectrum(), float etai = 1.0f, float etat = 1.5f)
 			: BSDF(ScatterType(BSDF_REFLECTION | BSDF_TRANSMISSION | BSDF_SPECULAR), BSDFType::Glass, color)
 			, m_etai(etai), m_etat(etat) {}
 		Glass(UniquePtr<Texture2D<Spectrum>> tex, UniquePtr<Texture2D<RGBSpectrum>> normal, float etai = 1.0f, float etat = 1.5f)
