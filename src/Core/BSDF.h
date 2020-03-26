@@ -120,7 +120,7 @@ namespace Aya {
 			const SurfaceIntersection &intersection, Vector3 *v_in, float* pdf, ScatterType types = BSDF_ALL, ScatterType *sample_types = nullptr) const = 0;
 
 		template<typename T>
-		AYA_FORCE_INLINE const T getValue(const Texture2D<T> *tex,
+		inline const T getValue(const Texture2D<T> *tex,
 			const SurfaceIntersection &intersection,
 			const TextureFilter filter = TextureFilter::TriLinear) const {
 			Vector2f diffs[2] = {
