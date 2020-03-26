@@ -14,10 +14,11 @@ namespace Aya {
 	void Primitive::loadMesh(const Transform &o2w,
 		const char *path,
 		const bool force_compute_normal,
+		const bool left_handed,
 		UniquePtr<BSDF> bsdf,
 		const MediumInterface &medium_interface) {
 		ObjMesh *mesh = new ObjMesh;
-		mesh->loadObj(path, force_compute_normal);
+		mesh->loadObj(path, force_compute_normal, left_handed);
 		mp_mesh = MakeUnique<TriangleMesh>();
 		mp_mesh->loadMesh(o2w, mesh);
 
