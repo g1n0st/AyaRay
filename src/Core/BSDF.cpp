@@ -29,8 +29,7 @@ namespace Aya {
 		return getValue(mp_texture.get(), intersection) * 
 			evalInner(l_out, l_in, intersection, types);
 	}
-	float BSDF::pdf(const Vector3 &v_out, const Vector3 &v_in, const SurfaceIntersection &intersection, ScatterType types) const
-	{
+	float BSDF::pdf(const Vector3 &v_out, const Vector3 &v_in, const SurfaceIntersection &intersection, ScatterType types) const {
 		if (v_out.dot(intersection.gn) * v_in.dot(intersection.gn) > 0.f)
 			types = ScatterType(types & ~BSDF_TRANSMISSION);
 		else
