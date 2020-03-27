@@ -16,11 +16,7 @@
 #define ATTRIBUTE_ALIGNED16(a) a
 #define ATTRIBUTE_ALIGNED64(a) a
 #define ATTRIBUTE_ALIGNED128(a) a
-#elif defined(_M_ARM)
-#define AYA_FORCE_INLINE inline
-#define ATTRIBUTE_ALIGNED16(a) __declspec() a
-#define ATTRIBUTE_ALIGNED64(a) __declspec() a
-#define ATTRIBUTE_ALIGNED128(a) __declspec () a
+
 #else//__MINGW32__
 //#define BT_HAS_ALIGNED_ALLOCATOR
 #pragma warning(disable : 4324) // disable padding warning
