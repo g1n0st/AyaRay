@@ -14,7 +14,11 @@
 #endif
 
 #ifdef _WIN32
+#if  defined(__GNUC__)
+#include <x86intrin.h> 
+#else
 #include <intrin.h>
+#endif
 #endif
 
 #define AYA_EPSILON FLT_EPSILON
