@@ -354,6 +354,10 @@ namespace Aya {
 					mat[1][0], mat[1][1], mat[1][2], trans[1],
 					mat[2][0], mat[2][1], mat[2][2], trans[2],
 					0, 0, 0, 1);
+				m_inv.setValue(inv[0][0], inv[0][1], inv[0][2], -trans[0],
+					inv[1][0], mat[1][1], inv[1][2], -trans[1],
+					inv[2][0], mat[2][1], inv[2][2], -trans[2],
+					0, 0, 0, 1);
 			}
 
 			AYA_FORCE_INLINE Transform(const Transform &rhs) :
@@ -370,6 +374,10 @@ namespace Aya {
 				m_mat.setValue(mat[0][0], mat[0][1], mat[0][2], trans[0],
 					mat[1][0], mat[1][1], mat[1][2], trans[1],
 					mat[2][0], mat[2][1], mat[2][2], trans[2],
+					0, 0, 0, 1);
+				m_inv.setValue(inv[0][0], inv[0][1], inv[0][2], -trans[0],
+					inv[1][0], mat[1][1], inv[1][2], -trans[1],
+					inv[2][0], mat[2][1], inv[2][2], -trans[2],
 					0, 0, 0, 1);
 
 				return *this;
