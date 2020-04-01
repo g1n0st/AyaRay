@@ -11,7 +11,7 @@
 
 #include "Accelerators\BVH.h"
 #include "Core\Scene.h"
-
+#include "Core\Camera.h"
 #include "Lights\AreaLight.h"
 #include "Lights\EnvironmentLight.h"
 #include "Lights\PointLight.h"
@@ -30,12 +30,13 @@
 
 #include "Math\Matrix4x4.h"
 
+using namespace Aya;
+using namespace std;
+
 void ayaInit() {
 	Aya::SampledSpectrum::init();
 }
 
-using namespace Aya;
-using namespace std;
 int main(void) {
 	ayaInit();
 	Transform murb = Transform().setScale(0.04f, 0.04f, 0.04f) * Transform().setEulerZYX(0, 15, 0);
@@ -100,7 +101,7 @@ int main(void) {
 
 	GaussianFilter *filter = new GaussianFilter();
 	//ProjectiveCamera *cam = new ProjectiveCamera(Point3(0, 2.5, 2.5), Vector3(0, 2.5, 0), Vector3(0, 1, 0), 40, 1, 0, 1, 0, 0);
-	ProjectiveCamera *cam = new ProjectiveCamera(Point3(-5, 0, 0), Vector3(0, 0, 0), Vector3(0, 1, 0), 40, float(testnumx) / float(testnumy), 0, 1, 0, 0);
+	Camera *cam = new Camera(Point3(-5, 0, 0), Vector3(0, 0, 0), Vector3(0, -1, 0), testnumx, testnumy);
 	//ProjectiveCamera *cam = new ProjectiveCamera(Point3(0, 0.75, 3), Vector3(0, 0.75, -1), Vector3(0, 1, 0), 40, 1, 0, 100000, 0, 0);
 
 	RandomSampler *random_sampler = new RandomSampler();
@@ -109,7 +110,7 @@ int main(void) {
 	Film *film = new Film(testnumx, testnumy, filter);
 
 	TaskSynchronizer task(testnumx, testnumy);
-	int spp = 200;
+	int spp = 500;
 	DirectLightingIntegrator *integrator = new DirectLightingIntegrator(task, spp, 5);
 	PathTracingIntegrator *pt = new PathTracingIntegrator(task, spp, 16);
 	RNG rng;
