@@ -91,7 +91,7 @@ namespace Aya {
 			u = 2.f * u - 1.f;
 			v = 2.f * v - 1.f;
 
-			if (Vector2f(scr_coord.x + u, scr_coord.v + v).length() > m_vignette_factor)
+			if (Vector2f(scr_coord.x + u, scr_coord.y + v).length() > m_vignette_factor)
 				return false;
 
 			u *= m_CoC_radius;
@@ -104,6 +104,8 @@ namespace Aya {
 		*ray = m_view_inv(*ray);
 		ray->m_mint = float(AYA_RAY_EPS);
 		ray->m_maxt = float(INFINITY - AYA_RAY_EPS);
+
+		return true;
 	}
 	bool Camera::generateRayDifferential(const CameraSample &sample, RayDifferential *ray) const {
 		Point3 cam_coord = rasterToCamera(Point3(sample.image_x, sample.image_y, 0.f));
@@ -142,6 +144,8 @@ namespace Aya {
 		*ray = m_view_inv(*ray);
 		ray->m_mint = float(AYA_RAY_EPS);
 		ray->m_maxt = float(INFINITY - AYA_RAY_EPS);
+
+		return true;
 	}
 
 	void Camera::setApertureFunc(const char *path) {
