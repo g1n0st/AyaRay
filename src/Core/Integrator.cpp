@@ -28,10 +28,11 @@ namespace Aya {
 						cam_sample.image_x += x;
 						cam_sample.image_y += y;
 
-						// When Camera built, there should to modify
-						SurfaceIntersection si;
-						RayDifferential ray = camera->getRay(cam_sample.image_x / float(height), cam_sample.image_y / float(width));
-						Spectrum L = li(ray, scene, tile_sampler.get(), rng, memory);
+						RayDifferential ray;
+						Spectrum L(0.f);
+						if (camera->generateRayDifferential(cam_sample, &ray)) {
+							L = li(ray, scene, tile_sampler.get(), rng, memory);
+						}
 
 						film->addSample(cam_sample.image_x, cam_sample.image_y, L);
 						memory.freeAll();
