@@ -5,54 +5,105 @@
 #include "../Core/Ray.h"
 #include "../Core/RNG.h"
 #include "../Core/Sampling.h"
+#include "../Core/Sampler.h"
+#include "../Math/Transform.h"
+#include "../Loaders/Bitmap.h"
 
 namespace Aya {
 	class Camera {
 	public:
-		virtual Ray getRay(const float &s, const float &t) const = 0;
-	};
+		Point3 m_pos;
+		Point3 m_target;
+		Vector3 m_up;
+		Vector3 m_dir;
 
-	class ProjectiveCamera : public Camera {
+		float m_FOV;
+		float m_ratio;
+		float m_near;
+		float m_far;
+
+		float m_CoC_radius, m_focal_plane_dist;
+		float m_image_plane_dist;
+		float m_vignette_factor;
+
+		Vector3 m_dx_cam, m_dy_cam;
+
+	protected:
+		int m_res_x, m_res_y;
+
+		Transform m_view, m_view_inv;
+		Transform m_proj;
+
+		Transform m_screen2raster, m_raster2screen;
+		Transform m_raster2camera, m_camera2raster;
+		Transform m_raster2world, m_world2raster;
+
+		UniquePtr<Distribution2D> mp_aperture;
+
 	public:
-		Point3 m_origin;
-		Vector3 m_horizontal, m_vertical, m_lower_left_corner;
-		Vector3 m_u, m_v, m_w;
-		float m_t0, m_t1;
-		float m_lens_radius;
+		Camera();
+		Camera(const Point3 &pos, const Point3 &tar, const Vector3 &up, int res_x, int res_y,
+			float FOV = 35.f, float _near = .1f, float _far = 1000.f,
+			const float blur_radius = 0.f, const float focal_dist = 0.f, const float vignette = 3.f);
 
-	private:
-		mutable RNG rng;
-
-	public:
-		ProjectiveCamera() {}
-		ProjectiveCamera(const Point3 &lookform, const Point3 &lookat, const Vector3 &vup,
-			float vfov, float aspect, float aperture, float focus_dist, float t0, float t1) {
-			m_t0 = t0;
-			m_t1 = t1;
-			m_lens_radius = aperture / 2;
-
-			float theta = vfov * (float)M_PI / 180.f;
-			float half_height = tanf(theta / 2.f);
-			float half_width = aspect * half_height;
-
-			m_origin = lookform;
-			m_w = (lookform - lookat).normalize();
-			m_u = vup.cross(m_w).normalize();
-			m_v = m_w.cross(m_u);
-
-			m_lower_left_corner = m_origin - (m_u * half_width + m_v * half_height + m_w) * focus_dist;
-			m_horizontal = m_u * half_width * focus_dist * 2;
-			m_vertical = m_v * half_height * focus_dist * 2;
+		virtual ~Camera() {
 		}
 
-		Ray getRay(const float &s, const float &t) const {
-			float dx, dy;
-			ConcentricSampleDisk(rng.drand48(), rng.drand48(), &dx, &dy);
-			Point3 rd = m_lens_radius * Point3(dx, dy, 0.f);
-			Vector3 offset = rd.x() * m_u + rd.y() * m_v;
-			float time = Lerp(rng.drand48(), m_t0, m_t1);
+		virtual void init(const Point3 &pos, const Point3 &tar, const Vector3 &up, int res_x, int res_y,
+			float FOV = 35.f, float _near = .1f, float _far = 1000.f,
+			const float blur_radius = 0.f, const float focal_dist = 0.f, const float vignette = 3.f);
+		virtual void resize(int width, int height);
 
-			return Ray(m_origin + offset, (m_lower_left_corner + s * m_horizontal + t * m_vertical - m_origin - offset).normalize());
+		bool generateRay(const CameraSample &sample, Ray *ray, const bool force_pinhole = false) const;
+		bool generateRayDifferential(const CameraSample &sample, RayDifferential *ray) const;
+
+		inline const Matrix4x4& getViewMatrix() const {
+			return m_view.m_mat;
+		}
+		inline const Matrix4x4& getViewInvMatrix() const {
+			return m_view_inv.m_mat;
+		}
+		inline const Matrix4x4& getProjMatrix() const {
+			return m_proj.m_mat;
+		}
+		inline const Matrix4x4& getRasterMatrix() const {
+			return m_screen2raster.m_mat;
+		}
+
+		template<class T> inline T worldToRaster(const T elem) const {
+			return m_world2raster(elem);
+		}
+		template<class T> inline T rasterToWorld(const T elem) const {
+			return m_raster2world(elem);
+		}
+		template<class T> inline T rasterToCamera(const T elem) const {
+			return m_raster2camera(elem);
+		}
+		template<class T> inline T cameraToRaster(const T elem) const {
+			return m_camera2raster(elem);
+		}
+
+		inline int getResolusionX() const {
+			return m_res_x;
+		}
+		inline int getResolusionY() const {
+			return m_res_y;
+		}
+		inline bool checkRaster(const Point3 &pos) const {
+			return pos.x() < float(m_res_x) && pos.x() >= 0.f
+				&& pos.y() < float(m_res_y) && pos.y() >= 0.f;
+		}
+
+		void setApertureFunc(const char *path);
+
+		float getCircleOfConfusionRadius() const {
+			return m_CoC_radius;
+		}
+		float getFocusDistance() const {
+			return m_focal_plane_dist;
+		}
+		float getImagePlaneDistance() const {
+			return m_image_plane_dist;
 		}
 	};
 }
