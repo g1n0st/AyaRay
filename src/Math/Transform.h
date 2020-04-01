@@ -601,6 +601,54 @@ namespace Aya {
 				return setEulerZYX(roll, pitch, yaw);
 			}
 
+			static Transform lookAt(const Point3 &pos, const Point3 &look, const Vector3 &up) {
+				Matrix4x4 cam2world;
+				// Initialize fourth column of viewing matrix
+				cam2world.m_el[0][3] = pos.x();
+				cam2world.m_el[1][3] = pos.y();
+				cam2world.m_el[2][3] = pos.z();
+				cam2world.m_el[3][3] = 1.f;
+
+				// Initialize first three columns of viewing matrix
+				Vector3 dir = (look - pos).normalize();
+				assert(up.normalize().cross(dir).length2() > 0.f);
+
+				Vector3 right = up.normalize().cross(dir).normalize();
+				Vector3 nup = dir.cross(right);
+
+				cam2world.m_el[0][0] = right.x();
+				cam2world.m_el[1][0] = right.y();
+				cam2world.m_el[2][0] = right.z();
+				cam2world.m_el[3][0] = 0.f;
+				cam2world.m_el[0][1] = nup.x();
+				cam2world.m_el[1][1] = nup.y();
+				cam2world.m_el[2][1] = nup.z();
+				cam2world.m_el[3][1] = 0.f;
+				cam2world.m_el[0][2] = dir.x();
+				cam2world.m_el[1][2] = dir.y();
+				cam2world.m_el[2][2] = dir.z();
+				cam2world.m_el[3][2] = 0.f;
+
+				return Transform(cam2world.inverse(), cam2world);
+			}
+			static Transform orthographic(float zNear, float zFar) {
+				return Transform().setScale(1.f, 1.f, 1.f / (zFar - zNear))
+					* Transform().setTranslate(0.f, 0.f, -zNear);
+			}
+			static Transform perspective(float fFov, float fRatio, float fNear, float fFar) {
+				// Perform projective divide for perspective projection
+				Matrix4x4 persp(1, 0, 0, 0,
+								0, 1, 0, 0,
+								0, 0, fFar / (fFar - fNear), -fFar * fNear / (fFar - fNear),
+								0, 0, 1, 0);
+				
+				// Scale canonical perspective view to specified field of vie
+				float invTanAng = 1.f / std::tanf(Radian(fFov) / 2.f);
+				return Transform().setScale(invTanAng / fRatio, invTanAng, 1.f)
+					* Transform(persp);
+			}
+
+
 			AYA_FORCE_INLINE Vector3 operator() (const Vector3 &v) const {
 				QuadWord r = m_mat * QuadWord(v.x(), v.y(), v.z(), 0.f);
 				return Vector3(r.x(), r.y(), r.z());
