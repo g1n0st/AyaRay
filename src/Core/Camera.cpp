@@ -97,7 +97,7 @@ namespace Aya {
 			u *= m_CoC_radius;
 			v *= m_CoC_radius;
 
-			ray->m_ori = Vector3(u, v, 0.f);
+			ray->m_ori = Point3(u, v, 0.f);
 			ray->m_dir = (focal - ray->m_ori).normalize();
 		}
 
@@ -133,7 +133,7 @@ namespace Aya {
 			u *= m_CoC_radius;
 			v *= m_CoC_radius;
 
-			ray->m_ori = Vector3(u, v, 0.f);
+			ray->m_ori = Point3(u, v, 0.f);
 			ray->m_dir = (focal - ray->m_ori).normalize();
 		}
 		ray->m_rx_ori = ray->m_ry_ori = ray->m_ori;
