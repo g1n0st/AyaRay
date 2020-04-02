@@ -57,19 +57,15 @@ namespace Aya {
 		bool generateRay(const CameraSample &sample, Ray *ray, const bool force_pinhole = false) const;
 		bool generateRayDifferential(const CameraSample &sample, RayDifferential *ray) const;
 
-		inline const Matrix4x4& getViewMatrix() const {
-			return m_view.m_mat;
+		template<class T> inline T view(const T elem) const {
+			return m_view(T);
 		}
-		inline const Matrix4x4& getViewInvMatrix() const {
-			return m_view_inv.m_mat;
+		template<class T> inline T viewInv(const T elem) const {
+			return m_view_inv(T);
 		}
-		inline const Matrix4x4& getProjMatrix() const {
-			return m_proj.m_mat;
+		template<class T> inline T proj(const T elem) const {
+			return m_proj(T);
 		}
-		inline const Matrix4x4& getRasterMatrix() const {
-			return m_screen2raster.m_mat;
-		}
-
 		template<class T> inline T worldToRaster(const T elem) const {
 			return m_world2raster(elem);
 		}
