@@ -10,10 +10,11 @@ namespace Aya {
 			Point3 ori;
 			Vector3 dir;
 			Spectrum throughput;
-			uint32_t path_len;
-			
-			bool is_finite_light : 1;
-			bool specular_path : 1;
+
+			// Shared a 32-bit field
+			uint32_t path_len		: 30;
+			bool is_finite_light		: 1;
+			bool specular_path		: 1;
 
 			// Multiple Importance Sampling
 			// Implementing Vertex Connection and Merging
@@ -49,7 +50,7 @@ namespace Aya {
 
 		static PathState sampleLightSource(const Scene *scene, Sampler *sampler, RNG &rng);
 		static int generateLightPath(const Scene *scene, Sampler *sampler, RNG &rng,
-			const Camera *camera, Film *film, const int max_depth,
+			const Camera *camera, Film *film, const uint32_t max_depth,
 			PathVertex *path, int *vertex_count,
 			const bool connect_to_cam = true, const int RR_depth = 3);
 		static Spectrum connectToCamera(const Scene *scene, Sampler *sampler, RNG &rng,
