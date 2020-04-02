@@ -58,13 +58,13 @@ namespace Aya {
 		bool generateRayDifferential(const CameraSample &sample, RayDifferential *ray) const;
 
 		template<class T> inline T view(const T elem) const {
-			return m_view(T);
+			return m_view(elem);
 		}
 		template<class T> inline T viewInv(const T elem) const {
-			return m_view_inv(T);
+			return m_view_inv(elem);
 		}
 		template<class T> inline T proj(const T elem) const {
-			return m_proj(T);
+			return m_proj(elem);
 		}
 		template<class T> inline T worldToRaster(const T elem) const {
 			return m_world2raster(elem);
