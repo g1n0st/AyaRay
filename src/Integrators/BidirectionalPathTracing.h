@@ -25,7 +25,7 @@ namespace Aya {
 			uint32_t path_len;
 
 			// Diffuse surface Intersection local infomation
-			Intersection isect;
+			SurfaceIntersection isect;
 			Vector3 v_in;
 
 			float dvcm;
@@ -54,19 +54,19 @@ namespace Aya {
 			const bool connect_to_cam = true, const int RR_depth = 3);
 		static Spectrum connectToCamera(const Scene *scene, Sampler *sampler, RNG &rng,
 			const Camera *camera, Film *film,
-			const Intersection &intersection, const PathVertex &path_vertex, Point3 *raster_pos);
+			const SurfaceIntersection &intersection, const PathVertex &path_vertex, Point3 *raster_pos);
 		static void sampleCamera(const Scene *scene,
 			const Camera *camera, Film *film,
 			const RayDifferential &ray, PathState &init_path);
 		static Spectrum connectToLight(const Scene *scene, Sampler *sampler, RNG &rng,
-			const RayDifferential &ray, const Intersection &intersection, PathState &cam_path);
+			const RayDifferential &ray, const SurfaceIntersection &intersection, PathState &cam_path);
 		static Spectrum hittingLightSource(const Scene *scene, RNG &rng,
-			const RayDifferential &ray, const Intersection &intersection, const Light *light, PathState &cam_path);
+			const RayDifferential &ray, const SurfaceIntersection &intersection, const Light *light, PathState &cam_path);
 
 		static Spectrum connectVertex(const Scene *scene, RNG &rng,
-			const Intersection &intersection, const PathVertex &light_vertex, const PathState &cam_path);
+			const SurfaceIntersection &intersection, const PathVertex &light_vertex, const PathState &cam_path);
 		static bool sampleScattering(const Scene *scene, RNG &rng,
-			const RayDifferential &ray, const Intersection &intersection, const Sample& bsdf_sample, const PathState &cam_path);
+			const RayDifferential &ray, const SurfaceIntersection &intersection, const Sample& bsdf_sample, const PathState &cam_path);
 
 		inline static float MIS(const float val) {
 			// Power Heuristic Method
