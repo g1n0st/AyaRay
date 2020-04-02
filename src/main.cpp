@@ -39,6 +39,30 @@ void ayaInit() {
 
 int main(void) {
 	ayaInit();
+
+	int testnumx = 600;
+	int testnumy = 600;
+
+	RNG rng;
+	RandomSampler *random_sampler = new RandomSampler();
+	SobolSampler *sobol_sampler = new SobolSampler(testnumx, testnumy);
+	GaussianFilter *filter = new GaussianFilter();
+	//ProjectiveCamera *cam = new ProjectiveCamera(Point3(0, 2.5, 2.5), Vector3(0, 2.5, 0), Vector3(0, 1, 0), 40, 1, 0, 1, 0, 0);
+	Camera *cam = new Camera(Point3(-5, 0, 0), Vector3(0, 0, 0), Vector3(0, -1, 0), testnumx, testnumy, 40.f, 0.1f, 1000.f, 0.1f, 5, 2.f);
+	//ProjectiveCamera *cam = new ProjectiveCamera(Point3(0, 0.75, 3), Vector3(0, 0.75, -1), Vector3(0, 1, 0), 40, 1, 0, 100000, 0, 0);
+	Film *film = new Film(testnumx, testnumy, filter);
+	
+	/// debug
+	sobol_sampler->startPixel(300, 300);
+	CameraSample cam_sample;
+	sobol_sampler->generateSamples(300, 300, &cam_sample, rng);
+	cam_sample.image_x += 300;
+	cam_sample.image_y += 300;
+
+	RayDifferential ray;
+	cam->generateRayDifferential(cam_sample, &ray);
+	/// 
+
 	Transform murb = Transform().setScale(0.04f, 0.04f, 0.04f) * Transform().setEulerZYX(0, 15, 0);
 	AffineTransform cb = AffineTransform().setScale(2, 2, 2) * AffineTransform().setEulerZYX(0, 90, 0);
 	AffineTransform cbb = AffineTransform().setScale(1.3, 1.3, 1.3);
@@ -96,24 +120,11 @@ int main(void) {
 
 	scene->initAccelerator();
 
-	int testnumx = 600;
-	int testnumy = 600;
-
-	GaussianFilter *filter = new GaussianFilter();
-	//ProjectiveCamera *cam = new ProjectiveCamera(Point3(0, 2.5, 2.5), Vector3(0, 2.5, 0), Vector3(0, 1, 0), 40, 1, 0, 1, 0, 0);
-	Camera *cam = new Camera(Point3(-5, 0, 0), Vector3(0, 0, 0), Vector3(0, -1, 0), testnumx, testnumy);
-	//ProjectiveCamera *cam = new ProjectiveCamera(Point3(0, 0.75, 3), Vector3(0, 0.75, -1), Vector3(0, 1, 0), 40, 1, 0, 100000, 0, 0);
-
-	RandomSampler *random_sampler = new RandomSampler();
-	SobolSampler *sobol_sampler = new SobolSampler(testnumx, testnumy);
-
-	Film *film = new Film(testnumx, testnumy, filter);
-
 	TaskSynchronizer task(testnumx, testnumy);
-	int spp = 500;
+	int spp = 50;
 	DirectLightingIntegrator *integrator = new DirectLightingIntegrator(task, spp, 5);
 	PathTracingIntegrator *pt = new PathTracingIntegrator(task, spp, 16);
-	RNG rng;
+	
 	MemoryPool memory;
 	//integrator->li(cam->getRay(0.5, 0.5), scene, sobol_sampler, rng, memory);
 
