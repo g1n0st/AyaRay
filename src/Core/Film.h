@@ -42,7 +42,7 @@ namespace Aya {
 
 		void release();
 		int getPixelCount() const {
-			return m_pixel_buffer.linearSize();
+			return m_width * m_height;
 		}
 
 		virtual void addSample(float x, float y, const Spectrum &L);
