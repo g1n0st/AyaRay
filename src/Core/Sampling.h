@@ -203,6 +203,12 @@ namespace Aya {
 		float f = nf * f_pdf, g = ng * g_pdf;
 		return (f * f) / (f * f + g * g);
 	}
+	inline float PdfAtoW(float pdfA, float dist, float cos) {
+		return pdfA * dist * dist / Abs(cos);
+	}
+	inline float PdfWToA(float pdfW, float dist, float cos) {
+		return pdfW * Abs(cos) / (dist * dist);
+	}
 }
 
 #endif
