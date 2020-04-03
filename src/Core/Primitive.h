@@ -45,7 +45,7 @@ namespace Aya {
 			UniquePtr<BSDF> bsdf,
 			const MediumInterface &medium_interface = MediumInterface());
 
-		void postIntersect(const Ray &ray, SurfaceIntersection *intersection) const;
+		void postIntersect(const RayDifferential &ray, SurfaceIntersection *intersection) const;
 
 		const BSDF* getBSDF(const uint32_t id) const {
 			return mp_BSDFs[mp_material_idx[id]].get();

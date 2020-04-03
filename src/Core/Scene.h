@@ -25,7 +25,7 @@ namespace Aya {
 		~Scene() {}
 
 		bool intersect(const Ray &ray, Intersection *isect) const;
-		void postIntersect(const Ray &ray, SurfaceIntersection *intersection) const;
+		void postIntersect(const RayDifferential &ray, SurfaceIntersection *intersection) const;
 		bool occluded(const Ray &ray) const;
 
 		BBox worldBound() const;

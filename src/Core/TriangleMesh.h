@@ -35,7 +35,7 @@ namespace Aya {
 		void loadSphere(const Transform &o2w, const float radius, const uint32_t slices = 64, const uint32_t stacks = 64);
 		void loadPlane(const Transform &o2w, const float length);
 
-		void postIntersect(const Ray &ray, SurfaceIntersection *intersection) const;
+		void postIntersect(const RayDifferential &ray, SurfaceIntersection *intersection) const;
 
 		// Data Interface
 		inline const Point3& getPositionAt(uint32_t idx) const {

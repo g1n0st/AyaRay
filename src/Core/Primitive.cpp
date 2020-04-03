@@ -83,7 +83,7 @@ namespace Aya {
 		setBSDF(std::move(bsdf), medium_interface);
 	}
 
-	void Primitive::postIntersect(const Ray &ray, SurfaceIntersection *intersection) const {
+	void Primitive::postIntersect(const RayDifferential &ray, SurfaceIntersection *intersection) const {
 		intersection->bsdf = mp_BSDFs[mp_material_idx[intersection->tri_id]].get();
 		// BSSRDF Part
 		intersection->arealight = mp_light;

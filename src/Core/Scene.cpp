@@ -11,7 +11,7 @@ namespace Aya {
 		ray0.m_maxt = isect->dist;
 		return true;
 	}
-	void Scene::postIntersect(const Ray &ray, SurfaceIntersection *intersection) const {
+	void Scene::postIntersect(const RayDifferential &ray, SurfaceIntersection *intersection) const {
 		assert(intersection);
 		m_primitves[intersection->prim_id]->postIntersect(ray, intersection);
 

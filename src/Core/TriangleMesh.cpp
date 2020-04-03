@@ -84,7 +84,7 @@ namespace Aya {
 		m_verts = (uint32_t)4;
 		m_tris = (uint32_t)2;
 	}
-	void TriangleMesh::postIntersect(const Ray &ray, SurfaceIntersection *intersection) const {
+	void TriangleMesh::postIntersect(const RayDifferential &ray, SurfaceIntersection *intersection) const {
 		assert(intersection);
 
 		const uint32_t id1 = 3 * intersection->tri_id + 0;
