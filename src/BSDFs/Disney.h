@@ -39,7 +39,7 @@ namespace Aya {
 			m_clear_coat_gloss(clear_coat_gloss) {}
 
 		Disney(UniquePtr<Texture2D<Spectrum>> texture,
-			UniquePtr<Texture2D<Spectrum>> normal,
+			UniquePtr<Texture2D<RGBSpectrum>> normal,
 			float roughness					= 0.1f,
 			float specular					= 0.5f,
 			float metallic					= 0.0f,
