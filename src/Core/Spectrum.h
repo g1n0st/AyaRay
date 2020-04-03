@@ -646,7 +646,7 @@ namespace Aya {
 			toRGB(rgb);
 			return SampledSpectrum::fromRGB(rgb);
 		}
-		float y() {
+		float y() const {
 			const float yy[3] = { 0.212671f, 0.715160f, 0.072169f };
 			return yy[0] * (*this)[0] + yy[1] * (*this)[1] + yy[2] * (*this)[2];
 		}
