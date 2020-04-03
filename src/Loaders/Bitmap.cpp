@@ -66,7 +66,7 @@ namespace Aya {
 
 		const float inv_gamma = 1.f / 2.2f; // Gamma
 
-		unsigned char *pixels = new unsigned char[size];
+		short *pixels = new short[size];
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
 				int idx = pixel_bytes * (i * width + j);

@@ -669,13 +669,13 @@ namespace Aya {
 #define toSpectrum toRGBSpectrum
 #endif
 
-	typedef unsigned int Byte;
+	typedef short Byte;
 	class byteSpectrum {
 	public:
 		Byte r, g, b, a;
 
 		byteSpectrum() : r(0), g(0), b(0), a(255) {}
-		byteSpectrum(Byte R, Byte G, Byte B, Byte A = 255) : r(R), g(G), b(G), a(A) {}
+		byteSpectrum(Byte R, Byte G, Byte B, Byte A = 255) : r(R), g(G), b(B), a(A) {}
 		byteSpectrum(Byte val) : r(val), g(val), b(val), a(255) {}
 		byteSpectrum(const RGBSpectrum &c) noexcept {
 			float rgb[3];
@@ -713,7 +713,7 @@ namespace Aya {
 		}
 
 		AYA_FORCE_INLINE byteSpectrum operator * (float val) const {
-			return byteSpectrum(Byte(val * r), Byte(val * g), Byte(val * b));
+			return byteSpectrum(Byte(val * float(r)), Byte(val * float(g)), Byte(val * float(b)));
 		}
 		AYA_FORCE_INLINE friend byteSpectrum operator * (float val, const byteSpectrum &s) {
 			return s * val;
@@ -721,27 +721,27 @@ namespace Aya {
 		AYA_FORCE_INLINE byteSpectrum operator / (float val) const {
 			assert(val);
 			float inv = 1.f / val;
-			return byteSpectrum(Byte(inv * r), Byte(inv * g), Byte(inv * b));
+			return byteSpectrum(Byte(inv * float(r)), Byte(inv * float(g)), Byte(inv * float(b)));
 		}
 		AYA_FORCE_INLINE byteSpectrum operator >> (const int shift) const {
 			return byteSpectrum(r >> shift, g >> shift, b >> shift);
 		}
 		AYA_FORCE_INLINE byteSpectrum operator + (const byteSpectrum &c) const {
-			return byteSpectrum(c.r + r, c.g + g, c.b + b);
+			return byteSpectrum(r + c.r, g + c.g, b + c.b);
 		}
 		AYA_FORCE_INLINE byteSpectrum& operator += (const byteSpectrum &c) {
 			r += c.r;
-			b += c.b;
 			g += c.g;
+			b += c.b;
 			return *this;
 		}
 		AYA_FORCE_INLINE byteSpectrum operator - (const byteSpectrum &c) const {
-			return byteSpectrum(c.r - r, c.g - g, c.b - b);
+			return byteSpectrum(r - c.r, g - c.g, b - c.b);
 		}
 		AYA_FORCE_INLINE byteSpectrum& operator -= (const byteSpectrum &c) {
 			r -= c.r;
-			b -= c.b;
 			g -= c.g;
+			b -= c.b;
 			return *this;
 		}
 	};
