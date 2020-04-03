@@ -67,7 +67,8 @@ namespace Aya {
 		static Spectrum connectVertex(const Scene *scene, RNG &rng,
 			const SurfaceIntersection &intersection, const PathVertex &light_vertex, const PathState &cam_path);
 		static bool sampleScattering(const Scene *scene, RNG &rng,
-			const RayDifferential &ray, const SurfaceIntersection &intersection, const Sample& bsdf_sample, const PathState &cam_path);
+			const RayDifferential &ray, const SurfaceIntersection &intersection, const Sample& bsdf_sample, PathState &path_state,
+			const int RR_depth = -1);
 
 		inline static float MIS(const float val) {
 			// Power Heuristic Method
