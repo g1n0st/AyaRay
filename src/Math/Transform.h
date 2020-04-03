@@ -319,6 +319,8 @@ namespace Aya {
 				ret.m_rx_dir = (*this)(ret.m_rx_dir);
 				ret.m_ry_dir = (*this)(ret.m_ry_dir);
 
+				ret.m_has_differentials = r.m_has_differentials;
+
 				return ret;
 			}
 
@@ -694,6 +696,8 @@ namespace Aya {
 				ret.m_ry_ori = (*this)(ret.m_ry_ori);
 				ret.m_rx_dir = (*this)(ret.m_rx_dir);
 				ret.m_ry_dir = (*this)(ret.m_ry_dir);
+
+				ret.m_has_differentials = r.m_has_differentials;
 
 				return ret;
 			}
