@@ -89,6 +89,7 @@ namespace Aya {
 			Point3 light_p;
 			Normal3 light_n;
 			sampleTriangle(tri_id, b0, b1, light_p, light_n);
+			*normal = light_n.normalize();
 
 			Vector3 local_dir_out = CosineSampleHemisphere(light_sample1.u, light_sample1.v);
 			local_dir_out.setZ(Max(local_dir_out.z(), 1e-6f));
