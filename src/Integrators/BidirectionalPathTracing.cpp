@@ -18,7 +18,7 @@ namespace Aya {
 		PathVertex *light_path = memory.alloc<PathVertex>(m_max_depth);
 		int light_vertex_cnt;
 		int light_path_len = generateLightPath(scene, sampler, rng,
-			mp_cam, mp_film, m_max_depth,
+			mp_cam, mp_film, m_max_depth + 1,
 			light_path, &light_vertex_cnt);
 
 		// Initialize camera path with eye ray
@@ -72,7 +72,7 @@ namespace Aya {
 					if (light_vertex.path_len + cam_path.path_len > m_max_depth + 2)
 						break;
 
-					L += cam_path.throughput * 
+					L += cam_path.throughput * light_vertex.throughput * 
 						connectVertex(scene, rng, local_isect, light_vertex, cam_path);
 				}
 			}
@@ -233,7 +233,7 @@ namespace Aya {
 			Point3 focal = eye_ray(camera->getFocusDistance() / eye_ray.m_dir.z());
 
 			*raster_pos = camera->cameraToRaster(focal);
-			dir2cam = camera->view(eye_ray.m_ori) - intersection.p;
+			dir2cam = camera->viewInv(eye_ray.m_ori) - intersection.p;
 		}
 
 		// Check whether the ray is in front of camera
@@ -265,7 +265,7 @@ namespace Aya {
 		float n_lights = float(film->getPixelCount());
 		// Vertex connection (t = 1).
 		// The light sub-path vertex y_s-1 is connected to vertex z0 on the eye lens (a.k.a. eye/camera projectin)
-		float weight_light = MIS(cam_pdfA / n_lights) * (path_vertex.dvcm + path_vertex.dvc * MIS(pdf)); // formula (46) 
+		float weight_light = MIS(cam_pdfA / n_lights) * (path_vertex.dvcm + MIS(rev_pdf) * path_vertex.dvc); // formula (46) 
 		float MIS_weight = 1.f / (weight_light + 1.f);  // formula (37) (weight_camera = 0 in formula (47))
 		Spectrum L = MIS_weight * path_vertex.throughput * bsdf_fac * cam_pdfA / n_lights;
 
@@ -456,7 +456,7 @@ namespace Aya {
 			path_state.dvcm = MIS(1.f / pdf); // formula (34)
 		}
 		else {
-			path_state.specular_path &= 0;
+			path_state.specular_path &= 1;
 
 			path_state.dvc *= MIS(cos_out);	// rev_pdf / pdf equals to 1, formula (54)
 			path_state.dvcm = 0.f; // formula (53)
