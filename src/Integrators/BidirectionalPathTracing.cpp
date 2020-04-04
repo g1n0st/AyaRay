@@ -269,7 +269,7 @@ namespace Aya {
 		float MIS_weight = 1.f / (weight_light + 1.f);  // formula (37) (weight_camera = 0 in formula (47))
 		Spectrum L = MIS_weight * path_vertex.throughput * bsdf_fac * cam_pdfA / n_lights;
 
-		Ray ray2cam(intersection.p, dir2cam, intersection.m_medium_interface.getMedium(dir2cam, intersection.n), dist2cam);
+		Ray ray2cam(intersection.p, dir2cam, intersection.m_medium_interface.getMedium(dir2cam, intersection.n), 0.f, dist2cam);
 		if (L.isBlack() || scene->occluded(ray2cam))
 			return Spectrum(0.f);
 
@@ -407,7 +407,7 @@ namespace Aya {
 		float MIS_weight = 1.f / (weight_light + 1.f + weight_camera); // formula (37)
 		Spectrum L = (MIS_weight * g) * light_bsdf_fac * cam_bsdf_fac;
 
-		Ray ray2light(cam_pos, dir2light, intersection.m_medium_interface.getMedium(dir2light, cam_n), dist2light);
+		Ray ray2light(cam_pos, dir2light, intersection.m_medium_interface.getMedium(dir2light, cam_n), 0.f, dist2light);
 		if (L.isBlack() || scene->occluded(ray2light))
 			return Spectrum(0.f);
 
