@@ -66,6 +66,9 @@ namespace Aya {
 		inline const uint32_t* getIndexBuffer() const {
 			return mp_vert_idx;
 		}
+		inline const MeshVertex* getVertexBuffer() const {
+			return mp_vertices;
+		}
 
 		inline uint32_t getTriangleCount() const {
 			return m_tris;
