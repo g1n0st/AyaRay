@@ -49,4 +49,8 @@
 
 // Core/Memory
 #define AYA_L1_CACHE_LINE_SIZE 64
+
+// Intel Embree Accelerator
+#define AYA_USE_EMBREE_STATIC_LIB
+#define AYA_USE_EMBREE 2
 #endif
