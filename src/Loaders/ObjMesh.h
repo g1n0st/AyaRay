@@ -12,7 +12,7 @@
 #include <cstdio>
 #include <functional>
 
-#define AYA_MAX_PATH 257
+#define AYA_MAX_PATH 1024
 
 namespace Aya {
 	struct MeshVertex {
