@@ -63,6 +63,8 @@ namespace Aya {
 		}
 		else
 			setBSDF(std::move(bsdf), medium_interface);
+
+		SafeDelete(mesh);
 	}
 	void Primitive::loadSphere(const Transform &o2w,
 		const float radius,
