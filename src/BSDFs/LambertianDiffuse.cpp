@@ -2,12 +2,12 @@
 
 namespace Aya {
 	float LambertianDiffuse::evalInner(const Vector3 &wo, const Vector3 &wi, const SurfaceIntersection &intersection, ScatterType types) const {
-		if (CosTheta(wo) <= 0.f || !sameHemisphere(wo, wi))
+		if (!sameHemisphere(wo, wi))
 			return 0.0f;
 		return float(M_1_PI);
 	}
 	float LambertianDiffuse::pdfInner(const Vector3 &wo, const Vector3 &wi, const SurfaceIntersection &intersection, ScatterType types) const {
-		if (CosTheta(wo) <= 0.f || !sameHemisphere(wo, wi))
+		if (!sameHemisphere(wo, wi))
 			return 0.0f;
 		return Abs(CosTheta(wi)) * float(M_1_PI);
 	}
@@ -21,7 +21,7 @@ namespace Aya {
 
 		Vector3 wo = intersection.worldToLocal(v_out);
 		Vector3 wi = CosineSampleHemisphere(sample.u, sample.v);
-		if (CosTheta(wo) <= 0.f || !sameHemisphere(wo, wi))
+		if (!sameHemisphere(wo, wi))
 			return 0.f;
 
 		if (wo.z() < 0.f)
