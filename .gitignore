@@ -5,4 +5,5 @@
 /.vs
 /slide
 /docs
+/packages
 *.sln
