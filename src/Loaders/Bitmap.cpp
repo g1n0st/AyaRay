@@ -137,7 +137,8 @@ namespace Aya {
 		return pixels;
 	}
 	template<>
-	byteSpectrum* Bitmap::read(const char *name, int* width, int* height, int* channel) {
+	byteSpectrum* Bitmap::read(const char *name, int *width, int *height, int *channel) {
+		printf("Read texture: %s\n", name);
 		float *rgbs = (float*)stbi_loadf(name, width, height, channel, 4);
 
 		int size = (*width) * (*height);
@@ -147,7 +148,8 @@ namespace Aya {
 			pixels[i].r = (Byte)(rgbs[i * 4 + 0] * 255);
 			pixels[i].g = (Byte)(rgbs[i * 4 + 1] * 255);
 			pixels[i].b = (Byte)(rgbs[i * 4 + 2] * 255);
-			pixels[i].a = 255;
+			pixels[i].a = (*channel == 4) ? (Byte)(rgbs[i * 4 + 3] * 255) : 255;
+
 		}
 		return pixels;
 	}
