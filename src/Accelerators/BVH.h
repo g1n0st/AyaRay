@@ -1,7 +1,7 @@
 #ifndef AYA_ACCELERATORS_BVH_H
 #define AYA_ACCELERATORS_BVH_H
 
-#include "../Core/Primitive.h"
+#include "../Core/Accelerator.h"
 
 namespace Aya {
 	class BVHTriangle {
@@ -133,7 +133,7 @@ namespace Aya {
 		}
 	};
 
-	class BVHAccel {
+	class BVHAccel : public Accelerator{
 	private:
 		BVHNode *m_root;
 
@@ -150,10 +150,10 @@ namespace Aya {
 
 		}
 
-		void construct(const std::vector<Primitive*> &prims);
-		BBox worldBound() const;
-		bool intersect(const Ray &ray, Intersection *si) const;
-		bool occluded(const Ray &ray) const;
+		void construct(const std::vector<Primitive*> &prims) override;
+		BBox worldBound() const override;
+		bool intersect(const Ray &ray, Intersection *si) const override;
+		bool occluded(const Ray &ray) const override;
 	};
 }
 
