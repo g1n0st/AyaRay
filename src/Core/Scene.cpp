@@ -60,7 +60,11 @@ namespace Aya {
 
 	void Scene::initAccelerator() {
 		if (m_dirty) {
+#if defined(AYA_USE_EMBREE)
+			mp_accel = MakeUnique<EmbreeAccel>();
+#else
 			mp_accel = MakeUnique<BVHAccel>();
+#endif
 			std::vector<Primitive*> prims;
 			for (const auto& it : m_primitves) {
 				prims.push_back(it.get());

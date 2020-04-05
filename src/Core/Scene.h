@@ -4,7 +4,12 @@
 #include "../Math/Transform.h"
 #include "../Core/Light.h"
 #include "../Core/Primitive.h"
+
+#if defined(AYA_USE_EMBREE)
+#include "../Accelerators/EmbreeAccelerator.h"
+#else
 #include "../Accelerators/BVH.h"
+#endif
 
 #include <vector>
 
@@ -14,7 +19,7 @@ namespace Aya {
 		std::vector<UniquePtr<Primitive>> m_primitves;
 		std::vector<UniquePtr<Light>> m_lights;
 		Light* mp_env_light;
-		UniquePtr<BVHAccel> mp_accel;
+		UniquePtr<Accelerator> mp_accel;
 		bool m_dirty;
 		std::vector<UniquePtr<const Medium>> m_media;
 
