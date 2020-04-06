@@ -30,6 +30,9 @@ namespace Aya {
 		virtual bool hasAlpha() const {
 			return false;
 		}
+		virtual bool alphaTest(const Vector2f &coord) const {
+			return true;
+		}
 		virtual bool isConstant() const {
 			return false;
 		}
@@ -53,13 +56,13 @@ namespace Aya {
 
 	public:
 		ConstantTexture2D(const T &val) : m_val(val) {}
-		inline T sample(const Vector2f &coord, const Vector2f diffs[2]) const {
+		inline T sample(const Vector2f &coord, const Vector2f diffs[2]) const override {
 			return m_val;
 		}
-		inline T sample(const Vector2f &coord, const Vector2f diffs[2], TextureFilter filter) const {
+		inline T sample(const Vector2f &coord, const Vector2f diffs[2], TextureFilter filter) const override {
 			return m_val;
 		}
-		bool isConstant() const {
+		bool isConstant() const override {
 			return true;
 		}
 		T getValue() const {
@@ -110,25 +113,28 @@ namespace Aya {
 		Mipmap2D<TMem> m_texels;
 
 	public:
-		ImageTexture2D(const char *file_name, const float gamma = 1.f / 2.2f);
+		ImageTexture2D(const char *file_name, const float gamma = 1.f);
 		ImageTexture2D(const TMem* pixels, const int width, const int height);
 		~ImageTexture2D() {}
 
-		TRet sample(const Vector2f &coord, const Vector2f diffs[2]) const;
-		TRet sample(const Vector2f &coord, const Vector2f diffs[2], TextureFilter filter) const;
+		TRet sample(const Vector2f &coord, const Vector2f diffs[2]) const override;
+		TRet sample(const Vector2f &coord, const Vector2f diffs[2], TextureFilter filter) const override;
 		TRet anisotropicSample(const Vector2f &coord, const Vector2f diffs[2], const int max_rate) const;
 
-		inline void setFilter(const TextureFilter filter) {
+		inline void setFilter(const TextureFilter filter) override {
 			m_filter = filter;
 		}
-		inline int width() const {
+		inline int width() const override {
 			return m_width;
 		}
-		inline int height() const {
+		inline int height() const override {
 			return m_height;
 		}
-		inline bool has_alpha() const {
+		inline bool hasAlpha() const override {
 			return m_has_alpha;
+		}
+		inline bool alphaTest(const Vector2f &coord) const override {
+			return alpha(sample(coord, nullptr, TextureFilter::Nearest)) != 0.f;
 		}
 		const TMem* getLevelData(const int level = 0) const {
 			return m_texels.getLevelData(level);
@@ -144,7 +150,20 @@ namespace Aya {
 			return (byteSpectrum)RGBSpectrum(s).pow(gamma);
 		}
 		static float gammaCorrect(float s, const float gamma) {
-			return std::pow(s, gamma);
+			return std::powf(s, gamma);
+		}
+
+		static float alpha(const RGBSpectrum &s) {
+			return s[3];
+		}
+		static float alpha(const SampledSpectrum &s) {
+			return -1;
+		}
+		static float alpha(const byteSpectrum &s) {
+			return s.a;
+		}
+		static float alpha(const float s) {
+			return -1;
 		}
 	};
 }
