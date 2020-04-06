@@ -24,10 +24,17 @@ namespace Aya {
 
 			rtcCommitGeometry(geom);
 			rtcAttachGeometryByID(m_rtc_scene, geom, i);
+
+			
+			rtcSetGeometryIntersectFilterFunction(geom, &alphaTest);
+			rtcSetGeometryOccludedFilterFunction(geom, &alphaTest);
+			rtcSetGeometryUserData(geom, prims[i]);
+			
 			rtcReleaseGeometry(geom);
 		}
 
 		rtcCommitScene(m_rtc_scene);
+
 #elif (AYA_USE_EMBREE == 2)
 		m_device = rtcNewDevice(nullptr);
 		m_rtc_scene = rtcDeviceNewScene(m_device,
@@ -42,6 +49,10 @@ namespace Aya {
 
 			rtcSetBuffer(m_rtc_scene, geomID, RTC_VERTEX_BUFFER, prim->getMesh()->getVertexBuffer(), 0, sizeof(MeshVertex));
 			rtcSetBuffer(m_rtc_scene, geomID, RTC_INDEX_BUFFER, prim->getMesh()->getIndexBuffer(), 0, 3 * sizeof(uint32_t));
+		
+			rtcSetIntersectionFilterFunction(m_rtc_scene, geomID, (RTCFilterFunc)&alphaTest);
+			rtcSetOcclusionFilterFunction(m_rtc_scene, geomID, (RTCFilterFunc)&alphaTest);
+			rtcSetUserData(m_rtc_scene, geomID, prim);
 		}
 
 		rtcCommit(m_rtc_scene);

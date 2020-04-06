@@ -65,8 +65,48 @@ namespace Aya {
 #endif
 			return rtc_ray;
 		}
-	};
-}
-#endif
 
+#if (AYA_USE_EMBREE == 3) 
+		static void alphaTest(const struct RTCFilterFunctionNArguments* args) {
+			Primitive *prim = (Primitive*)args->geometryUserPtr;
+
+			uint32_t prim_id = RTCHitN_primID(args->hit, 1, 0);
+			float u = RTCHitN_u(args->hit, 1, 0);
+			float v = RTCHitN_v(args->hit, 1, 0);
+			if (prim->getBSDF(prim_id)->getTexture()->hasAlpha()) {
+				const TriangleMesh *mesh = prim->getMesh();
+				const Vector2f &uv1 = mesh->getUVAt(3 * prim_id + 0);
+				const Vector2f &uv2 = mesh->getUVAt(3 * prim_id + 1);
+				const Vector2f &uv3 = mesh->getUVAt(3 * prim_id + 2);
+
+				const Vector2f uv = (1.0f - u - v) * uv1 +
+					u * uv2 +
+					v * uv3;
+
+				if (!prim->getBSDF(prim_id)->getTexture()->alphaTest(uv))
+					RTCHitN_geomID(args->hit, 1, 0) = RTC_INVALID_GEOMETRY_ID; // reject hit
+			}
+		}
+#elif (AYA_USE_EMBREE == 2) 
+		static void alphaTest(void *user_ptr, RTCRay& ray) {
+			Primitive *prim = (Primitive*)user_ptr;
+
+			if (prim->getBSDF(ray.primID)->getTexture()->hasAlpha()) {
+				const TriangleMesh *mesh = prim->getMesh();
+				const Vector2f &uv1 = mesh->getUVAt(3 * ray.primID + 0);
+				const Vector2f &uv2 = mesh->getUVAt(3 * ray.primID + 1);
+				const Vector2f &uv3 = mesh->getUVAt(3 * ray.primID + 2);
+
+				const Vector2f uv = (1.0f - ray.u - ray.v) * uv1 +
+					ray.u * uv2 +
+					ray.v * uv3;
+
+				if (!prim->getBSDF(ray.primID)->getTexture()->alphaTest(uv))
+					ray.geomID = RTC_INVALID_GEOMETRY_ID; // reject hit
+			}
+	}
+#endif
+	};
+#endif
+}
 #endif
