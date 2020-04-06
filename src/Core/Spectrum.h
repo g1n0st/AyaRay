@@ -324,14 +324,14 @@ namespace Aya {
 		CoefficientSpectrum exp() const {
 			CoefficientSpectrum ret;
 			for (int i = 0; i < nSamples; i++) {
-				ret[i] = std::exp((*this)[i]);
+				ret[i] = std::expf((*this)[i]);
 			}
 			return ret;
 		}
 		CoefficientSpectrum pow(float p) const {
 			CoefficientSpectrum ret;
 			for (int i = 0; i < nSamples; i++) {
-				ret[i] = std::pow((*this)[i], p);
+				ret[i] = std::powf((*this)[i], p);
 			}
 			return ret;
 		}
