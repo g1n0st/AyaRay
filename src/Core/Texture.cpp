@@ -4,7 +4,7 @@
 
 namespace Aya {
 	template<class T>
-	inline void Mipmap2D<T>::generate(const Vector2i & dims, const T * raw_tex) {
+	inline void Mipmap2D<T>::generate(const Vector2i &dims, const T *raw_tex) {
 		m_tex_dims = dims;
 		m_levels = CeilLog2(Max(dims.x, dims.y));
 		SetMax(m_levels, 1);
@@ -60,7 +60,7 @@ namespace Aya {
 	}
 
 	template<class T>
-	T Mipmap2D<T>::linearSample(const Vector2f & coord, const Vector2f diffs[2]) const {
+	T Mipmap2D<T>::linearSample(const Vector2f &coord, const Vector2f diffs[2]) const {
 		float filter_width = Max(diffs[0].length(), diffs[1].length());
 		float lod = m_levels - 1 + fast_log2(Max(filter_width, 1e-8f));
 		if (lod < 0)
@@ -70,7 +70,7 @@ namespace Aya {
 	}
 
 	template<class T>
-	T Mipmap2D<T>::triLinearSample(const Vector2f & coord, const Vector2f diffs[2]) const {
+	T Mipmap2D<T>::triLinearSample(const Vector2f &coord, const Vector2f diffs[2]) const {
 		float filter_width = Max(diffs[0].length(), diffs[1].length());
 		float lod = m_levels - 1 + fast_log2(Max(filter_width, 1e-8f));
 		if (lod < 0)
@@ -93,7 +93,7 @@ namespace Aya {
 	}
 
 	template<class T>
-	T Mipmap2D<T>::levelLinearSample(const Vector2f & coord, const int level) const
+	T Mipmap2D<T>::levelLinearSample(const Vector2f &coord, const int level) const
 	{
 		const BlockedArray<T> &texel = mp_leveled_texels[level];
 		
@@ -120,7 +120,7 @@ namespace Aya {
 	}
 
 	template<class T>
-	T Mipmap2D<T>::nearestSample(const Vector2f & coord) const
+	T Mipmap2D<T>::nearestSample(const Vector2f &coord) const
 	{
 		const BlockedArray<T> &texel = mp_leveled_texels[0];
 		int coord_x = Min(int(coord.x * texel.v()), texel.v() - 1);
@@ -129,13 +129,15 @@ namespace Aya {
 	}
 
 	template<class TRet, class TMem>
-	ImageTexture2D<TRet, TMem>::ImageTexture2D(const char * file_name, const float gamma) {
+	ImageTexture2D<TRet, TMem>::ImageTexture2D(const char *file_name, const float gamma) {
 		int channel;
 		TMem *pixels = Bitmap::read<TMem>(file_name, &m_width, &m_height, &channel);
 		std::exception("Texture file load failed.");
 
-		for (int i = 0; i < m_width * m_height; i++) {
-			pixels[i] = gammaCorrect(pixels[i], gamma);
+		if (gamma != 1.f) {
+			for (int i = 0; i < m_width * m_height; i++) {
+				pixels[i] = gammaCorrect(pixels[i], gamma);
+			}
 		}
 
 		m_has_alpha = (channel == 4);
@@ -146,7 +148,7 @@ namespace Aya {
 		SafeDeleteArray(pixels);
 	}
 	template<class TRet, class TMem>
-	ImageTexture2D<TRet, TMem>::ImageTexture2D(const TMem * pixels, const int width, const int height) {
+	ImageTexture2D<TRet, TMem>::ImageTexture2D(const TMem *pixels, const int width, const int height) {
 		m_width = width;
 		m_height = height;
 		m_width_inv = 1.f / float(m_width);
@@ -156,7 +158,7 @@ namespace Aya {
 	}
 
 	template<class TRet, class TMem>
-	TRet ImageTexture2D<TRet, TMem>::sample(const Vector2f & coord, const Vector2f diffs[2]) const {
+	TRet ImageTexture2D<TRet, TMem>::sample(const Vector2f &coord, const Vector2f diffs[2]) const {
 		Vector2f wrapped_coord(	coord.x - FloorToInt(coord.x), 
 								coord.y - FloorToInt(coord.y));
 
@@ -179,7 +181,7 @@ namespace Aya {
 	}
 
 	template<class TRet, class TMem>
-	TRet ImageTexture2D<TRet, TMem>::sample(const Vector2f & coord, const Vector2f diffs[2], TextureFilter filter) const {
+	TRet ImageTexture2D<TRet, TMem>::sample(const Vector2f &coord, const Vector2f diffs[2], TextureFilter filter) const {
 		Vector2f wrapped_coord(coord.x - FloorToInt(coord.x),
 			coord.y - FloorToInt(coord.y));
 
@@ -202,7 +204,7 @@ namespace Aya {
 	}
 
 	template<class TRet, class TMem>
-	TRet ImageTexture2D<TRet, TMem>::anisotropicSample(const Vector2f & coord, const Vector2f diffs[2], const int max_rate) const {
+	TRet ImageTexture2D<TRet, TMem>::anisotropicSample(const Vector2f &coord, const Vector2f diffs[2], const int max_rate) const {
 		float dudx = diffs[0].u;
 		float dvdx = diffs[0].v;
 		float dudy = diffs[1].u;
