@@ -1122,11 +1122,13 @@ namespace Aya {
 		(*this)[0] = float(bs.r / 255.f);
 		(*this)[1] = float(bs.g / 255.f);
 		(*this)[2] = float(bs.b / 255.f);
+		(*this)[3] = float(bs.a / 255.f);
 	}
 	AYA_FORCE_INLINE RGBSpectrum& RGBSpectrum::operator = (const byteSpectrum &c) noexcept {
 		(*this)[0] = float(c.r / 255.f);
 		(*this)[1] = float(c.g / 255.f);
 		(*this)[2] = float(c.b / 255.f);
+		(*this)[3] = float(c.a / 255.f);
 		return *this;
 	}
 }
