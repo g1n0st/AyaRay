@@ -652,7 +652,10 @@ namespace Aya {
 		}
 
 		bool isBlack() const {
-			return (*this)[0] == 0.f && (*this)[1] == 0.f && (*this)[2] == 0.f;
+			return ((*this)[0] == 0.f && (*this)[1] == 0.f && (*this)[2] == 0.f)
+				|| std::isnan((*this)[0])
+				|| std::isnan((*this)[1])
+				|| std::isnan((*this)[2]);
 		}
 
 		friend inline std::ostream &operator << (std::ostream &os, const RGBSpectrum &s) {
