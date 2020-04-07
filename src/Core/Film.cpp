@@ -62,10 +62,13 @@ namespace Aya {
 			for (int x = 0; x < m_width; x++) {
 				Pixel pixel = m_accumulate_buffer(x, y);
 				pixel.color.clamp();
-				m_pixel_buffer(y, x) =
-					((Spectrum)(
-						pixel.color / (pixel.weight + float(AYA_EPSILON)) + pixel.splat / splat_scale
-						).pow(INV_GAMMA)).toRGBSpectrum();
+
+				Spectrum L = ((Spectrum)(
+					pixel.color / (pixel.weight + float(AYA_EPSILON)) + pixel.splat / splat_scale
+					).pow(INV_GAMMA)).toRGBSpectrum().clamp(0.f, 1.f);
+				L[3] = 1.f;
+				m_pixel_buffer(y, x) = L;
+					
 			}
 		});
 	}
