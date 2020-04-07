@@ -122,7 +122,7 @@ namespace Aya {
 		template<typename T>
 		inline const T getValue(const Texture2D<T> *tex,
 			const SurfaceIntersection &intersection,
-			const TextureFilter filter = TextureFilter::TriLinear) const {
+			const TextureFilter filter = TextureFilter::Linear) const {
 			Vector2f diffs[2] = {
 				Vector2f(intersection.dudx, intersection.dvdx),
 				Vector2f(intersection.dudy, intersection.dvdy)
