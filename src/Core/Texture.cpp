@@ -97,10 +97,10 @@ namespace Aya {
 	{
 		const BlockedArray<T> &texel = mp_leveled_texels[level];
 		
-		float coord_x = Min(coord.x * texel.v(), texel.v() - 1.f);
-		float coord_y = Min(coord.y * texel.u(), texel.u() - 1.f);
-		int idx0_x = FloorToInt(coord_x);
-		int idx0_y = FloorToInt(coord_y);
+		float coord_x = Clamp(coord.x * texel.v(), 0, texel.v() - 1.f);
+		float coord_y = Clamp(coord.y * texel.u(), 0, texel.u() - 1.f);
+		int idx0_x = Max(FloorToInt(coord_x), 0);
+		int idx0_y = Max(FloorToInt(coord_y), 0);
 		int idx1_x = Min(idx0_x + 1, texel.v() - 1);
 		int idx1_y = Min(idx0_y + 1, texel.u() - 1);
 
@@ -123,8 +123,8 @@ namespace Aya {
 	T Mipmap2D<T>::nearestSample(const Vector2f &coord) const
 	{
 		const BlockedArray<T> &texel = mp_leveled_texels[0];
-		int coord_x = Min(int(coord.x * texel.v()), texel.v() - 1);
-		int coord_y = Min(int(coord.y * texel.u()), texel.u() - 1);
+		int coord_x = Clamp(int(coord.x * texel.v()), 0, texel.v() - 1);
+		int coord_y = Clamp(int(coord.y * texel.u()), 0, texel.u() - 1);
 		return texel(coord_y, coord_x);
 	}
 
