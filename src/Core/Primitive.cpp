@@ -3,6 +3,7 @@
 #include "../BSDFs/LambertianDiffuse.h"
 #include "../BSDFs/Glass.h"
 #include "../BSDFs/Mirror.h"
+#include "../BSDFs/Disney.h"
 
 namespace Aya {
 	Primitive::~Primitive() {
@@ -13,56 +14,36 @@ namespace Aya {
 
 	void Primitive::loadMesh(const Transform &o2w,
 		const char *path,
+		std::function<UniquePtr<BSDF>(const ObjMaterial&)> mtl_parser,
 		const bool force_compute_normal,
 		const bool left_handed,
-		UniquePtr<BSDF> bsdf,
 		const MediumInterface &medium_interface) {
 		ObjMesh *mesh = new ObjMesh;
 		mesh->loadObj(path, force_compute_normal, left_handed);
 		mp_mesh = MakeUnique<TriangleMesh>();
 		mp_mesh->loadMesh(o2w, mesh);
 
-		if (bsdf.get() == nullptr) {
-			const auto& mtl_info = mesh->getMaterialBuff();
-			mp_BSDFs.resize(mtl_info.size());
+		const auto& mtl_info = mesh->getMaterialBuff();
+		mp_BSDFs.resize(mtl_info.size());
 
-			for (auto i = 0; i < mtl_info.size(); i++) {
-				auto &mtl = mtl_info[i];
-				if (mtl.texture_path[0]) {
-					if (mtl.bump_path[0])
-						mp_BSDFs[i] = MakeUnique<LambertianDiffuse>(mtl.texture_path, mtl.bump_path);
-					else
-						mp_BSDFs[i] = MakeUnique<LambertianDiffuse>(mtl.texture_path);
-				}
-				else {
-					if (mtl.trans_color != Spectrum(0.f))
-						mp_BSDFs[i] = MakeUnique<Glass>(mtl.trans_color, 1.f, mtl.refractive_index);
-					else if (mtl.specular_color != Spectrum(0.f))
-						mp_BSDFs[i] = MakeUnique<Mirror>(mtl.specular_color);
-					else
-						mp_BSDFs[i] = MakeUnique<LambertianDiffuse>(mtl.diffuse_color);
-
-					if (mtl.bump_path[0])
-						mp_BSDFs.back()->setNormalMap(mtl.bump_path);
-				}
-				m_medium_interface.emplace_back(medium_interface);
-			}
-
-			mp_material_idx = new uint32_t[mesh->getTriangleCount()];
-
-			for (uint32_t i = 0; i < mesh->getTriangleCount(); i++)
-				mp_material_idx[i] = mesh->getMaterialIdx(i);
-
-			m_subset_count = mesh->getSubsetCount();
-			mp_subset_material_idx = new uint32_t[m_subset_count];
-			mp_subset_start_idx = new uint32_t[m_subset_count];
-			for (uint32_t i = 0; i < m_subset_count; i++) {
-				mp_subset_material_idx[i] = mesh->getSubsetMtlIdx(i);
-				mp_subset_start_idx[i] = mesh->getSubsetStartIdx(i);
-			}
+		for (auto i = 0; i < mtl_info.size(); i++) {
+			auto &mtl = mtl_info[i];
+			mp_BSDFs[i] = mtl_parser(mtl);
+			m_medium_interface.emplace_back(medium_interface);
 		}
-		else
-			setBSDF(std::move(bsdf), medium_interface);
+
+		mp_material_idx = new uint32_t[mesh->getTriangleCount()];
+
+		for (uint32_t i = 0; i < mesh->getTriangleCount(); i++)
+			mp_material_idx[i] = mesh->getMaterialIdx(i);
+
+		m_subset_count = mesh->getSubsetCount();
+		mp_subset_material_idx = new uint32_t[m_subset_count];
+		mp_subset_start_idx = new uint32_t[m_subset_count];
+		for (uint32_t i = 0; i < m_subset_count; i++) {
+			mp_subset_material_idx[i] = mesh->getSubsetMtlIdx(i);
+			mp_subset_start_idx[i] = mesh->getSubsetStartIdx(i);
+		}
 
 		SafeDelete(mesh);
 	}

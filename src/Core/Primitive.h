@@ -32,9 +32,9 @@ namespace Aya {
 
 		void loadMesh(const Transform &o2w,
 			const char *path,
+			std::function<UniquePtr<BSDF>(const ObjMaterial&)> mtl_parser,
 			const bool force_compute_normal = false,
 			const bool left_handed = true,
-			UniquePtr<BSDF> bsdf = UniquePtr<BSDF>(nullptr),
 			const MediumInterface &medium_interface = MediumInterface());
 		void loadSphere(const Transform &o2w,
 			const float radius,
