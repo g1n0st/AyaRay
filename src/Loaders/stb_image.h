@@ -203,6 +203,8 @@ License:
    and modify this file however you want.
 
 */
+#pragma warning(disable : 4996)
+#pragma warning(disable : 4244)
 
 #ifndef STBI_INCLUDE_STB_IMAGE_H
 #define STBI_INCLUDE_STB_IMAGE_H
