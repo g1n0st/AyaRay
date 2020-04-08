@@ -5,6 +5,7 @@
 
 #include "../Math/MathUtility.h"
 #include "../Core/Spectrum.h"
+#include "../Core/Memory.h"
 
 #include <Windows.h>
 #include <winGDI.h>
