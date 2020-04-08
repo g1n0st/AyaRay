@@ -70,8 +70,8 @@ namespace Aya {
 
 	template<class T, class T1, class T2>
 	AYA_FORCE_INLINE T Clamp(const T &t, const T1  &low, const T2 &high) {
-		if (t < T(low)) return low;
-		if (t > T(high)) return high;
+		if (t < T(low)) return T(low);
+		if (t > T(high)) return T(high);
 		return t;
 	}
 
