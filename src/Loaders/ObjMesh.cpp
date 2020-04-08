@@ -63,7 +63,7 @@ namespace Aya {
 		int current_mtl = 0;
 		char mtl_filename[AYA_MAX_PATH] = { 0 };
 
-		parserFramework(path, [&] (char *cmd_header, char *cmd_para) {
+		parserFramework(path, [&](char *cmd_header, char *cmd_para) {
 			if (0 == std::strcmp(cmd_header, "#")) {
 				// Comment
 			}
@@ -306,54 +306,85 @@ namespace Aya {
 				// Refractive Index
 				float ni;
 				sscanf_s(cmd_para, "%f", &ni);
-				m_materials[current_material].refractive_index = ni;
+				m_materials[current_material].Ni = ni;
+			}
+			else if (0 == std::strcmp(cmd_header, "Ns")) {
+				// Refractive Index
+				float ns;
+				sscanf_s(cmd_para, "%f", &ns);
+				m_materials[current_material].Ns = ns;
+			}
+			else if (0 == std::strcmp(cmd_header, "illum")) {
+				int illum;
+				sscanf_s(cmd_para, "%d", &illum);
+				m_materials[current_material].illum = illum;
+			}
+			else if (0 == std::strcmp(cmd_header, "Ke")) {
+				// Emissive color
+				float r, g, b;
+				sscanf_s(cmd_para, "%f %f %f", &r, &g, &b);
+				m_materials[current_material].Ke = RGBSpectrum(r, g, b);
+			}
+			else if (0 == std::strcmp(cmd_header, "Ka")) {
+				// Ambient color
+				float r, g, b;
+				sscanf_s(cmd_para, "%f %f %f", &r, &g, &b);
+				m_materials[current_material].Ka = RGBSpectrum(r, g, b);
 			}
 			else if (0 == std::strcmp(cmd_header, "Kd")) {
 				// Diffuse color
 				float r, g, b;
 				sscanf_s(cmd_para, "%f %f %f", &r, &g, &b);
-				m_materials[current_material].diffuse_color = Spectrum::fromRGB(r, g, b);
+				m_materials[current_material].Kd = RGBSpectrum(r, g, b);
 			}
 			else if (0 == std::strcmp(cmd_header, "Ks")) {
 				// Specular color
 				float r, g, b;
 				sscanf_s(cmd_para, "%f %f %f", &r, &g, &b);
-				m_materials[current_material].specular_color = Spectrum::fromRGB(r, g, b);
+				m_materials[current_material].Ks = RGBSpectrum(r, g, b);
 			}
 			else if (0 == std::strcmp(cmd_header, "Tf")) {
 				// Transmission color
 				float r, g, b;
 				sscanf_s(cmd_para, "%f %f %f", &r, &g, &b);
-				m_materials[current_material].trans_color = Spectrum::fromRGB(r, g, b);
-			}
-			else if (0 == std::strcmp(cmd_header, "d") ||
-				0 == std::strcmp(cmd_header, "Tr")) {
-				// Alpha
-				sscanf_s(cmd_para, "%f", &m_materials[current_material].diffuse_color[3]);
+				m_materials[current_material].Tf = RGBSpectrum(r, g, b);
 			}
 			else if (0 == std::strcmp(cmd_header, "map_Kd")) {
 				// Texture Map
-				
+
 				const char *path1 = std::strrchr(path, '/');
-				const char *path2 = std::strrchr(path,  '\\');
+				const char *path2 = std::strrchr(path, '\\');
 
 				if (path1 || path2) {
 					int idx = int((path1 ? path1 : path2) - path + 1);
-					strncpy_s(m_materials[current_material].texture_path, AYA_MAX_PATH, path, idx);
+					strncpy_s(m_materials[current_material].map_Kd, AYA_MAX_PATH, path, idx);
 				}
-				strcat_s(m_materials[current_material].texture_path, AYA_MAX_PATH, cmd_para);
+				strcat_s(m_materials[current_material].map_Kd, AYA_MAX_PATH, cmd_para);
 			}
-			else if (0 == std::strcmp(cmd_header, "bump")) {
+			else if (0 == std::strcmp(cmd_header, "map_Ks")) {
+				// Specular Map
+
+				const char *path1 = std::strrchr(path, '/');
+				const char *path2 = std::strrchr(path, '\\');
+
+				if (path1 || path2) {
+					int idx = int((path1 ? path1 : path2) - path + 1);
+					strncpy_s(m_materials[current_material].map_Ks, AYA_MAX_PATH, path, idx);
+				}
+				strcat_s(m_materials[current_material].map_Ks, AYA_MAX_PATH, cmd_para);
+			}
+			else if (0 == std::strcmp(cmd_header, "bump") ||
+				0 == std::strcmp(cmd_header, "map_Bump")) {
 				// Bump Map
-				if (!m_materials[current_material].bump_path[0]) {
+				if (!m_materials[current_material].map_Bump[0]) {
 					const char *path1 = std::strrchr(path, '/');
 					const char *path2 = std::strrchr(path, '\\');
-					
+
 					if (path1 || path2) {
 						int idx = int((path1 ? path1 : path2) - path + 1);
-						strncpy_s(m_materials[current_material].bump_path, AYA_MAX_PATH, path, idx);
+						strncpy_s(m_materials[current_material].map_Bump, AYA_MAX_PATH, path, idx);
 					}
-					strcat_s(m_materials[current_material].bump_path, AYA_MAX_PATH, cmd_para);
+					strcat_s(m_materials[current_material].map_Bump, AYA_MAX_PATH, cmd_para);
 				}
 			}
 			else {

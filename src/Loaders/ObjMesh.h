@@ -38,8 +38,7 @@ namespace Aya {
 
 		MeshFace() = default;
 		MeshFace(const int idx0, const int idx1, const int idx2, const int sg) :
-			smoothing_group(sg)
-		{
+			smoothing_group(sg) {
 			idx[0] = idx0;
 			idx[1] = idx1;
 			idx[2] = idx2;
@@ -50,22 +49,47 @@ namespace Aya {
 		Cache *next;
 	};
 	struct ObjMaterial {
-		char name[AYA_MAX_PATH];
-		char texture_path[AYA_MAX_PATH];
-		char bump_path[AYA_MAX_PATH];
-		Spectrum diffuse_color;
-		Spectrum specular_color;
-		Spectrum trans_color;
-		float refractive_index;
+		char name[AYA_MAX_PATH];			// newmtl name
+		char map_Kd[AYA_MAX_PATH];		// texture map
+		char map_Ks[AYA_MAX_PATH];		// specular map
+		char map_Bump[AYA_MAX_PATH];	// bump map
+		RGBSpectrum Ka;					// ambient color
+		RGBSpectrum Ke;					// missive color
+		RGBSpectrum Kd;					// diffuse color
+		RGBSpectrum Ks;					// specular colore
+		RGBSpectrum Tf;					// transmission filter
+		float Ns;						// refractive index
+		float Ni;						// reflection index
+		int illum; // illumination
+
+		// 0 Color on and Ambient off
+		// 1 Color on and Ambient on
+		// 2 Highlight on
+		// 3 Reflection on and Ray trace on
+		// 4 Transparency: Glass on
+		//	 Reflection : Ray trace on
+		// 5 Reflection : Fresnel on and Ray trace on
+		// 6 Transparency : Refraction on
+		//	 Reflection : Fresnel off and Ray trace on
+		// 7 Transparency : Refraction on
+		//	 Reflection : Fresnel on and Ray trace on
+		// 8 Reflection on and Ray trace off
+		// 9 Transparency : Glass on Reflection : Ray trace off
+		// 10 Casts shadows onto invisible surfaces
 
 		ObjMaterial(const char *_name = "") :
-			diffuse_color(0.85f),
-			specular_color(0.f),
-			trans_color(0.f),
-			refractive_index(0.f) {
+			Ka(0.f),
+			Ke(0.f),
+			Kd(0.85f),
+			Ks(0.f),
+			Tf(0.f),
+			Ni(0.f),
+			Ns(0.f),
+			illum(0) {
 			strcpy_s(name, AYA_MAX_PATH, _name);
-			std::memset(texture_path, 0, AYA_MAX_PATH);
-			std::memset(bump_path, 0, AYA_MAX_PATH);
+			std::memset(map_Kd, 0, AYA_MAX_PATH);
+			std::memset(map_Bump, 0, AYA_MAX_PATH);
+			std::memset(map_Ks, 0, AYA_MAX_PATH);
 		}
 
 		inline bool operator == (const ObjMaterial &rhs) const {
@@ -98,12 +122,12 @@ namespace Aya {
 			m_subset_count(0),
 			m_normaled(false),
 			m_textured(false) {}
-		
+
 		bool loadObj(const char *path, const bool force_compute_normal = false, const bool left_handed = true);
 		void loadMtl(const char *path);
 		uint32_t addVertex(uint32_t hash, const MeshVertex *vertex);
 		void computeVertexNormals();
-		
+
 		inline const uint32_t* getIndexAt(int num) const {
 			return m_indices.data() + 3 * num;
 		}
