@@ -8,13 +8,14 @@ namespace Aya {
 
 		float roughness = getValue(mp_roughness.get(), intersection, TextureFilter::Linear);
 		roughness = Clamp(roughness, .02f, 1.f);
+		float specular = getValue(mp_specular.get(), intersection, TextureFilter::Linear);
 
 		float microfacet_pdf = GGX_Pdf_VisibleNormal(l_out, wh, roughness * roughness);
 		float pdf = 0.f;
 		float dwh_dwi = 1.f / (4.f * Abs(l_in.dot(wh)));
 		float spec_pdf = microfacet_pdf * dwh_dwi;
 
-		float normal_ref = Lerp(m_specular, .0f, .08f);
+		float normal_ref = Lerp(specular, .0f, .08f);
 		float OdotH = l_out.dot(wh);
 		float prob_spec = Fresnel_Schlick(OdotH, normal_ref);
 
@@ -62,6 +63,7 @@ namespace Aya {
 		Spectrum albedo = getValue(mp_texture.get(), intersection);
 		float roughness = getValue(mp_roughness.get(), intersection, TextureFilter::Linear);
 		roughness = Clamp(roughness, .02f, 1.f);
+		float specular = getValue(mp_specular.get(), intersection, TextureFilter::Linear);
 
 		Spectrum Ctint = albedo.y(); // luminance approx.
 		Spectrum Cspec0 = Lerp(m_metallic, // dielectric -> metallic
@@ -82,7 +84,7 @@ namespace Aya {
 		return (1.f - m_metallic)
 			* (albedo * Lerp(m_subsurface, diffuseTerm(l_out, l_in, IdotH, roughness), subsurfaceTerm(l_out, l_in, IdotH, roughness))
 				+ sheen)
-			+ Cspec0 * specularTerm(l_out, l_in, wh, OdotH, roughness, nullptr)
+			+ Cspec0 * specularTerm(l_out, l_in, wh, OdotH, roughness, specular, nullptr)
 			+ Spectrum(clearCoatTerm(l_out, l_in, wh, IdotH, m_clear_coat_gloss));
 	}
 
@@ -126,10 +128,11 @@ namespace Aya {
 			float microfacet_pdf;
 			float roughness = getValue(mp_roughness.get(), intersection, TextureFilter::Linear);
 			roughness = Clamp(roughness, .02f, 1.f);
+			float specular = getValue(mp_specular.get(), intersection, TextureFilter::Linear);
 
 			wh = GGX_SampleVisibleNormal(l_out, remapped_sample.u, remapped_sample.v, &microfacet_pdf, roughness * roughness);
 
-			float normal_ref = Lerp(m_specular, .0f, .08f);
+			float normal_ref = Lerp(specular, .0f, .08f);
 			float OdotH = l_out.dot(wh);
 			float prob_spec = Fresnel_Schlick(OdotH, normal_ref);
 

@@ -7,7 +7,7 @@ namespace Aya {
 	class Disney : public BSDF {
 	private:
 		UniquePtr<Texture2D<float>> mp_roughness;
-		float m_specular;
+		UniquePtr<Texture2D<float>> mp_specular;
 		float m_metallic;
 		float m_specular_tint;
 		float m_sheen;
@@ -17,9 +17,9 @@ namespace Aya {
 		float m_clear_coat_gloss;
 
 	public:
-		Disney(const Spectrum &reflectance	= Spectrum(),
-			float roughness					= 0.1f,
-			float specular					= 0.5f,
+		Disney(const Spectrum &reflectance,
+			UniquePtr<Texture2D<float>> roughness,
+			UniquePtr<Texture2D<float>> specular,
 			float metallic					= 0.0f,
 			float specular_tint				= 0.0f,
 			float sheen						= 0.0f,
@@ -28,8 +28,8 @@ namespace Aya {
 			float clear_coat					= 0.0f,
 			float clear_coat_gloss			= 0.0f
 		) : BSDF(ScatterType(BSDF_REFLECTION | BSDF_DIFFUSE | BSDF_GLOSSY), BSDFType::Disney, reflectance),
-			mp_roughness(new ConstantTexture2D<float>(roughness)),
-			m_specular(specular),
+			mp_roughness(std::move(roughness)),
+			mp_specular(std::move(specular)),
 			m_metallic(metallic),
 			m_specular_tint(specular_tint),
 			m_sheen(sheen),
@@ -40,8 +40,8 @@ namespace Aya {
 
 		Disney(UniquePtr<Texture2D<Spectrum>> texture,
 			UniquePtr<Texture2D<RGBSpectrum>> normal,
-			float roughness					= 0.1f,
-			float specular					= 0.5f,
+			UniquePtr<Texture2D<float>> roughness,
+			UniquePtr<Texture2D<float>> specular,
 			float metallic					= 0.0f,
 			float specular_tint				= 0.0f,
 			float sheen						= 0.0f,
@@ -50,8 +50,8 @@ namespace Aya {
 			float clear_coat					= 0.0f,
 			float clear_coat_gloss			= 0.0f
 		) : BSDF(ScatterType(BSDF_REFLECTION | BSDF_DIFFUSE | BSDF_GLOSSY), BSDFType::Disney, std::move(texture), std::move(normal)),
-			mp_roughness(new ConstantTexture2D<float>(roughness)),
-			m_specular(specular),
+			mp_roughness(std::move(roughness)),
+			mp_specular(std::move(specular)),
 			m_metallic(metallic),
 			m_specular_tint(specular_tint),
 			m_sheen(sheen),
@@ -60,8 +60,8 @@ namespace Aya {
 			m_clear_coat(clear_coat),
 			m_clear_coat_gloss(clear_coat_gloss) {}
 		Disney(const char *file_tex,
-			float roughness					= 0.1f,
-			float specular					= 0.5f,
+			UniquePtr<Texture2D<float>> roughness,
+			UniquePtr<Texture2D<float>> specular,
 			float metallic					= 0.0f,
 			float specular_tint				= 0.0f,
 			float sheen						= 0.0f,
@@ -70,8 +70,8 @@ namespace Aya {
 			float clear_coat					= 0.0f,
 			float clear_coat_gloss			= 0.0f
 		) : BSDF(ScatterType(BSDF_REFLECTION | BSDF_DIFFUSE | BSDF_GLOSSY), BSDFType::Disney, file_tex),
-			mp_roughness(new ConstantTexture2D<float>(roughness)),
-			m_specular(specular),
+			mp_roughness(std::move(roughness)),
+			mp_specular(std::move(specular)),
 			m_metallic(metallic),
 			m_specular_tint(specular_tint),
 			m_sheen(sheen),
@@ -81,8 +81,8 @@ namespace Aya {
 			m_clear_coat_gloss(clear_coat_gloss) {}
 		Disney(const char *file_tex,
 			const char *file_normal,
-			float roughness					= 0.1f,
-			float specular					= 0.5f,
+			UniquePtr<Texture2D<float>> roughness,
+			UniquePtr<Texture2D<float>> specular,
 			float metallic					= 0.0f,
 			float specular_tint				= 0.0f,
 			float sheen						= 0.0f,
@@ -91,8 +91,8 @@ namespace Aya {
 			float clear_coat					= 0.0f,
 			float clear_coat_gloss			= 0.0f
 		) : BSDF(ScatterType(BSDF_REFLECTION | BSDF_DIFFUSE | BSDF_GLOSSY), BSDFType::Disney, file_tex, file_normal),
-			mp_roughness(new ConstantTexture2D<float>(roughness)),
-			m_specular(specular),
+			mp_roughness(std::move(roughness)),
+			mp_specular(std::move(specular)),
 			m_metallic(metallic),
 			m_specular_tint(specular_tint),
 			m_sheen(sheen),
@@ -106,6 +106,20 @@ namespace Aya {
 		Spectrum f(const Vector3 &v_out, const Vector3 &v_in, const SurfaceIntersection &intersection, ScatterType types = BSDF_ALL) const override;
 
 		Spectrum evaluate(const Vector3 &l_out, const Vector3 &l_in, const SurfaceIntersection &intersection, ScatterType types = BSDF_ALL) const;
+
+		void setRoughness(const char *path) {
+			mp_roughness = MakeUnique<ImageTexture2D<float, float>>(path);
+		}
+		void setRoughness(const float roughness) {
+			mp_roughness = MakeUnique<ConstantTexture2D<float>>(roughness);
+		}
+		void setSpecular(const char *path) {
+			mp_specular = MakeUnique<ImageTexture2D<float, float>>(path);
+		}
+		void setSpecular(const float specular) {
+			mp_specular = MakeUnique<ConstantTexture2D<float>>(specular);
+		}
+		
 	private:
 		float pdfInner(const Vector3 &v_out, const Vector3 &v_in, const SurfaceIntersection &intersection, ScatterType types = BSDF_ALL) const override;
 		float evalInner(const Vector3 &v_out, const Vector3 &v_in, const SurfaceIntersection &intersection, ScatterType types = BSDF_ALL) const override;
@@ -145,7 +159,7 @@ namespace Aya {
 			return (1.f + (F_D90 - 1.f) * FL) * (1.f + (F_D90 - 1.f) * FV) * float(M_1_PI);
 		}
 		float specularTerm(const Vector3 &l_out, const Vector3 &l_in, const Vector3 &wh,
-			const float OdotH, const float roughness, const float *fresnel = nullptr) const {
+			const float OdotH, const float roughness, const float specular, const float *fresnel = nullptr) const {
 			if (CosTheta(l_out) * CosTheta(l_in) <= 0.f)
 				return 0.f;
 
@@ -153,7 +167,7 @@ namespace Aya {
 			if (Ds == 0.f)
 				return 0.f;
 
-			float normal_ref = Lerp(m_specular, .0f, .08f);
+			float normal_ref = Lerp(specular, .0f, .08f);
 			float Fs = fresnel ? *fresnel : Fresnel_Schlick(OdotH, normal_ref);
 
 			float rough_G = (.5f + .5f * roughness);
