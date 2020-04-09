@@ -3,7 +3,7 @@
 namespace Aya {
 	Spectrum PathTracingIntegrator::li(const RayDifferential &ray, const Scene *scene, Sampler *sampler, RNG &rng, MemoryPool &memory) const {
 		Spectrum L(0.f);
-		Spectrum tp = Spectrum::fromRGB(1.f, 1.f, 1.f);
+		Spectrum tp = Spectrum(1.f);
 
 		bool spec_bounce = true;
 		RayDifferential path_ray = ray;

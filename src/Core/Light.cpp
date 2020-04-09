@@ -10,6 +10,6 @@ namespace Aya {
 		if (ray.mp_medium)
 			return ray.mp_medium->tr(ray, sampler);
 		else
-			return Spectrum::fromRGB(1.f, 1.f, 1.f);
+			return Spectrum(1.f);
 	}
 }

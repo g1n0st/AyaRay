@@ -6,8 +6,8 @@ namespace Aya {
 			int tiles_count = m_task.getTilesCount();
 			int height = m_task.getX();
 			int width = m_task.getY();
-			std::cout << spp << std::endl;
-			
+			printf("Rendering %d spp(s)\n", spp);
+
 			concurrency::parallel_for(0, tiles_count, [&](int i) {
 			//for (int i = 0; i < tiles_count; i++) {
 				const RenderTile& tile = m_task.getTile(i);
@@ -152,7 +152,7 @@ namespace Aya {
 						}
 
 						if (!Li.isBlack()) {
-							Spectrum transmittance = Spectrum::fromRGB(1.f, 1.f, 1.f);
+							Spectrum transmittance = Spectrum(1.f);
 							if (ray_light.mp_medium)
 								transmittance = ray_light.mp_medium->tr(ray_light, sampler);
 

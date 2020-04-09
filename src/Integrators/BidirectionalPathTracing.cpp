@@ -286,7 +286,7 @@ namespace Aya {
 
 		init_path.ori = ray.m_ori;
 		init_path.dir = ray.m_dir;
-		init_path.throughput = Spectrum::fromRGB(1.f, 1.f, 1.f);
+		init_path.throughput = Spectrum(1.f);
 		init_path.path_len = 1;
 		init_path.specular_path = true;
 

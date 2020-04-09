@@ -40,7 +40,7 @@ namespace Aya {
 			*pdf = !sample_both ? 1.f : prob;
 			if (sample_types != NULL)
 				*sample_types = ScatterType(BSDF_REFLECTION | BSDF_SPECULAR);
-			return fresnel * Spectrum::fromRGB(1.f, 1.f, 1.f, SpectrumType::Reflectance) / AbsCosTheta(wi);
+			return fresnel * Spectrum(1.f) / AbsCosTheta(wi);
 		}
 		// refract
 		else if (sample.w > prob && sample_both || (sample_refract && !sample_both)) {
