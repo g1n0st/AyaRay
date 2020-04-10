@@ -185,7 +185,7 @@ namespace Aya {
 			free();
 		}
 
-		void init(uint32_t nu, uint32_t nv, const T* data = nullptr) {
+		void init(uint32_t nu, uint32_t nv, const T* data) {
 			u_res = nu;
 			v_res = nv;
 			auto roundUp = [this](const uint32_t x) {
@@ -196,10 +196,19 @@ namespace Aya {
 			for (uint32_t i = 0; i < n_alloc; ++i)
 				new (&m_data[i]) T();
 
-			if (data) {
-				for (uint32_t i = 0; i < u_res * v_res; i++)
-					m_data[i] = data[i];
-			}
+			for (uint32_t i = 0; i < u_res * v_res; i++)
+				m_data[i] = data[i];
+		}
+		void init(uint32_t nu, uint32_t nv) {
+			u_res = nu;
+			v_res = nv;
+			auto roundUp = [this](const uint32_t x) {
+				return (x + 3) & ~(3);
+			};
+			uint32_t n_alloc = roundUp(u_res) * roundUp(v_res);
+			m_data = AllocAligned<T>(n_alloc);
+			for (uint32_t i = 0; i < n_alloc; ++i)
+				new (&m_data[i]) T();
 		}
 		void free() {
 			for (uint32_t i = 0; i < u_res * v_res; ++i)
