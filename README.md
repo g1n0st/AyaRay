@@ -1,19 +1,19 @@
 # AyaRay
-Last update: 2020/3/20
+Last update: 2020/4/11
 
 g1n0st
 
-**AyaRay** is a physically based cross-platform renderer  developing by [Chang Yu]( https://github.com/g1n0st ),  for the purpose of learning global illumination and Ray Tracing. AyaRay is written in modern C ++ and integrates multi-threading and SIMD at the bottom to optimize high-performance computing. The ultimate goal of AyaRay is to have a complete offline rendering procedure,  and provide the corresponding workflow for the artist.
+**AyaRay** is a physically based Windows-platform renderer  developing by [Chang Yu]( https://github.com/g1n0st ),  for the purpose of learning global illumination and Ray Tracing. AyaRay is written in modern C ++ and integrates multi-threading and SIMD at the bottom to optimize high-performance computing. It includes many state of the art algorithms published in recent years in light transport simulation. The ultimate goal of AyaRay is to have a complete offline rendering procedure,  and provide the corresponding workflow for the artist.
 
-Welcome to use any part of the code or the application in any place, but it should be warned that for now the code is just a demo. And it has no enough ability in any commercial occasions.
+Welcome to use any part of the code or the application in any place, but it should be warned that for now the code is just a demo. And it has no enough ability in any commercial occasions. If you have any issue, please post to the issue page and I will reply as early as I can.
 
 ## Demos
 
-![Sphere with Bump Map](https://img-blog.csdnimg.cn/20200320203849616.bmp?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2cxbjBzdA==,size_16,color_FFFFFF,t_70#pic_center)
+![san-miguel 2nd floor, 1280x800, 1024spp](https://img-blog.csdnimg.cn/20200411110204730.bmp)
 
-![Alucy Obj Model With Environmental Light](https://img-blog.csdnimg.cn/20200320204048561.bmp?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2cxbjBzdA==,size_16,color_FFFFFF,t_70#pic_center)
+![san-miguel 1-st floor, 1280x800, 1024spp](https://img-blog.csdnimg.cn/20200411110241784.bmp)
 
-![Cornell-Box with Path Tracing](https://img-blog.csdnimg.cn/20200320203948770.bmp?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2cxbjBzdA==,size_16,color_FFFFFF,t_70#pic_center)
+![point-light with bunny in cornell-box, 600x600, 200spp](https://img-blog.csdnimg.cn/20200411110446841.bmp)
 
 ## Build
 
@@ -24,24 +24,31 @@ Because the project is still building and need fast iteration, so it has not pro
 + **AYA_DEBUG** debug option (off by default)
 + **AYA_USE_SIMD** Use SIMD / SEE instructions in the math library (on by default)
 + **AYA_SAMPLED_SPECTRUM**  Use Sampled Spectrum replace RGB Spectrum (off by default)
++ **AYA_USE_EMBREE** Replace default BVH to  Intel®  Embree BVH (default ver.2)
++ **AYA_USE_EMBREE_STATIC_LIB** Make Embree  provided as static lib (on by default)
 
 ## Features
 
 ### Integrators
 + Direct Lighting Integrator
 + Path Tracing
++ Bidirectional Path Tracing with MIS
++ Vertex Connection and Merging (Debugging)
 
 ### Materials
 + Bump Map
 + Texture Map
++ Alpha Test in texture
 + BSDFs
 	+ Lambertian Diffuse
 	+ Mirror (Smooth Conductor)
 	+ Glass (Smooth Dielectric)
+	+ Disney BRDF
 
 
 ### Acceleration Structures
 + BVH
++ Intel®  Embree BVH (ver.2 / ver.3)
 
 
 ### Lights
@@ -60,6 +67,9 @@ Because the project is still building and need fast iteration, so it has not pro
 
 ### Cameras
 + Perspective Camera
++ Motion blur
++ Custom lens shape
++ Vignette and Cat-eye effect
 
 ### Filters
 + Box Filter
@@ -76,23 +86,16 @@ Because the project is still building and need fast iteration, so it has not pro
 ## Todo Lists (Planning schedule)
 
 + More Integrators
-    + Bidirectional Path Tracing
-	+ Photon Mapping
-	+ Stochastic Progressive Photon Mapping
+    + Stochastic Progressive Photon Mapping
 	+ Metropolis Light Transport
-
+	
 + Project Build based on CMake and Github Project dependency
-+ Cross-platform Test
-
 + IES Lighting support
 + More Cameras Model
 	+ Environment Camera
 	+ Orthographic Camera
 + Rough Conductor/Dielectric
-+ Disney BSDF
 + BSSRDF
-+ Alpha Test
-
 + AyaGUI interface [AyaGUI](https://github.com/g1n0st/ayagui)
 + Preview interface based on GLSL Ray Tracing
 + OpenGL-based preview interface
