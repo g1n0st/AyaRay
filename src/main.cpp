@@ -20,6 +20,8 @@
 
 #include "Integrators\DirectLighting.h"
 #include "Integrators\PathTracing.h"
+#include "Integrators\BidirectionalPathTracing.h"
+
 #include "Samplers\RandomSampler.h"
 #include "Samplers\SobolSampler.h"
 
@@ -27,6 +29,7 @@
 #include "Filters\GaussianFilter.h"
 #include "Filters\MitchellNetravaliFilter.h"
 #include "Filters\TriangleFilter.h"
+#include "Integrators\VertexCM.h"
 
 #include "Math\Matrix4x4.h"
 
@@ -34,9 +37,45 @@ using namespace Aya;
 using namespace std;
 
 void ayaInit() {
-	Aya::SampledSpectrum::init();
+	//Aya::SampledSpectrum::init();
 }
 
+UniquePtr<BSDF> scene_parser_lambertian(const ObjMaterial &mtl) {
+	UniquePtr<BSDF> bsdf;
+	if (mtl.Tf != Spectrum(0.f)) {
+		bsdf = MakeUnique<Glass>(mtl.Tf, 1.f, mtl.Ni);
+	}
+	else if (mtl.Ks[0] > 0.4f) {
+		bsdf = MakeUnique<Glass>(Spectrum(1.f, 1.f, 1.f), 1.f, 1.5f);
+	}
+	else {
+		/*UniquePtr<Texture2D<float>> specular;
+		if (mtl.map_Ks[0])
+			specular = MakeUnique<ImageTexture2D<float, float>>(mtl.map_Ks);
+		else
+			specular = MakeUnique<ConstantTexture2D<float>>((mtl.Ks[0] +
+				mtl.Ks[1] +
+				mtl.Ks[2]) / 3.f);
+
+		UniquePtr<Texture2D<float>> roughness = MakeUnique<ConstantTexture2D<float>>((512.f - mtl.Ns) / 512.f);
+		float metallic = mtl.Ns / 512.f; */
+
+		if (mtl.map_Kd[0])
+			bsdf = MakeUnique<LambertianDiffuse>(mtl.map_Kd);
+		else
+			bsdf = MakeUnique<LambertianDiffuse>(Spectrum(mtl.Kd));
+	}
+	//if (mtl.map_Bump[0])
+	//	bsdf->setNormalMap(mtl.map_Bump);
+
+	return bsdf;
+}
+RNG rr;
+UniquePtr<BSDF> hahaha(const ObjMaterial &mtl) {
+	return MakeUnique<Disney>(Spectrum::fromRGB(rr.drand48(), rr.drand48(), rr.drand48()),
+		MakeUnique<ConstantTexture2D<float>>(0.1f),
+		MakeUnique<ConstantTexture2D<float>>(0.9f));
+}
 int main(void) {
 	ayaInit();
 
@@ -47,58 +86,73 @@ int main(void) {
 	RandomSampler *random_sampler = new RandomSampler();
 	SobolSampler *sobol_sampler = new SobolSampler(testnumx, testnumy);
 	GaussianFilter *filter = new GaussianFilter();
-	//ProjectiveCamera *cam = new ProjectiveCamera(Point3(0, 2.5, 2.5), Vector3(0, 2.5, 0), Vector3(0, 1, 0), 40, 1, 0, 1, 0, 0);
-	Camera *cam = new Camera(Point3(-5, 0, 0), Vector3(0, 0, 0), Vector3(0, -1, 0), testnumx, testnumy, 40.f, 0.1f, 1000.f, 0.1f, 5, 2.f);
-	//ProjectiveCamera *cam = new ProjectiveCamera(Point3(0, 0.75, 3), Vector3(0, 0.75, -1), Vector3(0, 1, 0), 40, 1, 0, 100000, 0, 0);
-	Film *film = new Film(testnumx, testnumy, filter);
-	
-	/// debug
-	sobol_sampler->startPixel(300, 300);
-	CameraSample cam_sample;
-	sobol_sampler->generateSamples(300, 300, &cam_sample, rng);
-	cam_sample.image_x += 300;
-	cam_sample.image_y += 300;
+	MitchellNetravaliFilter *mfilter = new MitchellNetravaliFilter();
+	//Camera *cam = new Camera(Point3(-5, 0, 0), Vector3(0, 0, 0), Vector3(0, -1, 0), testnumx, testnumy, 40.f, 0.1f, 1000.f, 0.1f, 5, 2.f);
+	Camera *cam = new Camera(Point3(6, 1.5, 0), Vector3(0, 1.5, 0), Vector3(0, -1, 0), testnumx, testnumy, 40.f);
+	//Camera *cam = new Camera(Point3(-7.73, 1.47, 7.50), Point3(-8.49, 0.94, 7.12), Vector3(0.47f, -0.85, 0.24), testnumx, testnumy, 75);
+	//Camera *cam = new Camera(Point3(-12.38, 2.03, -0.39), Point3(-13.23, 1.67, -0.76), Vector3(0.34, -0.93, 0.15), testnumx, testnumy, 40);
+	//Camera *cam = new Camera(Point3(-24.79, 7.58, -1.87), Point3(-23.80, 7.43, -1.88), Vector3(-0.15, -0.99, -0.00), testnumx, testnumy, 40);
+	//Camera *cam = new Camera(Point3(-15.12f, 3.73f, 9.96f), Point3(-14.58f, 3.06f, 9.45f), Vector3(-0.48f, -0.75f, 0.46f), testnumx, testnumy, 30);
+	Film *film = new Film(testnumx, testnumy, mfilter);
 
-	RayDifferential ray;
-	cam->generateRayDifferential(cam_sample, &ray);
-	/// 
+	// Tomoko Tracker
+	//for (int i = 82; i <= 85; i++)
+	//	for (int j = 531; j <= 534; j++)
+	//film->splat(i, 900 - j, Spectrum(10.f, 10.f, 10.f));
+	//film->addSampleCount();
+	//film->updateDisplay();
+	//Bitmap::save("test.bmp", (float*)film->getPixelBuffer(), testnumx, testnumy, RGBA_32);
 
 	Transform murb = Transform().setScale(0.04f, 0.04f, 0.04f) * Transform().setEulerZYX(0, 15, 0);
 	AffineTransform cb = AffineTransform().setScale(2, 2, 2) * AffineTransform().setEulerZYX(0, 90, 0);
-	AffineTransform cbb = AffineTransform().setScale(1.3, 1.3, 1.3);
-	Transform bunnyc = Transform().setScale(0.4, 0.4, 0.4) * Transform().setTranslate(0, -2, 0) * AffineTransform().setEulerZYX(0, -90, 0);
-	Transform idt = Transform() * Transform().setScale(0.004, 0.004, 0.004) * Transform().setTranslate(60, -420, 0);
-	Transform o2w = Transform().setTranslate(3, -1.4, 0) * Transform().setScale(0.9, 0.9, 0.9) * Transform().setEulerZYX(-10, 90, 10);
-	Transform o2w1 = Transform().setTranslate(3, 1.4, 0);
+	AffineTransform cbb = AffineTransform().setScale(1.3f, 1.3f, 1.3f);
+	Transform bunnyc = Transform().setScale(0.4f, 0.4f, 0.4f) * Transform().setTranslate(-0.2f, 0, -1.5f) * AffineTransform().setEulerZYX(0, 75, 0);
+	Transform bunnyb = Transform().setScale(0.5f, 0.5f, 0.5f) * Transform().setTranslate(0.6f, 2.1f, 1.4f) * AffineTransform().setEulerZYX(0, 130, 0);
+	Transform idt = Transform() * Transform().setScale(0.004f, 0.004f, 0.004f) * Transform().setTranslate(60, -420, 0);
+	Transform o2w = Transform().setTranslate(-2.04f, 1.56f, 0) * Transform().setScale(3, 3.25f, 4) * Transform().setEulerZYX(0, 0, -90);
+	Transform o2w1 = Transform().setTranslate(3, 1.4f, 0);
 	int st = clock();
 	Primitive * primitive = new Primitive();
 	Primitive * light_p = new Primitive();
 	Primitive *bunny = new Primitive();
+	Primitive *bunny0 = new Primitive();
 	Primitive *mur = new Primitive();
+	Primitive *teapot = new Primitive();
+	Primitive *plane = new Primitive();
 	//primitive->loadMesh(o2w, "teapot.obj", true);
 	//primitive->loadPlane(o2w, 3, MakeUnique<LambertianDiffuse>(Spectrum(1.f, 1.f, 1.f)));
 	//light_p->loadMesh(cb, "./cornell-box/light.obj");
 	//mur->loadMesh(murb, "mur.obj", true);
 	RNG dr;
 	dr.srand(time(0));
-	bunny->loadMesh(bunnyc, "bunny.obj", true, true, MakeUnique<Disney>(Spectrum::fromRGB(100.f / 255.f, 149.f / 255.f, 225.0f / 255.0f), 0.75, 0.0, 0
-		, 0, 0, 0, 0, 1, 1));
-	//primitive->loadPlane(o2w, 2, MakeUnique<LambertianDiffuse>("cnm777.bmp"));
+	printf("Reading models...\n");
+	bunny0->loadMesh(bunnyb, "bunny.obj", 
+		[](const ObjMaterial &mtl) { return MakeUnique<Glass>(Spectrum::fromRGB(1.f, 1.f, 1.f), 1.f, 2.f); }
+		,true, true);
+	bunny->loadMesh(bunnyc, "bunny.obj", 
+		[](const ObjMaterial &mtl) { return MakeUnique<LambertianDiffuse>(Spectrum::fromRGB(100.f / 255.f, 149.f / 255.f, 225.0f / 255.0f)); }
+	, true, true);
+	//bunny->loadMesh(bunnyc, "bunny.obj", true, true, MakeUnique<Disney>(Spectrum::fromRGB(100.f / 255.f, 149.f / 255.f, 225.0f / 255.0f), 0.1f, 0.9f));
+	//plane->loadPlane(o2w, 1, MakeUnique<Disney>("background.jpg", 0.0f, 1.0f));
+	//plane->loadPlane(o2w, 1, MakeUnique<LambertianDiffuse>(Spectrum(0.5, 0.5, 0.5)));
 	//primitive->loadPlane(o2w, 2, MakeUnique<Glass>(Spectrum::fromRGB(1.f, 1.f, 1.f)));
 	//primitive->loadMesh(o2w, "teapot.obj", true, MakeUnique<Glass>(Spectrum::fromRGB(1.f, 0.7529f, 0.796f), 1.f, 1.5f));
-	//primitive->loadMesh(o2w, "teapot.obj", true);
+	//teapot->loadMesh(bunnyc, "teapot.obj", false, true, MakeUnique<Glass>(Spectrum::fromRGB(1.f, 1.f, 1.f), 1.f, 1.5f));
 	//primitive->loadMesh(idt, "Alucy.obj", true, MakeUnique<Mirror>(Spectrum::fromRGB(1.f, 1.f, 1.f)));
 	//primitive->loadMesh(idt, "Alucy.obj", true, MakeUnique<LambertianDiffuse>(Spectrum::fromRGB(1.f, 1.f, 1.f)));
 	//primitive->loadMesh(cb, "./cornell-box/CornellBox-Water.obj");
-	//primitive->loadMesh(cb, "./cornell-box/CornellBox-Water.obj");
+	primitive->loadMesh(cb, "./cornell-box/CornellBox-Empty-Squashed.obj", &scene_parser_lambertian);
+	//primitive->loadMesh(Transform(), "san-miguel.obj", &scene_parser_lambertian, true, true);
 	//primitive->loadMesh(o2w, "teapot.obj", true, MakeUnique<Glass>(Spectrum::fromRGB(1.f, 1.f, 1.f)));
 	//primitive->loadMesh(o2w, "teapot.obj", true, true, MakeUnique<Disney>(Spectrum::fromRGB(65.f / 255.f, 105.f / 255.f, 225.f / 255.f), 0.0f, 1.0f, 0.0f, 0, 0, 0.5f, 0.f));
 	//primitive->loadMesh(cb, "shaderball.obj", true, true);
-	//primitive->loadSphere(cbb, 1, MakeUnique<Disney>(MakeUnique<ConstantTexture2D<Spectrum>>(Spectrum::fromRGB(65.f / 255.f, 105.f / 255.f, 225.f / 255.f)),
-		//MakeUnique<ImageTexture2D<RGBSpectrum, RGBSpectrum>>("norm5.bmp"), 0.1f, 0.8f));
+	//primitive->loadSphere(cbb, 1, MakeUnique<Disney>(Spectrum::fromRGB(0.05f, 0.05f, 0.05f),
+	//	MakeUnique<ImageTexture2D<float, float>> ("piso_rustico_Spec.png"), MakeUnique<ImageTexture2D<float, float>> ("piso_rustico_Spec.png")));
 	Scene *scene = new Scene();
-	//scene->addPrimitive(mur);
-	//scene->addPrimitive(primitive);
+	//scene->addPrimitive(plane);
+	scene->addPrimitive(primitive);
+	//scene->addPrimitive(teapot);
+	scene->addPrimitive(bunny0);
 	scene->addPrimitive(bunny);
 	//scene->addPrimitive(light_p);
 	//scene->addLight(new EnvironmentLight("uffizi-large.hdr", scene));
@@ -114,25 +168,27 @@ int main(void) {
 	//scene->addLight(new AreaLight(l1, Spectrum(10.f, 10.f, 10.f)));
 	//scene->addLight(new AreaLight(l2, Spectrum(0.f, 0, 1.f)));
 	//scene->addLight(new PointLight(Point3(0.6, 3.0, 1.2), Spectrum(1.f, 55.0 / 255.0 * 1, 0.f)));
-	//scene->addLight(new PointLight(Point3(-0.6, 3.0, 1.2), Spectrum(0.f, 0, 1.f)));
-	//scene->addLight(new AreaLight(light_p, Spectrum::fromRGB(8.f, 8.f, 8.f)));
-	scene->addLight(new EnvironmentLight("uffizi-large.hdr", scene));
-
+	scene->addLight(new PointLight(Point3(0, 3.10f, 0), Spectrum(8.f, 8.f, 8.f)));
+	//scene->addLight(new AreaLight(light_p, Spectrum::fromRGB(10.f, 10.f, 10.f)));
+	//scene->addLight(new EnvironmentLight("uffizi-large.hdr", scene, 1.f));
+	//scene->addLight(new EnvironmentLight(Spectrum::fromRGB(8.f, 8.f, 8.f), scene));
+	//scene->addLight(new DirectionalLight(Vector3(0.21, -0.7, -0.67), Spectrum(50000, 50000, 50000), scene, 1.f));
+	//scene->addLight(new DirectionalLight(Vector3(0.38f, -0.9f, 0.24f), Spectrum(25000, 25000, 25000), scene, 1.f));
+	printf("Constructing accelerator...\n");
 	scene->initAccelerator();
 
 	TaskSynchronizer task(testnumx, testnumy);
-	int spp = 50;
-	DirectLightingIntegrator *integrator = new DirectLightingIntegrator(task, spp, 5);
+	int spp = 200;
+	DirectLightingIntegrator *dl = new DirectLightingIntegrator(task, spp, 5);
 	PathTracingIntegrator *pt = new PathTracingIntegrator(task, spp, 16);
-	
+	BidirectionalPathTracingIntegrator *bdpt = new BidirectionalPathTracingIntegrator(task, spp, 32, cam, film);
+	VertexCMIntegrator *vcm = new VertexCMIntegrator(task, spp, 0, 16, cam, film, VertexCMIntegrator::AlgorithmType::kBpt, 0.003f, 0.75f);
 	MemoryPool memory;
-	//integrator->li(cam->getRay(0.5, 0.5), scene, sobol_sampler, rng, memory);
-
-
-	pt->render(scene, cam, sobol_sampler , film);
-	//integrator->render(scene, cam, sobol_sampler, film);
+	//bdpt->render(scene, cam, random_sampler, film);
+	vcm->render(scene, cam, random_sampler, film);
+	//pt->render(scene, cam, sobol_sampler , film);
+	//dl->render(scene, cam, sobol_sampler, film);
 	cout << clock() - st << endl;
-	const RGBSpectrum * offset = film->getPixelBuffer();
 	Bitmap::save("test.bmp", (float*)film->getPixelBuffer(), testnumx, testnumy, RGBA_32);
 		return 0;
 }
