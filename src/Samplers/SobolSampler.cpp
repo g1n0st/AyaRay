@@ -50,6 +50,11 @@ namespace Aya {
 	UniquePtr<Sampler> SobolSampler::clone(const int seed) const {
 		return MakeUnique<SobolSampler>(m_res, m_log2_res, m_scramble, m_sample_idx);
 	}
+	UniquePtr<Sampler> SobolSampler::deepClone() const {
+		SobolSampler *copy = new SobolSampler();
+		memcpy_s(copy, sizeof(SobolSampler), this, sizeof(SobolSampler));
+		return UniquePtr<SobolSampler>(copy);
+	}
 
 	uint64_t SobolSampler::enumerateSampleIndex(const uint32_t px, const uint32_t py) const {
 		if (m_log2_res == 0) {

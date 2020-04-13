@@ -57,9 +57,12 @@ namespace Aya {
 		// For light path belonging to pixel index [x] it stores
 		// where it's light vertices end (begin is at [x-1])
 		BlockedArray<Vector2i> ranges;
+		BlockedArray<UniquePtr<Sampler>> pixel_samplers;
+
 		HashGrid grid;
 
 		ranges.init(m_task.getX(), m_task.getY());
+		pixel_samplers.init(m_task.getX(), m_task.getY());
 
 		for (uint32_t spp = 0; spp < m_spp; spp++) {
 			printf("Rendering %d spp(s)\n", spp);
@@ -92,7 +95,7 @@ namespace Aya {
 				//for (int i = 0; i < tiles_count; i++) {
 				const RenderTile& tile = m_task.getTile(i);
 
-				UniquePtr<Sampler> tile_sampler(sampler->clone(spp * tiles_count + i));
+				UniquePtr<Sampler> tile_sampler = sampler->clone(spp * tiles_count + i);
 
 				RNG rng;
 				MemoryPool memory;
@@ -102,10 +105,13 @@ namespace Aya {
 						if (m_task.aborted())
 							return;
 
+						Sampler *sampler = tile_sampler.get();
+						sampler->startPixel(x, y);
+
 						// Randomly select a light source, and generate the light path
 						PathVertex *light_path = memory.alloc<PathVertex>(m_max_depth);
 						int light_vertex_cnt;
-						int light_path_len = generateLightPath(scene, tile_sampler.get(), rng,
+						int light_path_len = generateLightPath(scene, sampler, rng,
 							mp_cam, mp_film, m_max_depth + 1,
 							light_path, &light_vertex_cnt);
 						{
@@ -118,6 +124,7 @@ namespace Aya {
 							int vertex_end = int(light_vertices.size());
 
 							ranges(x, y) = Vector2i(vertex_start, vertex_end);
+							pixel_samplers(x, y) = sampler->deepClone();
 						}
 					}
 				}
@@ -134,8 +141,6 @@ namespace Aya {
 				//for (int i = 0; i < tiles_count; i++) {
 				const RenderTile& tile = m_task.getTile(i);
 
-				UniquePtr<Sampler> tile_sampler(sampler->clone(spp * tiles_count + i));
-
 				RNG rng;
 				MemoryPool memory;
 
@@ -144,9 +149,10 @@ namespace Aya {
 						if (m_task.aborted())
 							return;
 
-						tile_sampler->startPixel(x, y);
+						Sampler *sampler = pixel_samplers(x, y).get();
+
 						CameraSample cam_sample;
-						tile_sampler->generateSamples(x, y, &cam_sample, rng);
+						sampler->generateSamples(x, y, &cam_sample, rng);
 						cam_sample.image_x += x;
 						cam_sample.image_y += y;
 
@@ -201,7 +207,7 @@ namespace Aya {
 									// Connect to light source
 									if (cam_path.path_len >= m_min_depth)
 										L += cam_path.throughput *
-											connectToLight(scene, tile_sampler.get(), rng, path_ray, local_isect, cam_path);
+											connectToLight(scene, sampler, rng, path_ray, local_isect, cam_path);
 
 									// Connect to light vertices
 									Vector2i range = ranges(x, y);
@@ -234,7 +240,7 @@ namespace Aya {
 								}
 
 								// Extend camera path with importance sampling on BSDF
-								if (!sampleScattering(scene, rng, path_ray, local_isect, tile_sampler->getSample(), cam_path))
+								if (!sampleScattering(scene, rng, path_ray, local_isect, sampler->getSample(), cam_path))
 									break;
 							}
 						}

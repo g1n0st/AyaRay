@@ -38,6 +38,7 @@ namespace Aya {
 		virtual Sample getSample() = 0;
 
 		virtual UniquePtr<Sampler> clone(const int seed) const = 0;
+		virtual UniquePtr<Sampler> deepClone() const = 0;
 	};
 }
 #endif

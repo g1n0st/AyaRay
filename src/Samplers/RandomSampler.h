@@ -26,6 +26,7 @@ namespace Aya {
 		Sample getSample() override;
 
 		UniquePtr<Sampler> clone(const int seed) const override;
+		UniquePtr<Sampler> deepClone() const override;
 	};
 }
 #endif

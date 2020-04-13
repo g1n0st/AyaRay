@@ -17,6 +17,7 @@ namespace Aya {
 		mutable RNG rng;
 
 	public:
+		SobolSampler() = default;
 		SobolSampler(const int rx, const int ry) :
 			m_sample_idx(0), m_sobol_idx(0), m_dim(0), m_scramble(0) {
 			m_res = RoundUpToPowerOfTwo(Max(rx, ry));
@@ -41,6 +42,7 @@ namespace Aya {
 		Sample getSample() override;
 
 		UniquePtr<Sampler> clone(const int seed) const override;
+		UniquePtr<Sampler> deepClone() const override;
 
 	private:
 		uint64_t enumerateSampleIndex(const uint32_t pixel_x, const uint32_t pixel_y) const;

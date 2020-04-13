@@ -28,4 +28,9 @@ namespace Aya {
 	UniquePtr<Sampler> RandomSampler::clone(const int seed) const {
 		return MakeUnique<RandomSampler>(seed);
 	}
+	UniquePtr<Sampler> RandomSampler::deepClone() const {
+		RandomSampler *copy = new RandomSampler();
+		memcpy_s(copy, sizeof(RandomSampler), this, sizeof(RandomSampler));
+		return UniquePtr<RandomSampler>(copy);
+	}
 }
