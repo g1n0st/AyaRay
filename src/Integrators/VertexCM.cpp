@@ -194,7 +194,7 @@ namespace Aya {
 								if (local_isect.arealight != nullptr) {
 									if (cam_path.path_len >= m_min_depth)
 										L += cam_path.throughput *
-										hittingLightSource(scene, rng, path_ray, local_isect, (Light*)local_isect.arealight, cam_path);
+											hittingLightSource(scene, rng, path_ray, local_isect, (Light*)local_isect.arealight, cam_path);
 									break;
 								}
 
@@ -361,11 +361,13 @@ namespace Aya {
 				light_vertex.dvcm = light_path.dvcm;
 
 				// Connect to camera
-				if (connect_to_cam && light_path.path_len + 1 >= m_min_depth) {
-					Point3 raster;
-					Spectrum L =
-						connectToCamera(scene, sampler, rng, camera, film, intersection, light_vertex, &raster);
-					film->splat(raster.x(), raster.y(), L);
+				if (m_useVC) {
+					if (connect_to_cam && light_path.path_len + 1 >= m_min_depth) {
+						Point3 raster;
+						Spectrum L =
+							connectToCamera(scene, sampler, rng, camera, film, intersection, light_vertex, &raster);
+						film->splat(raster.x(), raster.y(), L);
+					}
 				}
 			}
 
