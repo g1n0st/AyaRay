@@ -81,8 +81,8 @@ namespace Aya {
 
 		Frame frame;
 
-		const BSDF *bsdf;
-		const AreaLight *arealight;
+		const BSDF *bsdf				= nullptr;
+		const AreaLight *arealight	= nullptr;
 
 	public:
 		SurfaceIntersection()
