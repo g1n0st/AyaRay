@@ -264,11 +264,10 @@ namespace Aya {
 		VertexCMIntegrator(const TaskSynchronizer &task, const uint32_t &spp,
 			uint32_t min_depth, uint32_t max_depth,
 			const Camera *camera, Film *film,
-			AlgorithmType algorithm_type,
-			const float radius_factor,
-			const float radius_alpha);
-		~VertexCMIntegrator() {
-		}
+			AlgorithmType algorithm_type = AlgorithmType::kVcm,
+			const float radius_factor = .003f,
+			const float radius_alpha = .75f);
+		~VertexCMIntegrator() = default;
 
 		void render(const Scene *scene, const Camera *camera, Sampler *sampler, Film *film) const override;
 

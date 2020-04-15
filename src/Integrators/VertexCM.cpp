@@ -31,7 +31,7 @@ namespace Aya {
 			m_useVM = true;
 			break;
 		default:
-			assert((void)(printf("Unknown algorithm requested\n")));
+			assert((printf("Unknown algorithm requested\n"), 0));
 			break;
 		}
 		
@@ -65,8 +65,6 @@ namespace Aya {
 		pixel_samplers.init(m_task.getX(), m_task.getY());
 
 		for (uint32_t spp = 0; spp < m_spp; spp++) {
-			printf("Rendering %d spp(s)\n", spp);
-
 			int tiles_count = m_task.getTilesCount();
 			int height = m_task.getX();
 			int width = m_task.getY();
