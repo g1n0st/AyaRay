@@ -6,7 +6,6 @@ namespace Aya {
 			int tiles_count = m_task.getTilesCount();
 			int height = m_task.getX();
 			int width = m_task.getY();
-			printf("Rendering %d spp(s)\n", spp);
 
 			concurrency::parallel_for(0, tiles_count, [&](int i) {
 			//for (int i = 0; i < tiles_count; i++) {
