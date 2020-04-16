@@ -14,7 +14,7 @@ namespace Aya {
 		float roughness = getValue(m_roughness.get(), intersection, TextureFilter::Linear);
 		roughness = Clamp(roughness, .02f, 1.f);
 		roughness = roughness * roughness;
-		Vector3 wh = GGX_SampleVisibleNormal(wo, sample.u, sample.v, &microfacet_pdf, roughness);
+		Vector3 wh = GGX_SampleVisibleNormal(wo * (CosTheta(wo) >= 0.f ? 1.f : -1.f), sample.u, sample.v, &microfacet_pdf, roughness);
 
 		if (microfacet_pdf == 0.f)
 			return 0.f;
@@ -51,18 +51,12 @@ namespace Aya {
 		return getValue(mp_texture.get(), intersection) * F * D * G / (4.f * AbsCosTheta(wo) * AbsCosTheta(wi));
 	}
 
-	float RoughConductor::evalInner(const Vector3 &v_out, const Vector3 &v_in, const SurfaceIntersection &intersection, ScatterType types) const {
-		if (!sameHemisphere(v_out, v_in))
+	float RoughConductor::evalInner(const Vector3 &wo, const Vector3 &wi, const SurfaceIntersection &intersection, ScatterType types) const {
+		if (!sameHemisphere(wo, wi))
 			return 0.0f;
 
-		Vector3 wo = v_out, wi = v_in;
-		Normal3 wh = (v_out + v_in).normalize();
-
-		if (CosTheta(wh) < 0.f) {
-			wh *= -1.f;
-			wo.setZ(wo.z() * -1.f);
-			wi.setZ(wi.z() * -1.f);
-		}
+		Vector3 wh = (wo + wi).normalize();
+		wh *= (CosTheta(wh) >= 0.f ? 1.f : -1.f);
 
 		float roughness = getValue(m_roughness.get(), intersection, TextureFilter::Linear);
 		roughness = Clamp(roughness, .02f, 1.f);
@@ -78,25 +72,19 @@ namespace Aya {
 		return F * D * G / (4.f * AbsCosTheta(wo) * AbsCosTheta(wi));
 	}
 
-	float RoughConductor::pdfInner(const Vector3 &v_out, const Vector3 &v_in, const SurfaceIntersection &intersection, ScatterType types) const {
-		if (!sameHemisphere(v_out, v_in))
+	float RoughConductor::pdfInner(const Vector3 &wo, const Vector3 &wi, const SurfaceIntersection &intersection, ScatterType types) const {
+		if (!sameHemisphere(wo, wi))
 			return 0.0f;
 
-		Vector3 wo = v_out, wi = v_in;
-		Normal3 wh = (v_out + v_in).normalize();
-
-		if (CosTheta(wh) < 0.f) {
-			wh *= -1.f;
-			wo.setZ(wo.z() * -1.f);
-			wi.setZ(wi.z() * -1.f);
-		}
+		Vector3 wh = (wo + wi).normalize();
+		wh *= (CosTheta(wh) >= 0.f ? 1.f : -1.f);
 
 		float roughness = getValue(m_roughness.get(), intersection, TextureFilter::Linear);
 		roughness = Clamp(roughness, .02f, 1.f);
 		roughness = roughness * roughness;
 
 		float dwh_dwi = 1.f / (4.f * wi.dot(wh));
-		float wh_prob = GGX_Pdf_VisibleNormal(wo, wh, roughness);
+		float wh_prob = GGX_Pdf_VisibleNormal(wo * (CosTheta(wo) >= 0.f ? 1.f : -1.f), wh, roughness);
 
 		return Abs(wh_prob * dwh_dwi);
 	}
