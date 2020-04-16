@@ -1,5 +1,5 @@
 # AyaRay
-Last update: 2020/4/11
+Last update: 2020/4/16
 
 g1n0st
 
@@ -21,11 +21,11 @@ Because the project is still building and need fast iteration, so it has not pro
 
 ## Compile switch
 
-+ **AYA_DEBUG** debug option (off by default)
-+ **AYA_USE_SIMD** Use SIMD / SEE instructions in the math library (on by default)
-+ **AYA_SAMPLED_SPECTRUM**  Use Sampled Spectrum replace RGB Spectrum (off by default)
-+ **AYA_USE_EMBREE** Replace default BVH to  Intel®  Embree BVH (default ver.2)
-+ **AYA_USE_EMBREE_STATIC_LIB** Make Embree  provided as static lib (on by default)
++ `AYA_DEBUG` debug option (off by default)
++ `AYA_USE_SIMD` Use SIMD / SEE instructions in the math library (on by default)
++ `AYA_SAMPLED_SPECTRUM`  Use Sampled Spectrum replace RGB Spectrum (off by default)
++ `AYA_USE_EMBREE` Replace default BVH to  Intel®  Embree BVH (default ver.2)
++ `AYA_USE_EMBREE_STATIC_LIB` Make Embree  provided as static lib (on by default)
 
 ## Features
 
@@ -34,6 +34,7 @@ Because the project is still building and need fast iteration, so it has not pro
 + Path Tracing
 + Bidirectional Path Tracing with MIS
 + Vertex Connection and Merging (Debugging)
++ Multiplex Metropolis Light Transport
 
 ### Materials
 + Bump Map
@@ -44,6 +45,7 @@ Because the project is still building and need fast iteration, so it has not pro
 	+ Mirror (Smooth Conductor)
 	+ Glass (Smooth Dielectric)
 	+ Disney BRDF
+	+ Rough Conductor/Dielectric
 
 
 ### Acceleration Structures
@@ -87,14 +89,12 @@ Because the project is still building and need fast iteration, so it has not pro
 
 + More Integrators
     + Stochastic Progressive Photon Mapping
-	+ Metropolis Light Transport
 	
 + Project Build based on CMake and Github Project dependency
 + IES Lighting support
 + More Cameras Model
 	+ Environment Camera
 	+ Orthographic Camera
-+ Rough Conductor/Dielectric
 + BSSRDF
 + AyaGUI interface [AyaGUI](https://github.com/g1n0st/ayagui)
 + Preview interface based on GLSL Ray Tracing
