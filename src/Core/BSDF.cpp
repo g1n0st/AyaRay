@@ -84,7 +84,7 @@ namespace Aya {
 		return .5f * (Rparl2 + Rperp2);
 	}
 
-	float BSDF::GGX_D(const Vector3 & wh, float alpha) {
+	float BSDF::GGX_D(const Vector3 &wh, float alpha) {
 		if (wh.z() <= 0.f)
 			return 0.f;
 
@@ -92,7 +92,7 @@ namespace Aya {
 		return float(M_1_PI) * (root * root);
 	}
 
-	Vector3 BSDF::GGX_SampleNormal(float u1, float u2, float* pdf, float alpha) {
+	Vector3 BSDF::GGX_SampleNormal(float u1, float u2, float *pdf, float alpha) {
 		float alpha_sqr = alpha * alpha;
 		float tan_sqr = alpha_sqr * u1 / (1.f - u1 + 1e-10f);
 		float cos_1 = 1.f / std::sqrt(1.f + tan_sqr);
