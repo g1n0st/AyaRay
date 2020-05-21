@@ -26,6 +26,14 @@ namespace Aya {
 			x = x1;
 			y = y1;
 		}
+		AYA_FORCE_INLINE T operator [](const int &p) const {
+			assert(p >= 0 && p <= 1);
+			return p ? v : u;
+		}
+		AYA_FORCE_INLINE T &operator [](const int &p) {
+			assert(p >= 0 && p <= 1);
+			return p ? v : u;
+		}
 
 		AYA_FORCE_INLINE bool operator == (const Vector2 &v) const {
 			return (x == v.x) && (y == v.y);
@@ -108,6 +116,8 @@ namespace Aya {
 
 	typedef Vector2<int> Vector2i;
 	typedef Vector2<float> Vector2f;
+	typedef Vector2<int> Point2i;
+	typedef Vector2<float> Point2f;
 }
 
 #endif
