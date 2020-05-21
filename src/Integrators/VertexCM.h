@@ -82,10 +82,8 @@ namespace Aya {
 
 				const Vector3 light_dir = light_vertex.isect.n;
 				const BSDF *cam_bsdf = m_cam_isect.bsdf;
-				const Normal3 &cam_n = m_cam_isect.n;
 				Vector3 v_out_cam = -m_cam_state.dir;
 				Spectrum cam_bsdf_fac = cam_bsdf->f(v_out_cam, light_dir, m_cam_isect);
-				float cos_at_cam = cam_n.dot(light_dir);
 				float cam_dir_pdfW = cam_bsdf->pdf(v_out_cam, light_dir, m_cam_isect);
 				float rev_cam_dir_pdfW = cam_bsdf->pdf(light_dir, v_out_cam, m_cam_isect);
 
