@@ -12,6 +12,29 @@
 #include <sstream>
 
 namespace Aya {
+	enum class SampleCombination {
+		Discard,
+		DiscardWithAutomaticBudget,
+		InverseVariance,
+	};
+
+	enum class BsdfSamplingFractionLoss {
+		None,
+		KL,
+		Variance,
+	};
+
+	enum class SpatialFilter {
+		Nearest,
+		StochasticBox,
+		Box,
+	};
+
+	enum class DirectionalFilter {
+		Nearest,
+		Box,
+	};
+
 	static void addToAtomicFloat(std::atomic<float> &var, float val) {
 		auto current = var.load();
 		while (!var.compare_exchange_weak(current, current + val));
