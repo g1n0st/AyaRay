@@ -143,7 +143,7 @@ namespace Aya {
 			else {
 				l_in = CosineSampleHemisphere(remapped_sample.u, remapped_sample.v);
 				if (l_out.z < 0.f)
-					l_in.setZ(l_in.z * -1.f);
+					l_in.z *= -1.f;
 
 				*sample_types = ScatterType(BSDF_REFLECTION | BSDF_DIFFUSE);
 			}

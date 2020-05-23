@@ -107,14 +107,6 @@ namespace Aya {
 			}
 #endif
 
-			AYA_FORCE_INLINE void setX(const float &x) { m_val[0] = x; }
-			AYA_FORCE_INLINE void setY(const float &y) { m_val[1] = y; }
-			AYA_FORCE_INLINE void setZ(const float &z) { m_val[2] = z; }
-			AYA_FORCE_INLINE void setW(const float &w) { m_val[3] = w; }
-			AYA_FORCE_INLINE const float& getX() const { return m_val[0]; }
-			AYA_FORCE_INLINE const float& getY() const { return m_val[1]; }
-			AYA_FORCE_INLINE const float& getZ() const { return m_val[2]; }
-
 			AYA_FORCE_INLINE float operator [](const int &p) const {
 				assert(p >= 0 && p <= 3);
 				return m_val[p];

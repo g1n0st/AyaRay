@@ -92,7 +92,7 @@ namespace Aya {
 			*normal = light_n.normalize();
 
 			Vector3 local_dir_out = CosineSampleHemisphere(light_sample1.u, light_sample1.v);
-			local_dir_out.setZ(Max(local_dir_out.z, 1e-6f));
+			local_dir_out.z = Max(local_dir_out.z, 1e-6f);
 
 			Frame light_frame = Frame(light_n);
 			Vector3 world_dir_out = light_frame.localToWorld(local_dir_out);
