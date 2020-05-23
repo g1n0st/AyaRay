@@ -240,7 +240,7 @@ namespace Aya {
 						Vector2f()
 					};
 					m_luminance(y, x) = 
-						mp_map->sample(Vector2f(u, v), diff, TextureFilter::Linear).y() * sin_theta;
+						mp_map->sample(Vector2f(u, v), diff, TextureFilter::Linear).luminance() * sin_theta;
 				}
 			}
 

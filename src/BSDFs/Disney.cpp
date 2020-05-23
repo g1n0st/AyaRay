@@ -24,7 +24,7 @@ namespace Aya {
 
 		if (m_clear_coat > 0.f) {
 			Spectrum albedo = getValue(mp_texture.get(), intersection);
-			float coat_weight = m_clear_coat / (m_clear_coat + albedo.y());
+			float coat_weight = m_clear_coat / (m_clear_coat + albedo.luminance());
 			float fresnel_coat = Fresnel_Schlick_Coat(AbsCosTheta(l_out));
 			float prob_coat = (fresnel_coat * coat_weight) /
 				(fresnel_coat * coat_weight +
@@ -65,7 +65,7 @@ namespace Aya {
 		roughness = Clamp(roughness, .02f, 1.f);
 		float specular = getValue(mp_specular.get(), intersection, TextureFilter::Linear);
 
-		Spectrum Ctint = albedo.y(); // luminance approx.
+		Spectrum Ctint = albedo.luminance(); // luminance approx.
 		Spectrum Cspec0 = Lerp(m_metallic, // dielectric -> metallic
 			Lerp(1.f - m_specular_tint, albedo, Ctint), // baseColor -> Colorless
 			albedo);
@@ -102,7 +102,7 @@ namespace Aya {
 
 		if (m_clear_coat > 0.f) {
 			Spectrum albedo = getValue(mp_texture.get(), intersection);
-			float coat_weight = m_clear_coat / (m_clear_coat + albedo.y());
+			float coat_weight = m_clear_coat / (m_clear_coat + albedo.luminance());
 			float fresnel_coat = Fresnel_Schlick_Coat(AbsCosTheta(l_out));
 			float prob_coat = (fresnel_coat * coat_weight) /
 				(fresnel_coat * coat_weight +

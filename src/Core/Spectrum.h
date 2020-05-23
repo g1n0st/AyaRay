@@ -497,7 +497,7 @@ namespace Aya {
 			xyz[1] *= scale;
 			xyz[2] *= scale;
 		}
-		float y() const {
+		float luminance() const {
 			float scale = float(sampled_lambda_end - sampled_lambda_start) /
 				float(CIE_Y_integral * n_spectral_samples);
 
@@ -646,7 +646,7 @@ namespace Aya {
 			toRGB(rgb);
 			return SampledSpectrum::fromRGB(rgb);
 		}
-		float y() const {
+		float luminance() const {
 			const float yy[3] = { 0.212671f, 0.715160f, 0.072169f };
 			return yy[0] * (*this)[0] + yy[1] * (*this)[1] + yy[2] * (*this)[2];
 		}
