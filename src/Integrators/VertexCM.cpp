@@ -404,7 +404,7 @@ namespace Aya {
 			// Sampling on disk lens
 			float U, V;
 			ConcentricSampleDisk(sampler->get1D(), sampler->get1D(), &U, &V);
-			if (Vector2f(scr_coord.x + U, scr_coord.v + V).length() > camera->m_vignette_factor)
+			if (Vector2f(scr_coord.x + U, scr_coord.v + V).length() > camera->m_vignetteFactor)
 				return Spectrum(0.f);
 			U *= camera->getCircleOfConfusionRadius();
 			V *= camera->getCircleOfConfusionRadius();
@@ -470,7 +470,7 @@ namespace Aya {
 		// this technique makes, which is equal to the number of light sub-paths
 		Spectrum L = MIS_weight * path_vertex.throughput * bsdf_fac * cam_pdfA / n_lights;
 
-		Ray ray2cam(intersection.p, dir2cam, intersection.m_medium_interface.getMedium(dir2cam, intersection.n), 0.f, dist2cam);
+		Ray ray2cam(intersection.p, dir2cam, intersection.m_mediumInterface.getMedium(dir2cam, intersection.n), 0.f, dist2cam);
 		if (L.isBlack() || scene->occluded(ray2cam))
 			return Spectrum(0.f);
 
@@ -670,7 +670,7 @@ namespace Aya {
 		
 		Spectrum L = (MIS_weight * g) * light_bsdf_fac * cam_bsdf_fac;
 
-		Ray ray2light(cam_pos, dir2light, intersection.m_medium_interface.getMedium(dir2light, cam_n), 0.f, dist2light);
+		Ray ray2light(cam_pos, dir2light, intersection.m_mediumInterface.getMedium(dir2light, cam_n), 0.f, dist2light);
 		if (L.isBlack() || scene->occluded(ray2light))
 			return Spectrum(0.f);
 
@@ -698,7 +698,7 @@ namespace Aya {
 
 		// Apply Russian Roulette if non-specular surface was hit
 		if (non_specular && RR_depth != -1 && int(path_state.path_len) > RR_depth) {
-			float RR_prob = Min(1.f, path_state.throughput.y());
+			float RR_prob = Min(1.f, path_state.throughput.luminance());
 			if (rng.drand48() < RR_prob) {
 				pdf *= RR_prob;
 				rev_pdf *= RR_prob;

@@ -50,13 +50,13 @@ namespace Aya {
 	public:
 		Point3 p;
 		Normal3 n;
-		MediumInterface m_medium_interface;
+		MediumInterface m_mediumInterface;
 
 	public:
 		Scatter(const Point3 pos = Point3(0.f, 0.f, 0.f), 
 			const Normal3 norm = Normal3(0.f, 0.f, 1.f),
 			const MediumInterface &medium_interface = MediumInterface()) :
-			p(pos), n(pos), m_medium_interface(medium_interface) {}
+			p(pos), n(pos), m_mediumInterface(medium_interface) {}
 		virtual bool isSurfaceScatter() const = 0;
 	};
 

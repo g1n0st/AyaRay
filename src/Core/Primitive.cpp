@@ -7,9 +7,9 @@
 
 namespace Aya {
 	Primitive::~Primitive() {
-		SafeDeleteArray(mp_material_idx);
-		SafeDeleteArray(mp_subset_start_idx);
-		SafeDeleteArray(mp_subset_material_idx);
+		SafeDeleteArray(mp_materialIdx);
+		SafeDeleteArray(mp_subsetStartIdx);
+		SafeDeleteArray(mp_subsetMaterialIdx);
 	}
 
 	void Primitive::loadMesh(const Transform &o2w,
@@ -29,20 +29,20 @@ namespace Aya {
 		for (auto i = 0; i < mtl_info.size(); i++) {
 			auto &mtl = mtl_info[i];
 			mp_BSDFs[i] = mtl_parser(mtl);
-			m_medium_interface.emplace_back(medium_interface);
+			m_mediumInterface.emplace_back(medium_interface);
 		}
 
-		mp_material_idx = new uint32_t[mesh->getTriangleCount()];
+		mp_materialIdx = new uint32_t[mesh->getTriangleCount()];
 
 		for (uint32_t i = 0; i < mesh->getTriangleCount(); i++)
-			mp_material_idx[i] = mesh->getMaterialIdx(i);
+			mp_materialIdx[i] = mesh->getMaterialIdx(i);
 
-		m_subset_count = mesh->getSubsetCount();
-		mp_subset_material_idx = new uint32_t[m_subset_count];
-		mp_subset_start_idx = new uint32_t[m_subset_count];
-		for (uint32_t i = 0; i < m_subset_count; i++) {
-			mp_subset_material_idx[i] = mesh->getSubsetMtlIdx(i);
-			mp_subset_start_idx[i] = mesh->getSubsetStartIdx(i);
+		m_subsetCount = mesh->getSubsetCount();
+		mp_subsetMaterialIdx = new uint32_t[m_subsetCount];
+		mp_subsetStartIdx = new uint32_t[m_subsetCount];
+		for (uint32_t i = 0; i < m_subsetCount; i++) {
+			mp_subsetMaterialIdx[i] = mesh->getSubsetMtlIdx(i);
+			mp_subsetStartIdx[i] = mesh->getSubsetStartIdx(i);
 		}
 
 		SafeDelete(mesh);
@@ -67,23 +67,23 @@ namespace Aya {
 	}
 
 	void Primitive::postIntersect(const RayDifferential &ray, SurfaceIntersection *intersection) const {
-		intersection->bsdf = mp_BSDFs[mp_material_idx[intersection->tri_id]].get();
+		intersection->bsdf = mp_BSDFs[mp_materialIdx[intersection->tri_id]].get();
 		// BSSRDF Part
 		intersection->arealight = mp_light;
-		intersection->m_medium_interface = m_medium_interface[mp_material_idx[intersection->tri_id]];
+		intersection->m_mediumInterface = m_mediumInterface[mp_materialIdx[intersection->tri_id]];
 		mp_mesh->postIntersect(ray, intersection);
 	}
 	void Primitive::setBSDF(UniquePtr<BSDF> bsdf, const MediumInterface &medium_interface) {
 		mp_BSDFs.resize(1);
 		mp_BSDFs[0] = std::move(bsdf);
-		m_medium_interface.emplace_back(medium_interface);
+		m_mediumInterface.emplace_back(medium_interface);
 
-		mp_material_idx = new uint32_t[mp_mesh->getTriangleCount()];
-		memset(mp_material_idx, 0, sizeof(uint32_t) * mp_mesh->getTriangleCount());
+		mp_materialIdx = new uint32_t[mp_mesh->getTriangleCount()];
+		memset(mp_materialIdx, 0, sizeof(uint32_t) * mp_mesh->getTriangleCount());
 
-		m_subset_count = 1;
-		mp_subset_material_idx = new uint32_t[1];
-		mp_subset_start_idx = new uint32_t[1];
-		mp_subset_material_idx[0] = mp_subset_start_idx[0] = 0;
+		m_subsetCount = 1;
+		mp_subsetMaterialIdx = new uint32_t[1];
+		mp_subsetStartIdx = new uint32_t[1];
+		mp_subsetMaterialIdx[0] = mp_subsetStartIdx[0] = 0;
 	}
 }

@@ -39,7 +39,7 @@ namespace Aya {
 		}
 
 		if (sample_types != nullptr)
-			*sample_types = m_scatter_type;
+			*sample_types = m_scatterType;
 
 		float D = GGX_D(wh, roughness);
 		if (D == 0.f)

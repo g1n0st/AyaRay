@@ -86,26 +86,26 @@ namespace Aya {
 
 	class BSDF {
 	protected:
-		const ScatterType m_scatter_type;
-		const BSDFType m_BSDF_type;
+		const ScatterType m_scatterType;
+		const BSDFType m_bsdfType;
 		UniquePtr<Texture2D<Spectrum>> mp_texture;
-		UniquePtr<Texture2D<RGBSpectrum>> mp_normal_map;
+		UniquePtr<Texture2D<RGBSpectrum>> mp_normalMap;
 
 	public:
 		BSDF(ScatterType t1, BSDFType t2, const Spectrum &color);
 		BSDF(ScatterType t1, BSDFType t2, UniquePtr<Texture2D<Spectrum>> tex, UniquePtr<Texture2D<RGBSpectrum>> normal);
 		BSDF(ScatterType t1, BSDFType t2, const char *texture_file);
 		BSDF(ScatterType t1, BSDFType t2, const char *texture_file, const char *normal_file);
-		virtual ~BSDF() {}
+		virtual ~BSDF() = default;
 
 		bool matchesTypes(ScatterType flags) const {
-			return (m_scatter_type & flags) == m_scatter_type;
+			return (m_scatterType & flags) == m_scatterType;
 		}
 		bool isSpecular() const {
-			return (ScatterType(BSDF_SPECULAR | BSDF_DIFFUSE | BSDF_GLOSSY) & m_scatter_type) == ScatterType(BSDF_SPECULAR);
+			return (ScatterType(BSDF_SPECULAR | BSDF_DIFFUSE | BSDF_GLOSSY) & m_scatterType) == ScatterType(BSDF_SPECULAR);
 		}
 		void setNormalMap(const char *normal_file) {
-			mp_normal_map = MakeUnique<ImageTexture2D<RGBSpectrum, byteSpectrum>>(normal_file, 1.f);
+			mp_normalMap = MakeUnique<ImageTexture2D<RGBSpectrum, byteSpectrum>>(normal_file, 1.f);
 		}
 		void setTexture(const char *image_file) {
 			mp_texture = MakeUnique<ImageTexture2D<Spectrum, byteSpectrum>>(image_file);
@@ -117,7 +117,7 @@ namespace Aya {
 		virtual Spectrum f(const Vector3 &v_out, const Vector3 &v_in, const SurfaceIntersection &intersection, ScatterType types = BSDF_ALL) const;
 		virtual float pdf(const Vector3 &v_out, const Vector3 &v_in, const SurfaceIntersection &intersection, ScatterType types = BSDF_ALL) const;
 		virtual Spectrum sample_f(const Vector3 &v_out, const Sample &sample,
-			const SurfaceIntersection &intersection, Vector3 *v_in, float* pdf, ScatterType types = BSDF_ALL, ScatterType *sample_types = nullptr) const = 0;
+			const SurfaceIntersection &intersection, Vector3 *v_in, float *pdf, ScatterType types = BSDF_ALL, ScatterType *sample_types = nullptr) const = 0;
 
 		template<typename T>
 		inline const T getValue(const Texture2D<T> *tex,
@@ -131,23 +131,23 @@ namespace Aya {
 		}
 
 		const ScatterType getScatterType() const {
-			return m_scatter_type;
+			return m_scatterType;
 		}
 		const BSDFType getBSDFType() const {
-			return m_BSDF_type;
+			return m_bsdfType;
 		}
 		const Texture2D<Spectrum>* getTexture() const {
 			return mp_texture.get();
 		}
 		const Texture2D<RGBSpectrum>* getNormalMap() const {
-			return mp_normal_map.get();
+			return mp_normalMap.get();
 		}
 
 		UniquePtr<Texture2D<Spectrum>> moveTexture() {
 			return std::move(mp_texture);
 		}
 		UniquePtr<Texture2D<RGBSpectrum>> moveNormalMap() {
-			return std::move(mp_normal_map);
+			return std::move(mp_normalMap);
 		}
 
 	protected:
@@ -166,13 +166,13 @@ namespace Aya {
 
 		// http://www.cs.cornell.edu/~srm/publications/EGSR07-btdf.pdf
 		static float GGX_D(const Vector3 &wh, float alpha);
-		static Vector3 GGX_SampleNormal(float u1, float u2, float* pdf, float alpha);
+		static Vector3 GGX_SampleNormal(float u1, float u2, float *pdf, float alpha);
 		static float SmithG(const Vector3 &v, const Vector3 &wh, float alpha);
 		static float	 GGX_G(const Vector3 &wo, const Vector3 &wi, const Vector3 &wh, float alpha);
 		static float GGX_Pdf(const Vector3 &wh, float alpha);
 
 		static Vector2f	ImportanceSampleGGX_VisibleNormal_Unit(float theta, float u1, float u2);
-		static Vector3 GGX_SampleVisibleNormal(const Vector3 &wi, float u1, float u2, float* pdf, float roughness);
+		static Vector3 GGX_SampleVisibleNormal(const Vector3 &wi, float u1, float u2, float *pdf, float roughness);
 		static float GGX_Pdf_VisibleNormal(const Vector3 &wi, const Vector3 &h, float roughness);
  	};
 }

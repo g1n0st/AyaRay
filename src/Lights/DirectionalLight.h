@@ -42,7 +42,7 @@ namespace Aya {
 			float radius;
 			mp_scene->worldBound().boundingSphere(&center, &radius);
 			tester->setSegment(pos, pos + 2.f * radius * (*dir));
-			tester->setMedium(scatter.m_medium_interface.getMedium(*dir, scatter.n));
+			tester->setMedium(scatter.m_mediumInterface.getMedium(*dir, scatter.n));
 
 			if (cos_at_light)
 				*cos_at_light = dir->dot(m_dir);

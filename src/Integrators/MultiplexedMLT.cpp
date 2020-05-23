@@ -100,7 +100,7 @@ namespace Aya {
 				MetropolisSampler sampler(m_sigma, m_large_step_prob, seed);
 
 				Vector2f raster_pos;
-				bootstrap_weights[seed] = evalSample(scene, &sampler, depth, &raster_pos, rng, memory).y();
+				bootstrap_weights[seed] = evalSample(scene, &sampler, depth, &raster_pos, rng, memory).luminance();
 
 				memory.freeAll();
 			}
@@ -150,13 +150,13 @@ namespace Aya {
 				Spectrum proposed_Li = evalSample(scene, &sampler, depth, &proposed_raster, rng, memory);
 
 				// Compute acceptance probability for proposed sample
-				float accept_prob = Min(1.f, proposed_Li.y() / (current_Li.y() + 1e-4f));
+				float accept_prob = Min(1.f, proposed_Li.luminance() / (current_Li.luminance() + 1e-4f));
 				if (accept_prob > 0.f)
 					mp_film->splat(proposed_raster.x, proposed_raster.y,
-						proposed_Li * accept_prob / (proposed_Li.y() + 1e-4f));
+						proposed_Li * accept_prob / (proposed_Li.luminance() + 1e-4f));
 
 				mp_film->splat(current_raster.x, current_raster.y, 
-					current_Li * (1.f - accept_prob) / (current_Li.y() + 1e-4f));
+					current_Li * (1.f - accept_prob) / (current_Li.luminance() + 1e-4f));
 
 				// Accept or reject the proposal
 				if (rng.drand48() < accept_prob) {

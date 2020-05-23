@@ -84,7 +84,7 @@ namespace Aya {
 				*emit_pdf_w = *pdf * ConcentricDiscPdf() / (radius * radius);
 
 			tester->setRay(pos, *dir, 2.f * radius);
-			tester->setMedium(scatter.m_medium_interface.getMedium(*dir, scatter.n));
+			tester->setMedium(scatter.m_mediumInterface.getMedium(*dir, scatter.n));
 
 			Vector2f diff[2] = {Vector2f(), Vector2f()};
 			return mp_map->sample(Vector2f(u, v), diff, TextureFilter::Linear) * m_scale;

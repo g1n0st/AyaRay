@@ -31,13 +31,13 @@ namespace Aya {
 
 	class Light {
 	protected:
-		uint32_t m_sample_count;
+		uint32_t m_sampleCount;
 
 	public:
 		Light(uint32_t count) :
-			m_sample_count(count) {}
+			m_sampleCount(count) {}
 
-		virtual ~Light() {}
+		virtual ~Light() = default;
 		virtual Spectrum illuminate(const Scatter &scatter,
 			const Sample &light_sample,
 			Vector3 *dir,
@@ -65,7 +65,7 @@ namespace Aya {
 		virtual bool isDelta() const = 0;
 		virtual bool isFinite() const = 0;
 		uint32_t getSampleCount() const {
-			return m_sample_count;
+			return m_sampleCount;
 		}
 	};
 }

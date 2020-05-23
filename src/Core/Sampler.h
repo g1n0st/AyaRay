@@ -22,7 +22,7 @@ namespace Aya {
 
 	class Sampler {
 	public:
-		virtual ~Sampler() {}
+		virtual ~Sampler() = default;
 
 		virtual void generateSamples(
 			const int pixel_x,

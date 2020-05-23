@@ -22,14 +22,14 @@ namespace Aya {
 		pdf += spec_pdf * prob_spec;
 		pdf += AbsCosTheta(l_in) * float(M_1_PI) * (1.f - prob_spec);
 
-		if (m_clear_coat > 0.f) {
+		if (m_clearCoat > 0.f) {
 			Spectrum albedo = getValue(mp_texture.get(), intersection);
-			float coat_weight = m_clear_coat / (m_clear_coat + albedo.luminance());
+			float coat_weight = m_clearCoat / (m_clearCoat + albedo.luminance());
 			float fresnel_coat = Fresnel_Schlick_Coat(AbsCosTheta(l_out));
 			float prob_coat = (fresnel_coat * coat_weight) /
 				(fresnel_coat * coat_weight +
 				(1.f - fresnel_coat) * (1.f - coat_weight));
-			float coat_rough = Lerp(m_clear_coat_gloss, .005f, .10f);
+			float coat_rough = Lerp(m_clearCoatGloss, .005f, .10f);
 			float coat_half_pdf = GGX_Pdf_VisibleNormal(l_out, wh, coat_rough);
 			float coat_pdf = coat_half_pdf * dwh_dwi;
 
@@ -67,9 +67,9 @@ namespace Aya {
 
 		Spectrum Ctint = albedo.luminance(); // luminance approx.
 		Spectrum Cspec0 = Lerp(m_metallic, // dielectric -> metallic
-			Lerp(1.f - m_specular_tint, albedo, Ctint), // baseColor -> Colorless
+			Lerp(1.f - m_specularTint, albedo, Ctint), // baseColor -> Colorless
 			albedo);
-		Spectrum Csheen = Lerp(m_sheen_tint, Ctint, albedo); // Colorless -> baseColor
+		Spectrum Csheen = Lerp(m_sheenTint, Ctint, albedo); // Colorless -> baseColor
 
 		Vector3 wh = (l_out + l_in).normalize();
 		float OdotH = l_out.dot(wh);
@@ -85,7 +85,7 @@ namespace Aya {
 			* (albedo * Lerp(m_subsurface, diffuseTerm(l_out, l_in, IdotH, roughness), subsurfaceTerm(l_out, l_in, IdotH, roughness))
 				+ sheen)
 			+ Cspec0 * specularTerm(l_out, l_in, wh, OdotH, roughness, specular, nullptr)
-			+ Spectrum(clearCoatTerm(l_out, l_in, wh, IdotH, m_clear_coat_gloss));
+			+ Spectrum(clearCoatTerm(l_out, l_in, wh, IdotH, m_clearCoatGloss));
 	}
 
 	Spectrum Disney::sample_f(const Vector3 &v_out, const Sample &sample, const SurfaceIntersection &intersection, 
@@ -100,9 +100,9 @@ namespace Aya {
 		bool sample_coat = false;
 		Sample remapped_sample = sample;
 
-		if (m_clear_coat > 0.f) {
+		if (m_clearCoat > 0.f) {
 			Spectrum albedo = getValue(mp_texture.get(), intersection);
-			float coat_weight = m_clear_coat / (m_clear_coat + albedo.luminance());
+			float coat_weight = m_clearCoat / (m_clearCoat + albedo.luminance());
 			float fresnel_coat = Fresnel_Schlick_Coat(AbsCosTheta(l_out));
 			float prob_coat = (fresnel_coat * coat_weight) /
 				(fresnel_coat * coat_weight +
@@ -112,7 +112,7 @@ namespace Aya {
 				sample_coat = true;
 				remapped_sample.v /= prob_coat;
 
-				float coat_rough = Lerp(m_clear_coat_gloss, .005f, .1f);
+				float coat_rough = Lerp(m_clearCoatGloss, .005f, .1f);
 				float coat_pdf;
 				wh = GGX_SampleVisibleNormal(l_out, remapped_sample.u, remapped_sample.v, &coat_pdf, coat_rough);
 				l_in = -l_out + 2.f * l_out.dot(wh) * wh;

@@ -3,7 +3,7 @@
 namespace Aya {
 
 	const float Film::INV_GAMMA = .454545f;
-
+		
 	void Film::init(int width, int height, Filter *filter) {
 		resize(width, height);
 		mp_filter.reset();
@@ -13,18 +13,18 @@ namespace Aya {
 		m_width = width;
 		m_height = height;
 
-		m_pixel_buffer.free();
-		m_pixel_buffer.init(height, width);
-		m_accumulate_buffer.free();
-		m_accumulate_buffer.init(width, height);
-		m_sample_count = 0;
+		m_pixelBuffer.free();
+		m_pixelBuffer.init(height, width);
+		m_accumulateBuffer.free();
+		m_accumulateBuffer.init(width, height);
+		m_sampleCount = 0;
 	}
 	void Film::release() {
 	}
 	void Film::clear() {
-		m_sample_count = 0;
-		m_pixel_buffer.free();
-		m_accumulate_buffer.free();
+		m_sampleCount = 0;
+		m_pixelBuffer.free();
+		m_accumulateBuffer.free();
 	}
 
 	void Film::addSample(float x, float y, const Spectrum& L) {
@@ -39,7 +39,7 @@ namespace Aya {
 
 		for (auto i = min_y; i <= max_y; i++) {
 			for (auto j = min_x; j <= max_x; j++) {
-				Pixel& pixel = m_accumulate_buffer(j, m_height - 1 - i);
+				Pixel& pixel = m_accumulateBuffer(j, m_height - 1 - i);
 				float weight = mp_filter->evaluate(j - x, i - y);
 				pixel.weight += weight;
 				pixel.color += weight * L;
@@ -51,23 +51,23 @@ namespace Aya {
 
 		int xx = Clamp((int)std::floor(x), 0, m_width - 1);
 		int yy = Clamp((int)std::floor(y), 0, m_height - 1);
-		m_accumulate_buffer(xx, m_height - 1 - yy).splat += L;
+		m_accumulateBuffer(xx, m_height - 1 - yy).splat += L;
 	}
 	void Film::updateDisplay(const float ss) {
 		std::lock_guard<std::mutex> lck(m_mt);
 
-		float splat_scale = ss > 0.f ? ss : m_sample_count;
+		float splat_scale = ss > 0.f ? ss : m_sampleCount;
 
 		concurrency::parallel_for(0, m_height, [this, splat_scale](int y) {
 			for (int x = 0; x < m_width; x++) {
-				Pixel pixel = m_accumulate_buffer(x, y);
+				Pixel pixel = m_accumulateBuffer(x, y);
 				pixel.color.clamp();
 
 				Spectrum L = ((Spectrum)(
 					pixel.color / (pixel.weight + float(AYA_EPSILON)) + pixel.splat / splat_scale
 					).pow(INV_GAMMA)).toRGBSpectrum().clamp(0.f, 1.f);
 				L[3] = 1.f;
-				m_pixel_buffer(y, x) = L;
+				m_pixelBuffer(y, x) = L;
 					
 			}
 		});

@@ -7,7 +7,7 @@
 namespace Aya {
 	class Accelerator {
 	public:
-		Accelerator() {}
+		Accelerator() = default;
 		virtual ~Accelerator();
 
 		virtual void construct(const std::vector<Primitive*> &prims) = 0;

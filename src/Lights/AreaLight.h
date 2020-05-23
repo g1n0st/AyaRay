@@ -57,7 +57,7 @@ namespace Aya {
 			const Vector3 light_v = light_p - pos;
 			*dir = light_v.normalize();
 			tester->setSegment(pos, light_p);
-			tester->setMedium(scatter.m_medium_interface.getMedium(*dir, scatter.n));
+			tester->setMedium(scatter.m_mediumInterface.getMedium(*dir, scatter.n));
 
 			const float dist2 = light_v.length2();
 			*pdf = dist2 / Abs(light_n.dot(-*dir)) * m_area_inv;

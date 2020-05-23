@@ -1,8 +1,6 @@
 #include "Camera.h"
 
 namespace Aya {
-	Camera::Camera(){
-	}
 	Camera::Camera(const Point3 &pos, const Point3 &tar, const Vector3 &up, 
 		int res_x, int res_y, float FOV, float _near, float _far,
 		const float blur_radius, const float focal_dist, const float vignette) {
@@ -16,23 +14,23 @@ namespace Aya {
 		m_target = tar;
 		m_dir = (m_target - m_pos).normalize();
 		m_up = up;
-		m_res_x = res_x;
-		m_res_y = res_y;
+		m_resX = res_x;
+		m_resY = res_y;
 		m_FOV = FOV;
 		m_near = _near;
 		m_far = _far;
 		
 
 		m_view = Transform::lookAt(m_pos, m_target, m_up);
-		m_view_inv = m_view.inverse();
-		resize(m_res_x, m_res_y);
+		m_viewInv = m_view.inverse();
+		resize(m_resX, m_resY);
 
-		m_CoC_radius = blur_radius;
-		m_focal_plane_dist = focal_dist;
-		m_vignette_factor = 3.f - vignette;
+		m_CoCRadius = blur_radius;
+		m_focalPlaneDist = focal_dist;
+		m_vignetteFactor = 3.f - vignette;
 
 		float tanHalfAngle = tanf(Radian(m_FOV * .5f));
-		m_image_plane_dist = m_res_y * .5f / tanHalfAngle;
+		m_imagePlaneDist = m_resY * .5f / tanHalfAngle;
 
 		const int size = 128;
 		BlockedArray<float> apeture_func(size, size);
@@ -48,27 +46,27 @@ namespace Aya {
 		mp_aperture = MakeUnique<Distribution2D>(apeture_func.data(), size, size);
 	}
 	void Camera::resize(int width, int height) {
-		m_res_x = width;
-		m_res_y = height;
+		m_resX = width;
+		m_resY = height;
 
-		m_ratio = float(m_res_x) / float(m_res_y);
+		m_ratio = float(m_resX) / float(m_resY);
 		m_proj = Transform::perspective(m_FOV, m_ratio, m_near, m_far);
-		m_screen2raster = Transform().setScale(float(m_res_x), float(m_res_y), 1.f)
+		m_screenToRaster = Transform().setScale(float(m_resX), float(m_resY), 1.f)
 			* Transform().setScale(.5f, -.5f, 1.f)
 			* Transform().setTranslate(1.f, -1.f, 0.f);
-		m_raster2screen = m_screen2raster.inverse();
-		m_raster2camera = m_proj.inverse() * m_raster2screen;
-		m_camera2raster = m_raster2camera.inverse();
-		m_raster2world = m_view_inv * m_raster2camera;
-		m_world2raster = m_raster2world.inverse();
+		m_rasterToScreen = m_screenToRaster.inverse();
+		m_rasterToCamera = m_proj.inverse() * m_rasterToScreen;
+		m_cameraToRaster = m_rasterToCamera.inverse();
+		m_rasterToWorld = m_viewInv * m_rasterToCamera;
+		m_worldToRaster = m_rasterToWorld.inverse();
 
-		m_dx_cam = rasterToCamera(Point3(1.f, 0.f, 0.f))
+		m_dxCam = rasterToCamera(Point3(1.f, 0.f, 0.f))
 			- rasterToCamera(Point3(0.f, 0.f, 0.f));
-		m_dy_cam = rasterToCamera(Point3(0.f, 1.f, 0.f))
+		m_dyCam = rasterToCamera(Point3(0.f, 1.f, 0.f))
 			- rasterToCamera(Point3(0.f, 0.f, 0.f));
 
 		float tanHalfAngle = tanf(Radian(m_FOV * .5f));
-		m_image_plane_dist = m_res_y * .5f / tanHalfAngle;
+		m_imagePlaneDist = m_resY * .5f / tanHalfAngle;
 	}
 
 	bool Camera::generateRay(const CameraSample &sample, Ray *ray, const bool force_pinhole) const {
@@ -77,12 +75,12 @@ namespace Aya {
 		ray->m_ori = Point3(0.f, 0.f, 0.f);
 		ray->m_dir = cam_coord.normalize();
 
-		if (m_CoC_radius > 0.f && !force_pinhole) {
-			float focal_hit = m_focal_plane_dist / ray->m_dir.z;
+		if (m_CoCRadius > 0.f && !force_pinhole) {
+			float focal_hit = m_focalPlaneDist / ray->m_dir.z;
 			Point3 focal = (*ray)(focal_hit);
 
-			Vector2f scr_coord(2.f * float(sample.image_x) / float(m_res_x) - 1.f,
-				2.f * float(sample.image_y) / float(m_res_y) - 1.f);
+			Vector2f scr_coord(2.f * float(sample.image_x) / float(m_resX) - 1.f,
+				2.f * float(sample.image_y) / float(m_resY) - 1.f);
 			scr_coord.x *= m_ratio;
 			scr_coord.y *= -1.f;
 
@@ -91,17 +89,17 @@ namespace Aya {
 			u = 2.f * u - 1.f;
 			v = 2.f * v - 1.f;
 
-			if (Vector2f(scr_coord.x + u, scr_coord.y + v).length() > m_vignette_factor)
+			if (Vector2f(scr_coord.x + u, scr_coord.y + v).length() > m_vignetteFactor)
 				return false;
 
-			u *= m_CoC_radius;
-			v *= m_CoC_radius;
+			u *= m_CoCRadius;
+			v *= m_CoCRadius;
 
 			ray->m_ori = Point3(u, v, 0.f);
 			ray->m_dir = (focal - ray->m_ori).normalize();
 		}
 
-		*ray = m_view_inv(*ray);
+		*ray = m_viewInv(*ray);
 		ray->m_mint = float(AYA_RAY_EPS);
 		ray->m_maxt = float(INFINITY - AYA_RAY_EPS);
 
@@ -113,12 +111,12 @@ namespace Aya {
 		ray->m_ori = Point3(0.f, 0.f, 0.f);
 		ray->m_dir = cam_coord.normalize();
 
-		if (m_CoC_radius > 0.f) {
-			float focal_hit = m_focal_plane_dist / ray->m_dir.z;
+		if (m_CoCRadius > 0.f) {
+			float focal_hit = m_focalPlaneDist / ray->m_dir.z;
 			Point3 focal = (*ray)(focal_hit);
 
-			Vector2f scr_coord(2.f * float(sample.image_x) / float(m_res_x) - 1.f,
-				2.f * float(sample.image_y) / float(m_res_y) - 1.f);
+			Vector2f scr_coord(2.f * float(sample.image_x) / float(m_resX) - 1.f,
+				2.f * float(sample.image_y) / float(m_resY) - 1.f);
 			scr_coord.x *= m_ratio;
 			scr_coord.y *= -1.f;
 
@@ -127,21 +125,21 @@ namespace Aya {
 			u = 2.f * u - 1.f;
 			v = 2.f * v - 1.f;
 
-			if (Vector2f(scr_coord.x + u, scr_coord.y + v).length() > m_vignette_factor)
+			if (Vector2f(scr_coord.x + u, scr_coord.y + v).length() > m_vignetteFactor)
 				return false;
 
-			u *= m_CoC_radius;
-			v *= m_CoC_radius;
+			u *= m_CoCRadius;
+			v *= m_CoCRadius;
 
 			ray->m_ori = Point3(u, v, 0.f);
 			ray->m_dir = (focal - ray->m_ori).normalize();
 		}
-		ray->m_rx_ori = ray->m_ry_ori = ray->m_ori;
-		ray->m_rx_dir = (cam_coord + m_dx_cam).normalize();
-		ray->m_ry_dir = (cam_coord + m_dy_cam).normalize();
-		ray->m_has_differentials = true;
+		ray->m_rxOri = ray->m_ryOri = ray->m_ori;
+		ray->m_rxDir = (cam_coord + m_dxCam).normalize();
+		ray->m_ryDir = (cam_coord + m_dyCam).normalize();
+		ray->m_hasDifferentials = true;
 
-		*ray = m_view_inv(*ray);
+		*ray = m_viewInv(*ray);
 		ray->m_mint = float(AYA_RAY_EPS);
 		ray->m_maxt = float(INFINITY - AYA_RAY_EPS);
 

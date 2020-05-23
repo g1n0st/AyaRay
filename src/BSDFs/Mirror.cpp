@@ -28,7 +28,7 @@ namespace Aya {
 		*v_in = intersection.localToWorld(wi);
 		*pdf = 1.f;
 		if (sample_types != NULL)
-			*sample_types = m_scatter_type;
+			*sample_types = m_scatterType;
 
 		return getValue(mp_texture.get(), intersection) / AbsCosTheta(wi);
 	}

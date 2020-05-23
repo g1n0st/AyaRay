@@ -121,7 +121,7 @@ namespace Aya {
 
 				m_subset_start_idx.push_back(int(m_indices.size()));
 				m_subset_mtl_idx.push_back(current_mtl);
-				m_subset_count++;
+				m_subsetCount++;
 			}
 			else if (0 == std::strcmp(cmd_header, "f")) {
 				// Face
@@ -242,10 +242,10 @@ namespace Aya {
 			}
 		});
 
-		if (m_subset_count == 0) {
+		if (m_subsetCount == 0) {
 			m_subset_start_idx.push_back(0);
 			m_subset_mtl_idx.push_back(0);
-			m_subset_count = 1;
+			m_subsetCount = 1;
 		}
 
 		m_subset_start_idx.push_back(uint32_t(m_indices.size()));

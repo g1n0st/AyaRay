@@ -22,7 +22,7 @@
 namespace Aya {
 	class EmbreeAccel : public Accelerator {
 	private:
-		RTCScene m_rtc_scene = nullptr;
+		RTCScene m_rtcScene = nullptr;
 		RTCDevice m_device = nullptr;
 
 	public:

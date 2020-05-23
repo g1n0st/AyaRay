@@ -314,12 +314,12 @@ namespace Aya {
 				RayDifferential ret = r;
 				ret.m_ori = (*this)(ret.m_ori);
 				ret.m_dir = (*this)(ret.m_dir);
-				ret.m_rx_ori = (*this)(ret.m_rx_ori);
-				ret.m_ry_ori = (*this)(ret.m_ry_ori);
-				ret.m_rx_dir = (*this)(ret.m_rx_dir);
-				ret.m_ry_dir = (*this)(ret.m_ry_dir);
+				ret.m_rxOri = (*this)(ret.m_rxOri);
+				ret.m_ryOri = (*this)(ret.m_ryOri);
+				ret.m_rxDir = (*this)(ret.m_rxDir);
+				ret.m_ryDir = (*this)(ret.m_ryDir);
 
-				ret.m_has_differentials = r.m_has_differentials;
+				ret.m_hasDifferentials = r.m_hasDifferentials;
 
 				return ret;
 			}
@@ -692,12 +692,12 @@ namespace Aya {
 				RayDifferential ret = r;
 				ret.m_ori = (*this)(ret.m_ori);
 				ret.m_dir = (*this)(ret.m_dir);
-				ret.m_rx_ori = (*this)(ret.m_rx_ori);
-				ret.m_ry_ori = (*this)(ret.m_ry_ori);
-				ret.m_rx_dir = (*this)(ret.m_rx_dir);
-				ret.m_ry_dir = (*this)(ret.m_ry_dir);
+				ret.m_rxOri = (*this)(ret.m_rxOri);
+				ret.m_ryOri = (*this)(ret.m_ryOri);
+				ret.m_rxDir = (*this)(ret.m_rxDir);
+				ret.m_ryDir = (*this)(ret.m_ryDir);
 
-				ret.m_has_differentials = r.m_has_differentials;
+				ret.m_hasDifferentials = r.m_hasDifferentials;
 
 				return ret;
 			}

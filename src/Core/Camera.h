@@ -22,26 +22,26 @@ namespace Aya {
 		float m_near;
 		float m_far;
 
-		float m_CoC_radius, m_focal_plane_dist;
-		float m_image_plane_dist;
-		float m_vignette_factor;
+		float m_CoCRadius, m_focalPlaneDist;
+		float m_imagePlaneDist;
+		float m_vignetteFactor;
 
-		Vector3 m_dx_cam, m_dy_cam;
+		Vector3 m_dxCam, m_dyCam;
 
 	protected:
-		int m_res_x, m_res_y;
+		int m_resX, m_resY;
 
-		Transform m_view, m_view_inv;
+		Transform m_view, m_viewInv;
 		Transform m_proj;
 
-		Transform m_screen2raster, m_raster2screen;
-		Transform m_raster2camera, m_camera2raster;
-		Transform m_raster2world, m_world2raster;
+		Transform m_screenToRaster, m_rasterToScreen;
+		Transform m_rasterToCamera, m_cameraToRaster;
+		Transform m_rasterToWorld, m_worldToRaster;
 
 		UniquePtr<Distribution2D> mp_aperture;
 
 	public:
-		Camera();
+		Camera() = default;
 		Camera(const Point3 &pos, const Point3 &tar, const Vector3 &up, int res_x, int res_y,
 			float FOV = 35.f, float _near = .1f, float _far = 1000.f,
 			const float blur_radius = 0.f, const float focal_dist = 0.f, const float vignette = 3.f);
@@ -61,45 +61,45 @@ namespace Aya {
 			return m_view(elem);
 		}
 		template<class T> inline T viewInv(const T elem) const {
-			return m_view_inv(elem);
+			return m_viewInv(elem);
 		}
 		template<class T> inline T proj(const T elem) const {
 			return m_proj(elem);
 		}
 		template<class T> inline T worldToRaster(const T elem) const {
-			return m_world2raster(elem);
+			return m_worldToRaster(elem);
 		}
 		template<class T> inline T rasterToWorld(const T elem) const {
-			return m_raster2world(elem);
+			return m_rasterToWorld(elem);
 		}
 		template<class T> inline T rasterToCamera(const T elem) const {
-			return m_raster2camera(elem);
+			return m_rasterToCamera(elem);
 		}
 		template<class T> inline T cameraToRaster(const T elem) const {
-			return m_camera2raster(elem);
+			return m_cameraToRaster(elem);
 		}
 
 		inline int getResolusionX() const {
-			return m_res_x;
+			return m_resX;
 		}
 		inline int getResolusionY() const {
-			return m_res_y;
+			return m_resY;
 		}
 		inline bool checkRaster(const Point3 &pos) const {
-			return pos.x < float(m_res_x) && pos.x >= 0.f
-				&& pos.y < float(m_res_y) && pos.y >= 0.f;
+			return pos.x < float(m_resX) && pos.x >= 0.f
+				&& pos.y < float(m_resY) && pos.y >= 0.f;
 		}
 
 		void setApertureFunc(const char *path);
 
 		float getCircleOfConfusionRadius() const {
-			return m_CoC_radius;
+			return m_CoCRadius;
 		}
 		float getFocusDistance() const {
-			return m_focal_plane_dist;
+			return m_focalPlaneDist;
 		}
 		float getImagePlaneDistance() const {
-			return m_image_plane_dist;
+			return m_imagePlaneDist;
 		}
 	};
 }

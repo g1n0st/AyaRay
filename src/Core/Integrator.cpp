@@ -138,7 +138,7 @@ namespace Aya {
 						scene->worldBound().boundingSphere(&center, &radius);
 
 						SurfaceIntersection intersection;
-						Ray ray_light = Ray(pos, light_dir, scatter.m_medium_interface.getMedium(light_dir, norm), 0, 2.f * radius);
+						Ray ray_light = Ray(pos, light_dir, scatter.m_mediumInterface.getMedium(light_dir, norm), 0, 2.f * radius);
 						Spectrum Li;
 
 						if (scene->intersect(ray_light, &intersection)) {
@@ -177,25 +177,25 @@ namespace Aya {
 
 		Spectrum color;
 		if (pdf > 0.f && !f.isBlack() && Abs(in.dot(norm)) != 0.f) {
-			RayDifferential rd(pos, in, intersection.m_medium_interface.getMedium(in, norm), 0.f, float(INFINITY), ray.m_depth + 1);
-			if (ray.m_has_differentials) {
-				rd.m_has_differentials = true;
-				rd.m_rx_ori = pos + intersection.dpdx;
-				rd.m_ry_ori = pos + intersection.dpdy;
+			RayDifferential rd(pos, in, intersection.m_mediumInterface.getMedium(in, norm), 0.f, float(INFINITY), ray.m_depth + 1);
+			if (ray.m_hasDifferentials) {
+				rd.m_hasDifferentials = true;
+				rd.m_rxOri = pos + intersection.dpdx;
+				rd.m_ryOri = pos + intersection.dpdy;
 
 				Vector3 dndx = intersection.dndu * intersection.dudx +
 					intersection.dndv * intersection.dvdx;
 				Vector3 dndy = intersection.dndu * intersection.dudy +
 					intersection.dndv * intersection.dvdy;
 
-				Vector3 doutdx = -ray.m_rx_dir - out;
-				Vector3 doutdy = -ray.m_ry_dir - out;
+				Vector3 doutdx = -ray.m_rxDir - out;
+				Vector3 doutdy = -ray.m_ryDir - out;
 
 				float dcosdx = doutdx.dot(norm) + out.dot(dndx);
 				float dcosdy = doutdy.dot(norm) + out.dot(dndy);
 
-				rd.m_rx_dir = in - doutdx + 2.0f * (out.dot(norm) * dndx + dcosdx * norm);
-				rd.m_ry_dir = in - doutdy + 2.0f * (out.dot(norm) * dndy + dcosdy * norm);
+				rd.m_rxDir = in - doutdx + 2.0f * (out.dot(norm) * dndx + dcosdx * norm);
+				rd.m_ryDir = in - doutdy + 2.0f * (out.dot(norm) * dndy + dcosdy * norm);
 			}
 
 			Spectrum L = integrator->li(rd, scene, sampler, rng, memory);
@@ -217,11 +217,11 @@ namespace Aya {
 
 		Spectrum color;
 		if (pdf > 0.f && !f.isBlack() && Abs(in.dot(norm)) != 0.f) {
-			RayDifferential rd(pos, in, intersection.m_medium_interface.getMedium(in, norm), 0.f, float(INFINITY), ray.m_depth + 1);
-			if (ray.m_has_differentials) {
-				rd.m_has_differentials = true;
-				rd.m_rx_ori = pos + intersection.dpdx;
-				rd.m_ry_ori = pos + intersection.dpdy;
+			RayDifferential rd(pos, in, intersection.m_mediumInterface.getMedium(in, norm), 0.f, float(INFINITY), ray.m_depth + 1);
+			if (ray.m_hasDifferentials) {
+				rd.m_hasDifferentials = true;
+				rd.m_rxOri = pos + intersection.dpdx;
+				rd.m_ryOri = pos + intersection.dpdy;
 
 				float eta = 1.5f;
 				Vector3 d = -out;
@@ -233,8 +233,8 @@ namespace Aya {
 				Vector3 dndy = intersection.dndu * intersection.dudy +
 					intersection.dndv * intersection.dvdy;
 
-				Vector3 doutdx = -ray.m_rx_dir - out;
-				Vector3 doutdy = -ray.m_ry_dir - out;
+				Vector3 doutdx = -ray.m_rxDir - out;
+				Vector3 doutdy = -ray.m_ryDir - out;
 
 				float dcosdx = doutdx.dot(norm) + out.dot(dndx);
 				float dcosdy = doutdy.dot(norm) + out.dot(dndy);
@@ -243,8 +243,8 @@ namespace Aya {
 				float dmudx = (eta - (eta * eta * d.dot(norm)) / in.dot(norm)) * dcosdx;
 				float dmudy = (eta - (eta * eta * d.dot(norm)) / in.dot(norm)) * dcosdy;
 
-				rd.m_rx_dir = in + eta * doutdx - (mu * dndx + dmudx * norm);
-				rd.m_ry_dir = in + eta * doutdy - (mu * dndy + dmudy * norm);
+				rd.m_rxDir = in + eta * doutdx - (mu * dndx + dmudx * norm);
+				rd.m_ryDir = in + eta * doutdy - (mu * dndy + dmudy * norm);
 			}
 
 			Spectrum L = integrator->li(rd, scene, sampler, rng, memory);

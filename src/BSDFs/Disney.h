@@ -9,12 +9,12 @@ namespace Aya {
 		UniquePtr<Texture2D<float>> mp_roughness;
 		UniquePtr<Texture2D<float>> mp_specular;
 		float m_metallic;
-		float m_specular_tint;
+		float m_specularTint;
 		float m_sheen;
-		float m_sheen_tint;
+		float m_sheenTint;
 		float m_subsurface;
-		float m_clear_coat;
-		float m_clear_coat_gloss;
+		float m_clearCoat;
+		float m_clearCoatGloss;
 
 	public:
 		Disney(const Spectrum &reflectance,
@@ -31,12 +31,12 @@ namespace Aya {
 			mp_roughness(std::move(roughness)),
 			mp_specular(std::move(specular)),
 			m_metallic(metallic),
-			m_specular_tint(specular_tint),
+			m_specularTint(specular_tint),
 			m_sheen(sheen),
-			m_sheen_tint(sheen_tint),
+			m_sheenTint(sheen_tint),
 			m_subsurface(subsurface),
-			m_clear_coat(clear_coat),
-			m_clear_coat_gloss(clear_coat_gloss) {}
+			m_clearCoat(clear_coat),
+			m_clearCoatGloss(clear_coat_gloss) {}
 
 		Disney(UniquePtr<Texture2D<Spectrum>> texture,
 			UniquePtr<Texture2D<RGBSpectrum>> normal,
@@ -53,12 +53,12 @@ namespace Aya {
 			mp_roughness(std::move(roughness)),
 			mp_specular(std::move(specular)),
 			m_metallic(metallic),
-			m_specular_tint(specular_tint),
+			m_specularTint(specular_tint),
 			m_sheen(sheen),
-			m_sheen_tint(sheen_tint),
+			m_sheenTint(sheen_tint),
 			m_subsurface(subsurface),
-			m_clear_coat(clear_coat),
-			m_clear_coat_gloss(clear_coat_gloss) {}
+			m_clearCoat(clear_coat),
+			m_clearCoatGloss(clear_coat_gloss) {}
 		Disney(const char *file_tex,
 			UniquePtr<Texture2D<float>> roughness,
 			UniquePtr<Texture2D<float>> specular,
@@ -73,12 +73,12 @@ namespace Aya {
 			mp_roughness(std::move(roughness)),
 			mp_specular(std::move(specular)),
 			m_metallic(metallic),
-			m_specular_tint(specular_tint),
+			m_specularTint(specular_tint),
 			m_sheen(sheen),
-			m_sheen_tint(sheen_tint),
+			m_sheenTint(sheen_tint),
 			m_subsurface(subsurface),
-			m_clear_coat(clear_coat),
-			m_clear_coat_gloss(clear_coat_gloss) {}
+			m_clearCoat(clear_coat),
+			m_clearCoatGloss(clear_coat_gloss) {}
 		Disney(const char *file_tex,
 			const char *file_normal,
 			UniquePtr<Texture2D<float>> roughness,
@@ -94,12 +94,12 @@ namespace Aya {
 			mp_roughness(std::move(roughness)),
 			mp_specular(std::move(specular)),
 			m_metallic(metallic),
-			m_specular_tint(specular_tint),
+			m_specularTint(specular_tint),
 			m_sheen(sheen),
-			m_sheen_tint(sheen_tint),
+			m_sheenTint(sheen_tint),
 			m_subsurface(subsurface),
-			m_clear_coat(clear_coat),
-			m_clear_coat_gloss(clear_coat_gloss) {}
+			m_clearCoat(clear_coat),
+			m_clearCoatGloss(clear_coat_gloss) {}
 
 		Spectrum sample_f(const Vector3 &v_out, const Sample &sample,
 			const SurfaceIntersection &intersection, Vector3 *v_in, float *pdf, ScatterType types = BSDF_ALL, ScatterType *sample_types = nullptr) const override;
@@ -193,7 +193,7 @@ namespace Aya {
 		}
 		float clearCoatTerm(const Vector3 &l_out, const Vector3 &l_in, const Vector3 &wh,
 			const float IdotH, const float roughness) const {
-			if (m_clear_coat == 0.f)
+			if (m_clearCoat == 0.f)
 				return 0.f;
 
 			float rough = Lerp(roughness, .005f, .1f);
@@ -205,7 +205,7 @@ namespace Aya {
 			float Fr = Fresnel_Schlick_Coat(IdotH);
 			float Gr = GGX_G(l_out, l_in, wh, .25f);
 
-			return m_clear_coat * Fr * Dr * Gr /
+			return m_clearCoat * Fr * Dr * Gr /
 				(4.f * AbsCosTheta(l_out) * AbsCosTheta(l_in));
 		}
 	};

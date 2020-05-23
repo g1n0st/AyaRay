@@ -2,17 +2,17 @@
 
 namespace Aya {
 	BSDF::BSDF(ScatterType t1, BSDFType t2, const Spectrum &color)
-		: m_scatter_type(t1), m_BSDF_type(t2), mp_texture(new ConstantTexture2D<Spectrum>(color)) {}
+		: m_scatterType(t1), m_bsdfType(t2), mp_texture(new ConstantTexture2D<Spectrum>(color)) {}
 	BSDF::BSDF(ScatterType t1, BSDFType t2, UniquePtr<Texture2D<Spectrum>> tex, UniquePtr<Texture2D<RGBSpectrum>> normal)
-		: m_scatter_type(t1), m_BSDF_type(t2), 
-		mp_texture(std::move(tex)), mp_normal_map(std::move(normal)) {}
+		: m_scatterType(t1), m_bsdfType(t2), 
+		mp_texture(std::move(tex)), mp_normalMap(std::move(normal)) {}
 	BSDF::BSDF(ScatterType t1, BSDFType t2, const char *texture_file)
-		: m_scatter_type(t1), m_BSDF_type(t2),
+		: m_scatterType(t1), m_bsdfType(t2),
 		mp_texture(new ImageTexture2D<Spectrum, byteSpectrum>(texture_file)) {}
 	BSDF::BSDF(ScatterType t1, BSDFType t2, const char *texture_file, const char *normal_file)
-		: m_scatter_type(t1), m_BSDF_type(t2) , 
+		: m_scatterType(t1), m_bsdfType(t2) , 
 		mp_texture(new ImageTexture2D<Spectrum, byteSpectrum>(texture_file)), 
-		mp_normal_map(new ImageTexture2D<RGBSpectrum, byteSpectrum>(normal_file, 1.f)) {}
+		mp_normalMap(new ImageTexture2D<RGBSpectrum, byteSpectrum>(normal_file, 1.f)) {}
 
 	Spectrum BSDF::f(const Vector3 &v_out, const Vector3 &v_in, const SurfaceIntersection &intersection, ScatterType types) const {
 		if (v_out.dot(intersection.gn) * v_in.dot(intersection.gn) > 0.f)

@@ -57,7 +57,7 @@ namespace Aya {
 				bool sample_subsurface = false;
 				if (!sample_subsurface) {
 					spec_bounce = (sample_types & BSDF_SPECULAR) != 0;
-					path_ray = Ray(pos, in, intersection.m_medium_interface.getMedium(in, normal));
+					path_ray = Ray(pos, in, intersection.m_mediumInterface.getMedium(in, normal));
 				}
 				else {
 					// There will be a BSSRDF integrator ...
@@ -86,7 +86,7 @@ namespace Aya {
 
 			// Russian Roulette
 			if (bounce > 3) {
-				float RR = Min(1.f, tp.y());
+				float RR = Min(1.f, tp.luminance());
 				if (rng.drand48() > RR)
 					break;
 

@@ -9,16 +9,16 @@ namespace Aya {
 
 	void SurfaceIntersection::computeDifferentials(const RayDifferential& ray) const {
 		do {
-			if (!ray.m_has_differentials) break;
+			if (!ray.m_hasDifferentials) break;
 
 			float d = -n.dot(p);
-			float tx = -(n.dot(ray.m_rx_ori) + d) / n.dot(ray.m_rx_dir);
+			float tx = -(n.dot(ray.m_rxOri) + d) / n.dot(ray.m_rxDir);
 			if (std::isnan(tx)) break;
-			float ty = -(n.dot(ray.m_ry_ori) + d) / n.dot(ray.m_ry_dir);
+			float ty = -(n.dot(ray.m_ryOri) + d) / n.dot(ray.m_ryDir);
 			if (std::isnan(ty)) break;
 
-			Vector3 v_px = ray.m_rx_ori + ray.m_rx_dir * tx;
-			Vector3 v_py = ray.m_ry_ori + ray.m_ry_dir * ty;
+			Vector3 v_px = ray.m_rxOri + ray.m_rxDir * tx;
+			Vector3 v_py = ray.m_ryOri + ray.m_ryDir * ty;
 
 			dpdx = v_px - p;
 			dpdy = v_py - p;

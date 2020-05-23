@@ -11,7 +11,7 @@ namespace Aya {
 
 	public:
 		Filter(const float &rad) : m_radius(rad) {}
-		virtual ~Filter() {}
+		virtual ~Filter() = default;
 
 		const float getRadius() const;
 		virtual const float evaluate(const float dx, const float dy) const = 0;

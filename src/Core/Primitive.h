@@ -10,7 +10,7 @@ namespace Aya {
 	
 	class Primitive {
 	private:
-		friend class Scene_;
+		friend class Scene;
 
 		UniquePtr<TriangleMesh> mp_mesh;
 
@@ -18,12 +18,12 @@ namespace Aya {
 		//std::vector<UniquePtr<BSSRDF>> mp_BSSRDFs;
 		const AreaLight *mp_light = nullptr;
 
-		uint32_t *mp_material_idx = nullptr;
-		uint32_t *mp_subset_start_idx  = nullptr;
-		uint32_t *mp_subset_material_idx = nullptr;
-		uint32_t m_subset_count;
+		uint32_t *mp_materialIdx = nullptr;
+		uint32_t *mp_subsetStartIdx  = nullptr;
+		uint32_t *mp_subsetMaterialIdx = nullptr;
+		uint32_t m_subsetCount;
 
-		std::vector<MediumInterface> m_medium_interface;
+		std::vector<MediumInterface> m_mediumInterface;
 
 	public:
 		Primitive() {
@@ -48,32 +48,32 @@ namespace Aya {
 		void postIntersect(const RayDifferential &ray, SurfaceIntersection *intersection) const;
 
 		const BSDF* getBSDF(const uint32_t id) const {
-			return mp_BSDFs[mp_material_idx[id]].get();
+			return mp_BSDFs[mp_materialIdx[id]].get();
 		}
 		const MediumInterface* getMediumInterface(const uint32_t id) const {
-			return &m_medium_interface[mp_material_idx[id]];
+			return &m_mediumInterface[mp_materialIdx[id]];
 		}
 		void setBSDF(const uint32_t id, UniquePtr<BSDF> bsdf) {
-			mp_BSDFs[mp_material_idx[id]] = std::move(bsdf);
+			mp_BSDFs[mp_materialIdx[id]] = std::move(bsdf);
 		}
 		void setMediumInterface(const uint32_t id, const MediumInterface &medium_interface) {
-			m_medium_interface[mp_material_idx[id]] = medium_interface;
+			m_mediumInterface[mp_materialIdx[id]] = medium_interface;
 		}
 
 		const TriangleMesh* getMesh() const {
 			return mp_mesh.get();
 		}
 		const uint32_t* getMaterialIdx() const {
-			return mp_material_idx;
+			return mp_materialIdx;
 		}
 		const uint32_t* getSubsetStartIdx() const {
-			return mp_subset_start_idx;
+			return mp_subsetStartIdx;
 		}
 		const uint32_t* getSubsetMaterialIdx() const {
-			return mp_subset_material_idx;
+			return mp_subsetMaterialIdx;
 		}
 		const uint32_t getSubsetCount() const {
-			return m_subset_count;
+			return m_subsetCount;
 		}
 
 		void setAreaLight(const AreaLight *light) {

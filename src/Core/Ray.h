@@ -37,31 +37,31 @@ namespace Aya {
 
 	class RayDifferential : public Ray {
 	public:
-		bool m_has_differentials;
-		Point3 m_rx_ori, m_ry_ori;
-		Vector3 m_rx_dir, m_ry_dir;
+		bool m_hasDifferentials;
+		Point3 m_rxOri, m_ryOri;
+		Vector3 m_rxDir, m_ryDir;
 
-		RayDifferential() { m_has_differentials = false; }
+		RayDifferential() { m_hasDifferentials = false; }
 		RayDifferential(const Point3 &ori, const Vector3 &dir,
 			const Medium *medium = nullptr,
 			float start = AYA_RAY_EPS, float end = INFINITY, uint32_t depth = 0) : Ray(ori, dir, medium, start, end, depth){
-			m_has_differentials = false;
+			m_hasDifferentials = false;
 		}
 		RayDifferential(const Ray &ray) : Ray(ray) {
-			m_has_differentials = false;
+			m_hasDifferentials = false;
 		}
 
 		void scale(const float &s) {
-			m_rx_ori = m_ori + (m_rx_ori - m_ori) * s;
-			m_ry_ori = m_ori + (m_ry_ori - m_ori) * s;
-			m_rx_dir = m_dir + (m_rx_dir - m_dir) * s;
-			m_ry_dir = m_dir + (m_ry_dir - m_dir) * s;
+			m_rxOri = m_ori + (m_rxOri - m_ori) * s;
+			m_ryOri = m_ori + (m_ryOri - m_ori) * s;
+			m_rxDir = m_dir + (m_rxDir - m_dir) * s;
+			m_ryDir = m_dir + (m_ryDir - m_dir) * s;
 		}
 		friend std::ostream & operator << (std::ostream &os, const RayDifferential &r) {
 			os << "[ " << (Ray &)r << " has differentials: " <<
-				(r.m_has_differentials ? "true" : "false") << ", xo = " << r.m_rx_ori <<
-				", xd = " << r.m_rx_dir << ", yo = " << r.m_ry_ori << ", yd = " <<
-				r.m_ry_dir;
+				(r.m_hasDifferentials ? "true" : "false") << ", xo = " << r.m_rxOri <<
+				", xd = " << r.m_rxDir << ", yo = " << r.m_ryOri << ", yd = " <<
+				r.m_ryDir;
 			return os;
 		}
 	};

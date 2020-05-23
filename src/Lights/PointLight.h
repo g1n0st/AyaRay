@@ -30,7 +30,7 @@ namespace Aya {
 			*dir = (m_pos - pos).normalize();
 			*pdf = (m_pos - pos).length2();
 			tester->setSegment(pos, m_pos);
-			tester->setMedium(scatter.m_medium_interface.getMedium(*dir, scatter.n));
+			tester->setMedium(scatter.m_mediumInterface.getMedium(*dir, scatter.n));
 
 			if (cos_at_light)
 				*cos_at_light = 1.f;

@@ -7,10 +7,10 @@ namespace Aya {
 		if (!m_device) {
 			m_device = rtcNewDevice(nullptr);
 		}
-		if (!m_rtc_scene) {
-			m_rtc_scene = rtcNewScene(m_device);
-			rtcSetSceneBuildQuality(m_rtc_scene, RTC_BUILD_QUALITY_HIGH);
-			rtcSetSceneFlags(m_rtc_scene, RTC_SCENE_FLAG_ROBUST);
+		if (!m_rtcScene) {
+			m_rtcScene = rtcNewScene(m_device);
+			rtcSetSceneBuildQuality(m_rtcScene, RTC_BUILD_QUALITY_HIGH);
+			rtcSetSceneFlags(m_rtcScene, RTC_SCENE_FLAG_ROBUST);
 		}
 
 		for (int i = 0; i < prims.size(); i++) {
@@ -23,7 +23,7 @@ namespace Aya {
 				mesh->getIndexBuffer(), 0, sizeof(uint32_t) * 3, mesh->getTriangleCount());
 
 			rtcCommitGeometry(geom);
-			rtcAttachGeometryByID(m_rtc_scene, geom, i);
+			rtcAttachGeometryByID(m_rtcScene, geom, i);
 
 			
 			rtcSetGeometryIntersectFilterFunction(geom, &alphaTest);
@@ -33,37 +33,37 @@ namespace Aya {
 			rtcReleaseGeometry(geom);
 		}
 
-		rtcCommitScene(m_rtc_scene);
+		rtcCommitScene(m_rtcScene);
 
 #elif (AYA_USE_EMBREE == 2)
 		m_device = rtcNewDevice(nullptr);
-		m_rtc_scene = rtcDeviceNewScene(m_device,
+		m_rtcScene = rtcDeviceNewScene(m_device,
 			RTC_SCENE_STATIC | RTC_SCENE_INCOHERENT | RTC_SCENE_HIGH_QUALITY, RTC_INTERSECT1);
 
 		for (auto &prim : prims) {
 			uint32_t geomID = rtcNewTriangleMesh(
-				m_rtc_scene,
+				m_rtcScene,
 				RTC_GEOMETRY_STATIC,
 				prim->getMesh()->getTriangleCount(),
 				prim->getMesh()->getVertexCount());
 
-			rtcSetBuffer(m_rtc_scene, geomID, RTC_VERTEX_BUFFER, prim->getMesh()->getVertexBuffer(), 0, sizeof(MeshVertex));
-			rtcSetBuffer(m_rtc_scene, geomID, RTC_INDEX_BUFFER, prim->getMesh()->getIndexBuffer(), 0, 3 * sizeof(uint32_t));
+			rtcSetBuffer(m_rtcScene, geomID, RTC_VERTEX_BUFFER, prim->getMesh()->getVertexBuffer(), 0, sizeof(MeshVertex));
+			rtcSetBuffer(m_rtcScene, geomID, RTC_INDEX_BUFFER, prim->getMesh()->getIndexBuffer(), 0, 3 * sizeof(uint32_t));
 		
-			rtcSetIntersectionFilterFunction(m_rtc_scene, geomID, (RTCFilterFunc)&alphaTest);
-			rtcSetOcclusionFilterFunction(m_rtc_scene, geomID, (RTCFilterFunc)&alphaTest);
-			rtcSetUserData(m_rtc_scene, geomID, prim);
+			rtcSetIntersectionFilterFunction(m_rtcScene, geomID, (RTCFilterFunc)&alphaTest);
+			rtcSetOcclusionFilterFunction(m_rtcScene, geomID, (RTCFilterFunc)&alphaTest);
+			rtcSetUserData(m_rtcScene, geomID, prim);
 		}
 
-		rtcCommit(m_rtc_scene);
+		rtcCommit(m_rtcScene);
 #endif
 	}
 	BBox EmbreeAccel::worldBound() const {
 		RTCBounds rtc_bound;
 #if (AYA_USE_EMBREE == 3)
-		rtcGetSceneBounds(m_rtc_scene, &rtc_bound);
+		rtcGetSceneBounds(m_rtcScene, &rtc_bound);
 #elif (AYA_USE_EMBREE == 2)
-		rtcGetBounds(m_rtc_scene, rtc_bound);
+		rtcGetBounds(m_rtcScene, rtc_bound);
 #endif
 
 		return BBox(
@@ -81,7 +81,7 @@ namespace Aya {
 
 		RTCIntersectContext context;
 		rtcInitIntersectContext(&context);
-		rtcIntersect1(m_rtc_scene, &context, &ray_hit);
+		rtcIntersect1(m_rtcScene, &context, &ray_hit);
 		if (ray_hit.hit.geomID == RTC_INVALID_GEOMETRY_ID || ray_hit.hit.primID == RTC_INVALID_GEOMETRY_ID)
 			return false;
 
@@ -98,7 +98,7 @@ namespace Aya {
 		RTCRay rtc_ray = toRTCRay(ray);
 		rtc_ray.mask = -1;
 
-		rtcIntersect(m_rtc_scene, rtc_ray);
+		rtcIntersect(m_rtcScene, rtc_ray);
 
 		if (rtc_ray.geomID == RTC_INVALID_GEOMETRY_ID)
 			return false;
@@ -120,19 +120,19 @@ namespace Aya {
 #if (AYA_USE_EMBREE == 3)
 		RTCIntersectContext context;
 		rtcInitIntersectContext(&context);
-		rtcOccluded1(m_rtc_scene, &context, &rtc_ray);
+		rtcOccluded1(m_rtcScene, &context, &rtc_ray);
 
 		return rtc_ray.tfar < 0;
 #elif (AYA_USE_EMBREE == 2)
-		rtcOccluded(m_rtc_scene, rtc_ray);
+		rtcOccluded(m_rtcScene, rtc_ray);
 		return rtc_ray.geomID != RTC_INVALID_GEOMETRY_ID;
 #endif
 	}
 
 	EmbreeAccel::~EmbreeAccel() {
 #if (AYA_USE_EMBREE == 3)
-		if (m_rtc_scene) {
-			rtcReleaseScene(m_rtc_scene);
+		if (m_rtcScene) {
+			rtcReleaseScene(m_rtcScene);
 		}
 		if (m_device) {
 			rtcReleaseDevice(m_device);

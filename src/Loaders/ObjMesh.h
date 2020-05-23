@@ -110,7 +110,7 @@ namespace Aya {
 		std::vector<uint32_t> m_material_idx;
 		std::vector<uint32_t> m_subset_start_idx;
 		std::vector<uint32_t> m_subset_mtl_idx;
-		uint32_t m_subset_count;
+		uint32_t m_subsetCount;
 
 		bool m_normaled;
 		bool m_textured;
@@ -119,7 +119,7 @@ namespace Aya {
 		ObjMesh() :
 			m_vertex_count(0),
 			m_triangle_count(0),
-			m_subset_count(0),
+			m_subsetCount(0),
 			m_normaled(false),
 			m_textured(false) {}
 
@@ -167,7 +167,7 @@ namespace Aya {
 		}
 
 		inline const uint32_t getSubsetCount() const {
-			return m_subset_count;
+			return m_subsetCount;
 		}
 		inline const uint32_t getSubsetStartIdx(int idx) const {
 			return m_subset_start_idx[idx];

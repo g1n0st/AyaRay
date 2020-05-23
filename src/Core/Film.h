@@ -19,9 +19,9 @@ namespace Aya {
 		};
 
 		int m_width, m_height;
-		uint32_t m_sample_count;
-		BlockedArray<RGBSpectrum> m_pixel_buffer;
-		BlockedArray<Pixel> m_accumulate_buffer;
+		uint32_t m_sampleCount;
+		BlockedArray<RGBSpectrum> m_pixelBuffer;
+		BlockedArray<Pixel> m_accumulateBuffer;
 		UniquePtr<Filter> mp_filter;
 
 		mutable std::mutex m_mt;
@@ -29,8 +29,8 @@ namespace Aya {
 		static const float INV_GAMMA;
 
 	public:
-		Film() {}
-		Film(int width, int height, Filter * filter) {
+		Film() = default;
+		Film(int width, int height, Filter *filter) {
 			init(width, height, filter);
 		}
 		virtual ~Film() {
@@ -49,15 +49,15 @@ namespace Aya {
 		virtual void splat(float x, float y, const Spectrum &L);
 		void updateDisplay(const float splat_scale = 0.f);
 		inline void addSampleCount() {
-			++m_sample_count;
-			printf("%d spp(s) is rendered\n", m_sample_count);
+			++m_sampleCount;
+			printf("%d spp(s) is rendered\n", m_sampleCount);
 		}
 
 		const RGBSpectrum* getPixelBuffer() const {
-			return m_pixel_buffer.data();
+			return m_pixelBuffer.data();
 		}
 		const int getSampleCount() const {
-			return m_sample_count;
+			return m_sampleCount;
 		}
 		virtual void denoise() {}
 	};
