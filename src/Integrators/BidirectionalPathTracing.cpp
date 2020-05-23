@@ -183,7 +183,7 @@ namespace Aya {
 					Point3 raster;
 					Spectrum L = 
 						connectToCamera(scene, sampler, rng, camera, film, intersection, light_vertex, &raster);
-					film->splat(raster.x(), raster.y(), L);
+					film->splat(raster.x, raster.y, L);
 				}
 			}
 
@@ -214,8 +214,8 @@ namespace Aya {
 		}
 		else { // Thin Lens Model
 			*raster_pos = camera->worldToRaster(intersection.p);
-			Vector2f scr_coord(2.f * float(raster_pos->x()) / float(camera->getResolusionX()) - 1.f,
-				2.f * float(raster_pos->y()) / float(camera->getResolusionY()) - 1.f);
+			Vector2f scr_coord(2.f * float(raster_pos->x) / float(camera->getResolusionX()) - 1.f,
+				2.f * float(raster_pos->y) / float(camera->getResolusionY()) - 1.f);
 			scr_coord.x *= camera->m_ratio;
 			scr_coord.y *= -1.f;
 
@@ -230,7 +230,7 @@ namespace Aya {
 			Ray eye_ray;
 			eye_ray.m_ori = Point3(U, V, 0.f);
 			eye_ray.m_dir = (camera->view(intersection.p) - eye_ray.m_ori).normalize();
-			Point3 focal = eye_ray(camera->getFocusDistance() / eye_ray.m_dir.z());
+			Point3 focal = eye_ray(camera->getFocusDistance() / eye_ray.m_dir.z);
 
 			*raster_pos = camera->cameraToRaster(focal);
 			dir2cam = camera->viewInv(eye_ray.m_ori) - intersection.p;

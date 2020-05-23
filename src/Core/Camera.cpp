@@ -78,7 +78,7 @@ namespace Aya {
 		ray->m_dir = cam_coord.normalize();
 
 		if (m_CoC_radius > 0.f && !force_pinhole) {
-			float focal_hit = m_focal_plane_dist / ray->m_dir.z();
+			float focal_hit = m_focal_plane_dist / ray->m_dir.z;
 			Point3 focal = (*ray)(focal_hit);
 
 			Vector2f scr_coord(2.f * float(sample.image_x) / float(m_res_x) - 1.f,
@@ -114,7 +114,7 @@ namespace Aya {
 		ray->m_dir = cam_coord.normalize();
 
 		if (m_CoC_radius > 0.f) {
-			float focal_hit = m_focal_plane_dist / ray->m_dir.z();
+			float focal_hit = m_focal_plane_dist / ray->m_dir.z;
 			Point3 focal = (*ray)(focal_hit);
 
 			Vector2f scr_coord(2.f * float(sample.image_x) / float(m_res_x) - 1.f,

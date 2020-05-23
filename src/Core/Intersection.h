@@ -29,7 +29,7 @@ namespace Aya {
 		}
 
 		Vector3 localToWorld(const Vector3 &vec) const {
-			return u * vec.x() + v * vec.y() + w * vec.z();
+			return u * vec.x + v * vec.y + w * vec.z;
 		}
 		Vector3 worldToLocal(const Vector3 &vec) const {
 			return vec.dot3(u, v, w);

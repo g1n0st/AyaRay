@@ -12,13 +12,13 @@
 
 namespace Aya {
 	AYA_FORCE_INLINE float CosTheta(const Vector3 &v) {
-		return v.z();
+		return v.z;
 	}
 	AYA_FORCE_INLINE float CosTheta2(const Vector3 &v) {
-		return v.z() * v.z();
+		return v.z * v.z;
 	}
 	AYA_FORCE_INLINE float AbsCosTheta(const Vector3 &v) {
-		return Abs(v.z());
+		return Abs(v.z);
 	}
 	AYA_FORCE_INLINE float SinTheta2(const Vector3 &v) {
 		return Max(0.f, 1.f - CosTheta2(v));
@@ -30,28 +30,28 @@ namespace Aya {
 		float sint = SinTheta(v);
 		if (sint == 0.f)
 			return 1.f;
-		return Clamp(v.x() / sint, -1.f, 1.f);
+		return Clamp(v.x / sint, -1.f, 1.f);
 	}
 	AYA_FORCE_INLINE float SinPhi(const Vector3 &v) {
 		float sint = SinTheta(v);
 		if (sint == 0.f)
 			return 0.f;
-		return Clamp(v.y() / sint, -1.f, 1.f);
+		return Clamp(v.y / sint, -1.f, 1.f);
 	}
 	AYA_FORCE_INLINE float TanTheta(const Vector3 &v) {
-		float tmp = 1.f - v.z() * v.z();
+		float tmp = 1.f - v.z * v.z;
 		if (tmp <= 0.f)
 			return 0.f;
-		return Sqrt(tmp) / v.z();
+		return Sqrt(tmp) / v.z;
 	}
 	AYA_FORCE_INLINE float TanTheta2(const Vector3 &v) {
-		float tmp = 1.f - v.z() * v.z();
+		float tmp = 1.f - v.z * v.z;
 		if (tmp <= 0.f)
 			return 0.f;
-		return tmp / (v.z() * v.z());
+		return tmp / (v.z * v.z);
 	}
 	AYA_FORCE_INLINE bool sameHemisphere(const Vector3 &v1, const Vector3 &v2) {
-		return v1.z() * v2.z() > 0.f;
+		return v1.z * v2.z > 0.f;
 	}
 
 	enum ScatterType {

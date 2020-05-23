@@ -150,7 +150,7 @@ namespace Aya {
 	inline Vector3 CosineSampleHemisphere(float u1, float u2) {
 		Vector3 ret;
 		ConcentricSampleDisk(u1, u2, &ret[0], &ret[1]);
-		ret[2] = Sqrt(Max(0.f, 1.f - ret.x() * ret.x() - ret.y() * ret.y()));
+		ret[2] = Sqrt(Max(0.f, 1.f - ret.x * ret.x - ret.y * ret.y));
 		return ret;
 	}
 	inline Vector3 UniformSampleSphere(float u1, float u2) {

@@ -86,8 +86,8 @@ namespace Aya {
 			return m_res_y;
 		}
 		inline bool checkRaster(const Point3 &pos) const {
-			return pos.x() < float(m_res_x) && pos.x() >= 0.f
-				&& pos.y() < float(m_res_y) && pos.y() >= 0.f;
+			return pos.x < float(m_res_x) && pos.x >= 0.f
+				&& pos.y < float(m_res_y) && pos.y >= 0.f;
 		}
 
 		void setApertureFunc(const char *path);

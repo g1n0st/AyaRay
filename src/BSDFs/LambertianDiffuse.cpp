@@ -22,8 +22,8 @@ namespace Aya {
 		Vector3 wo = intersection.worldToLocal(v_out);
 		Vector3 wi = CosineSampleHemisphere(sample.u, sample.v);
 
-		if (wo.z() < 0.f)
-			wi.setZ(wi .z() * -1.f);
+		if (wo.z < 0.f)
+			wi.setZ(wi .z * -1.f);
 
 		*v_in = intersection.localToWorld(wi);
 

@@ -293,7 +293,7 @@ namespace Aya {
 						ret = BidirectionalPathTracingIntegrator::connectToCamera(scene, sampler, rng,
 							mp_camera, mp_film, light_vertex.isect, light_vertex, &raster_p);
 
-						*raster_pos = Vector2f(raster_p.x(), raster_p.y());
+						*raster_pos = Vector2f(raster_p.x, raster_p.y);
 					}
 				}
 			}

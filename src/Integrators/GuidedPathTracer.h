@@ -588,12 +588,12 @@ namespace Aya {
 		}
 
 		static Point2f dirToCanonical(const Vector3 &d) {
-			if (!std::isfinite(d.x()) || !std::isfinite(d.y()) || !std::isfinite(d.z())) {
+			if (!std::isfinite(d.x) || !std::isfinite(d.y) || !std::isfinite(d.z)) {
 				return Point2f(0, 0);
 			}
 
-			const float cos_theta = Clamp(d.z(), -1.f, 1.f);
-			float phi = std::atan2f(d.y(), d.x());
+			const float cos_theta = Clamp(d.z, -1.f, 1.f);
+			float phi = std::atan2f(d.y, d.x);
 			while (phi < 0.f)
 				phi += 2.f * float(M_PI);
 
@@ -675,7 +675,7 @@ namespace Aya {
 
 			// We want some regularization such that our parameter does not become too big.
 			// We use l2 regularization, resulting in the following linear gradient.
-			float l2Reg_gradient = 0.01f * variable;
+			float l2Reg_gradient = .01f * variable;
 
 			float loss_gradient = l2Reg_gradient + dLoss_dVariable;
 

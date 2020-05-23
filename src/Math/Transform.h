@@ -87,13 +87,13 @@ namespace Aya {
 				return *this;
 			}
 			AYA_FORCE_INLINE AffineTransform& setScale(const Vector3 &scale) {
-				assert(scale.x() != 0 && scale.y() != 0 && scale.z() != 0);
-				m_mat.setValue(scale.x(), 0, 0,
-					0, scale.y(), 0,
-					0, 0, scale.z());
-				m_inv.setValue(1.f / scale.x(), 0, 0,
-					0, 1.f / scale.y(), 0,
-					0, 0, 1.f / scale.z());
+				assert(scale.x != 0 && scale.y != 0 && scale.z != 0);
+				m_mat.setValue(scale.x, 0, 0,
+					0, scale.y, 0,
+					0, 0, scale.z);
+				m_inv.setValue(1.f / scale.x, 0, 0,
+					0, 1.f / scale.y, 0,
+					0, 0, 1.f / scale.z);
 				m_trans.setZero();
 
 				return *this;
@@ -145,9 +145,9 @@ namespace Aya {
 			}
 			AYA_FORCE_INLINE AffineTransform& setRotation(const Vector3 &axis, const float &angle) {
 				Vector3 a = axis.normalize();
-				float x = a.x();
-				float y = a.y();
-				float z = a.z();
+				float x = a.x;
+				float y = a.y;
+				float z = a.z;
 				float s = sinf(Radian(angle));
 				float c = cosf(Radian(angle));
 
@@ -217,10 +217,10 @@ namespace Aya {
 				m_mat[1] = V2;
 				m_mat[2] = V3;
 #else
-				float xs = q.x() * s, ys = q.y() * s, zs = q.z() * s;
-				float wx = q.w() * xs, wy = q.w() * ys, wz = q.w() * zs;
-				float xx = q.x() * xs, xy = q.x() * ys, xz = q.x() * zs;
-				float yy = q.y() * ys, yz = q.y() * zs, zz = q.z() * zs;
+				float xs = q.x * s, ys = q.y * s, zs = q.z * s;
+				float wx = q.w * xs, wy = q.w * ys, wz = q.w * zs;
+				float xx = q.x * xs, xy = q.x * ys, xz = q.x * zs;
+				float yy = q.y * ys, yz = q.y * zs, zz = q.z * zs;
 
 				m_mat.setValue(
 					1.f - (yy + zz), xy - wz, xz + wy,
@@ -265,14 +265,14 @@ namespace Aya {
 			}
 			AYA_FORCE_INLINE BBox operator() (const BBox &b) const {
 				// const AffineTransform &M = *this;
-				// BBox ret(M(Point3(b.m_pmin.x(), b.m_pmin.y(), b.m_pmin.z())));
-				// ret.unity(M(Point3(b.m_pmax.x(), b.m_pmin.y(), b.m_pmin.z())));
-				// ret.unity(M(Point3(b.m_pmin.x(), b.m_pmax.y(), b.m_pmin.z())));
-				// ret.unity(M(Point3(b.m_pmin.x(), b.m_pmin.y(), b.m_pmax.z())));
-				// ret.unity(M(Point3(b.m_pmin.x(), b.m_pmax.y(), b.m_pmax.z())));
-				// ret.unity(M(Point3(b.m_pmax.x(), b.m_pmax.y(), b.m_pmin.z())));
-				// ret.unity(M(Point3(b.m_pmax.x(), b.m_pmin.y(), b.m_pmax.z())));
-				// ret.unity(M(Point3(b.m_pmax.x(), b.m_pmax.y(), b.m_pmax.z())));
+				// BBox ret(M(Point3(b.m_pmin.x, b.m_pmin.y, b.m_pmin.z)));
+				// ret.unity(M(Point3(b.m_pmax.x, b.m_pmin.y, b.m_pmin.z)));
+				// ret.unity(M(Point3(b.m_pmin.x, b.m_pmax.y, b.m_pmin.z)));
+				// ret.unity(M(Point3(b.m_pmin.x, b.m_pmin.y, b.m_pmax.z)));
+				// ret.unity(M(Point3(b.m_pmin.x, b.m_pmax.y, b.m_pmax.z)));
+				// ret.unity(M(Point3(b.m_pmax.x, b.m_pmax.y, b.m_pmin.z)));
+				// ret.unity(M(Point3(b.m_pmax.x, b.m_pmin.y, b.m_pmax.z)));
+				// ret.unity(M(Point3(b.m_pmax.x, b.m_pmax.y, b.m_pmax.z)));
 				// return ret;
 
 				BBox ret;
@@ -295,9 +295,9 @@ namespace Aya {
 				ret.m_pmax = mid + x;
 				ret.m_pmin = mid - x;
 #else
-				Vector3 cro(abs(x.x()) + abs(y.x()) + abs(z.x()),
-					abs(x.y()) + abs(y.y()) + abs(z.y()),
-					abs(x.z()) + abs(y.z()) + abs(z.z()));
+				Vector3 cro(abs(x.x) + abs(y.x) + abs(z.x),
+					abs(x.y) + abs(y.y) + abs(z.y),
+					abs(x.z) + abs(y.z) + abs(z.z));
 				ret.m_pmax = mid + cro;
 				ret.m_pmin = mid - cro;
 #endif
@@ -409,13 +409,13 @@ namespace Aya {
 			}
 
 			AYA_FORCE_INLINE Transform& setTranslate(const Vector3 &delta) {
-				m_mat.setValue(1, 0, 0, delta.x(),
-					0, 1, 0, delta.y(),
-					0, 0, 1, delta.z(),
+				m_mat.setValue(1, 0, 0, delta.x,
+					0, 1, 0, delta.y,
+					0, 0, 1, delta.z,
 					0, 0, 0, 1);
-				m_inv.setValue(1, 0, 0, -delta.x(),
-					0, 1, 0, -delta.y(),
-					0, 0, 1, -delta.z(),
+				m_inv.setValue(1, 0, 0, -delta.x,
+					0, 1, 0, -delta.y,
+					0, 0, 1, -delta.z,
 					0, 0, 0, 1);
 
 				return *this;
@@ -433,14 +433,14 @@ namespace Aya {
 				return *this;
 			}
 			AYA_FORCE_INLINE Transform& setScale(const Vector3 &scale) {
-				assert(scale.x() != 0 && scale.y() != 0 && scale.z() != 0);
-				m_mat.setValue(scale.x(), 0, 0, 0,
-					0, scale.y(), 0, 0,
-					0, 0, scale.z(), 0,
+				assert(scale.x != 0 && scale.y != 0 && scale.z != 0);
+				m_mat.setValue(scale.x, 0, 0, 0,
+					0, scale.y, 0, 0,
+					0, 0, scale.z, 0,
 					0, 0, 0, 1);
-				m_inv.setValue(1.f / scale.x(), 0, 0, 0,
-					0, 1.f / scale.y(), 0, 0,
-					0, 0, 1.f / scale.z(), 0,
+				m_inv.setValue(1.f / scale.x, 0, 0, 0,
+					0, 1.f / scale.y, 0, 0,
+					0, 0, 1.f / scale.z, 0,
 					0, 0, 0, 1);
 
 				return *this;
@@ -493,9 +493,9 @@ namespace Aya {
 			}
 			AYA_FORCE_INLINE Transform& setRotation(const Vector3 &axis, const float &angle) {
 				Vector3 a = axis.normalize();
-				float x = a.x();
-				float y = a.y();
-				float z = a.z();
+				float x = a.x;
+				float y = a.y;
+				float z = a.z;
 				float s = sinf(Radian(angle));
 				float c = cosf(Radian(angle));
 
@@ -566,10 +566,10 @@ namespace Aya {
 				m_mat[2] = V3;
 				m_mat[3] = v0001;
 #else
-				float xs = q.x() * s, ys = q.y() * s, zs = q.z() * s;
-				float wx = q.w() * xs, wy = q.w() * ys, wz = q.w() * zs;
-				float xx = q.x() * xs, xy = q.x() * ys, xz = q.x() * zs;
-				float yy = q.y() * ys, yz = q.y() * zs, zz = q.z() * zs;
+				float xs = q.x * s, ys = q.y * s, zs = q.z * s;
+				float wx = q.w * xs, wy = q.w * ys, wz = q.w * zs;
+				float xx = q.x * xs, xy = q.x * ys, xz = q.x * zs;
+				float yy = q.y * ys, yz = q.y * zs, zz = q.z * zs;
 
 				m_mat.setValue(
 					1.f - (yy + zz), xy - wz, xz + wy, 0,
@@ -606,9 +606,9 @@ namespace Aya {
 			static Transform lookAt(const Point3 &pos, const Point3 &look, const Vector3 &up) {
 				Matrix4x4 cam2world;
 				// Initialize fourth column of viewing matrix
-				cam2world.m_el[0][3] = pos.x();
-				cam2world.m_el[1][3] = pos.y();
-				cam2world.m_el[2][3] = pos.z();
+				cam2world.m_el[0][3] = pos.x;
+				cam2world.m_el[1][3] = pos.y;
+				cam2world.m_el[2][3] = pos.z;
 				cam2world.m_el[3][3] = 1.f;
 
 				// Initialize first three columns of viewing matrix
@@ -618,17 +618,17 @@ namespace Aya {
 				Vector3 right = up.normalize().cross(dir).normalize();
 				Vector3 nup = dir.cross(right);
 
-				cam2world.m_el[0][0] = right.x();
-				cam2world.m_el[1][0] = right.y();
-				cam2world.m_el[2][0] = right.z();
+				cam2world.m_el[0][0] = right.x;
+				cam2world.m_el[1][0] = right.y;
+				cam2world.m_el[2][0] = right.z;
 				cam2world.m_el[3][0] = 0.f;
-				cam2world.m_el[0][1] = nup.x();
-				cam2world.m_el[1][1] = nup.y();
-				cam2world.m_el[2][1] = nup.z();
+				cam2world.m_el[0][1] = nup.x;
+				cam2world.m_el[1][1] = nup.y;
+				cam2world.m_el[2][1] = nup.z;
 				cam2world.m_el[3][1] = 0.f;
-				cam2world.m_el[0][2] = dir.x();
-				cam2world.m_el[1][2] = dir.y();
-				cam2world.m_el[2][2] = dir.z();
+				cam2world.m_el[0][2] = dir.x;
+				cam2world.m_el[1][2] = dir.y;
+				cam2world.m_el[2][2] = dir.z;
 				cam2world.m_el[3][2] = 0.f;
 
 				return Transform(cam2world.inverse(), cam2world);
@@ -652,33 +652,33 @@ namespace Aya {
 
 
 			AYA_FORCE_INLINE Vector3 operator() (const Vector3 &v) const {
-				QuadWord r = m_mat * QuadWord(v.x(), v.y(), v.z(), 0.f);
-				return Vector3(r.x(), r.y(), r.z());
+				QuadWord r = m_mat * QuadWord(v.x, v.y, v.z, 0.f);
+				return Vector3(r.x, r.y, r.z);
 			}
 			AYA_FORCE_INLINE Point3 operator() (const Point3 &p) const {
-				QuadWord r = m_mat * QuadWord(p.x(), p.y(), p.z(), 1.f);
-				assert(r.w() != 0.f);
-				if (r.w() == 1.f)
-					return Point3(r.x(), r.y(), r.z());
+				QuadWord r = m_mat * QuadWord(p.x, p.y, p.z, 1.f);
+				assert(r.w != 0.f);
+				if (r.w == 1.f)
+					return Point3(r.x, r.y, r.z);
 				else {
-					float inv = 1.f / r.w();
-					return Point3(r.x() * inv, r.y() * inv, r.z() * inv);
+					float inv = 1.f / r.w;
+					return Point3(r.x * inv, r.y * inv, r.z * inv);
 				}
 			}
 			AYA_FORCE_INLINE Normal3 operator() (const Normal3 &n) const {
-				QuadWord r = m_inv.transpose() * QuadWord(n.x(), n.y(), n.z(), 0.f);
-				return Normal3(r.x(), r.y(), r.z());
+				QuadWord r = m_inv.transpose() * QuadWord(n.x, n.y, n.z, 0.f);
+				return Normal3(r.x, r.y, r.z);
 			}
 			AYA_FORCE_INLINE BBox operator() (const BBox &b) const {
 				const Transform &M = *this;
-				BBox ret(M(Point3(b.m_pmin.x(), b.m_pmin.y(), b.m_pmin.z())));
-				ret.unity(M(Point3(b.m_pmax.x(), b.m_pmin.y(), b.m_pmin.z())));
-				ret.unity(M(Point3(b.m_pmin.x(), b.m_pmax.y(), b.m_pmin.z())));
-				ret.unity(M(Point3(b.m_pmin.x(), b.m_pmin.y(), b.m_pmax.z())));
-				ret.unity(M(Point3(b.m_pmin.x(), b.m_pmax.y(), b.m_pmax.z())));
-				ret.unity(M(Point3(b.m_pmax.x(), b.m_pmax.y(), b.m_pmin.z())));
-				ret.unity(M(Point3(b.m_pmax.x(), b.m_pmin.y(), b.m_pmax.z())));
-				ret.unity(M(Point3(b.m_pmax.x(), b.m_pmax.y(), b.m_pmax.z())));
+				BBox ret(M(Point3(b.m_pmin.x, b.m_pmin.y, b.m_pmin.z)));
+				ret.unity(M(Point3(b.m_pmax.x, b.m_pmin.y, b.m_pmin.z)));
+				ret.unity(M(Point3(b.m_pmin.x, b.m_pmax.y, b.m_pmin.z)));
+				ret.unity(M(Point3(b.m_pmin.x, b.m_pmin.y, b.m_pmax.z)));
+				ret.unity(M(Point3(b.m_pmin.x, b.m_pmax.y, b.m_pmax.z)));
+				ret.unity(M(Point3(b.m_pmax.x, b.m_pmax.y, b.m_pmin.z)));
+				ret.unity(M(Point3(b.m_pmax.x, b.m_pmin.y, b.m_pmax.z)));
+				ret.unity(M(Point3(b.m_pmax.x, b.m_pmax.y, b.m_pmax.z)));
 				return ret;
 			}
 			AYA_FORCE_INLINE Ray operator() (const Ray &r) const {

@@ -22,8 +22,8 @@ namespace Aya {
 				m_pmax.m_val128 = _mm_max_ps(p1.m_val128, p2.m_val128);
 				m_pmin.m_val128 = _mm_min_ps(p1.m_val128, p2.m_val128);
 #else
-				m_pmax = Point3(Max(p1.x(), p2.x()), Max(p1.y(), p2.y()), Max(p1.z(), p2.z()));
-				m_pmin = Point3(Min(p1.x(), p2.x()), Min(p1.y(), p2.y()), Min(p1.z(), p2.z()));
+				m_pmax = Point3(Max(p1.x, p2.x), Max(p1.y, p2.y), Max(p1.z, p2.z));
+				m_pmin = Point3(Min(p1.x, p2.x), Min(p1.y, p2.y), Min(p1.z, p2.z));
 #endif
 			}
 #if defined(AYA_USE_SIMD)
@@ -44,9 +44,9 @@ namespace Aya {
 
 				return b1 && b2;
 #else
-				bool x = (b.m_pmax.x() >= m_pmin.x()) && (m_pmax.x() >= b.m_pmin.x());
-				bool y = (b.m_pmax.y() >= m_pmin.y()) && (m_pmax.y() >= b.m_pmin.y());
-				bool z = (b.m_pmax.z() >= m_pmin.z()) && (m_pmax.z() >= b.m_pmin.z());
+				bool x = (b.m_pmax.x >= m_pmin.x) && (m_pmax.x >= b.m_pmin.x);
+				bool y = (b.m_pmax.y >= m_pmin.y) && (m_pmax.y >= b.m_pmin.y);
+				bool z = (b.m_pmax.z >= m_pmin.z) && (m_pmax.z >= b.m_pmin.z);
 
 				return x && y && z;
 #endif
@@ -60,9 +60,9 @@ namespace Aya {
 
 				return b1 && b2;
 #else
-				return	(p.x() >= m_pmin.x() && p.x() <= m_pmax.x()) &&
-					(p.y() >= m_pmin.y() && p.y() <= m_pmax.y()) &&
-					(p.z() >= m_pmin.z() && p.z() <= m_pmax.z());
+				return	(p.x >= m_pmin.x && p.x <= m_pmax.x) &&
+					(p.y >= m_pmin.y && p.y <= m_pmax.y) &&
+					(p.z >= m_pmin.z && p.z <= m_pmax.z);
 #endif
 			}
 			AYA_FORCE_INLINE void expand(const float &d) {

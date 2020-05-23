@@ -132,7 +132,7 @@ namespace Aya {
 				float d = axis.length();
 				assert(d != 0.0f);
 				float s = sinf(angle * 0.5f) / d;
-				setValue(axis.x() * s, axis.y() * s, axis.z() * s, cosf(angle * 0.5f));
+				setValue(axis.x * s, axis.y * s, axis.z * s, cosf(angle * 0.5f));
 			}
 			void setEuler(const float& yaw, const float& pitch, const float& roll)
 			{
@@ -311,10 +311,10 @@ namespace Aya {
 				return Quaternion(A0);
 #else
 				return Quaternion(
-					w() * q.x() + x() * q.w() + y() * q.z() - z() * q.y(),
-					w() * q.y() + y() * q.w() + z() * q.x() - x() * q.z(),
-					w() * q.z() + z() * q.w() + x() * q.y() - y() * q.x(),
-					w() * q.w() - x() * q.x() - y() * q.y() - z() * q.z());
+					w() * q.x + x() * q.w + y() * q.z - z() * q.y,
+					w() * q.y + y() * q.w + z() * q.x - x() * q.z,
+					w() * q.z + z() * q.w + x() * q.y - y() * q.x,
+					w() * q.w - x() * q.x - y() * q.y - z() * q.z);
 #endif
 			}
 			AYA_FORCE_INLINE Quaternion& operator *= (const Quaternion & q) {
@@ -345,10 +345,10 @@ namespace Aya {
 				m_val128 = _mm_add_ps(m_val128, A1);      //	AB03 + AB12
 #else
 				setValue(
-					m_val[3] * q.x() + m_val[0] * q.w() + m_val[1] * q.z() - m_val[2] * q.y(),
-					m_val[3] * q.y() + m_val[1] * q.w() + m_val[2] * q.x() - m_val[0] * q.z(),
-					m_val[3] * q.z() + m_val[2] * q.w() + m_val[0] * q.y() - m_val[1] * q.x(),
-					m_val[3] * q.w() - m_val[0] * q.x() - m_val[1] * q.y() - m_val[2] * q.z());
+					m_val[3] * q.x + m_val[0] * q.w + m_val[1] * q.z - m_val[2] * q.y,
+					m_val[3] * q.y + m_val[1] * q.w + m_val[2] * q.x - m_val[0] * q.z,
+					m_val[3] * q.z + m_val[2] * q.w + m_val[0] * q.y - m_val[1] * q.x,
+					m_val[3] * q.w - m_val[0] * q.x - m_val[1] * q.y - m_val[2] * q.z);
 #endif
 				return *this;
 			}
@@ -380,10 +380,10 @@ namespace Aya {
 				return Quaternion(A1);
 #else
 				return Quaternion(
-					w() * v.x() + y() * v.z() - z() * v.y(),
-					w() * v.y() + z() * v.x() - x() * v.z(),
-					w() * v.z() + x() * v.y() - y() * v.x(),
-					-x() * v.x() - y() * v.y() - z() * v.z());
+					w() * v.x + y() * v.z - z() * v.y,
+					w() * v.y + z() * v.x - x() * v.z,
+					w() * v.z + x() * v.y - y() * v.x,
+					-x() * v.x - y() * v.y - z() * v.z);
 #endif
 			}
 			friend AYA_FORCE_INLINE Quaternion operator * (const BaseVector3 &w, const Quaternion& q) {
@@ -414,10 +414,10 @@ namespace Aya {
 				return Quaternion(A1);
 #else
 				return Quaternion(
-					+w.x() * q.w() + w.y() * q.z() - w.z() * q.y(),
-					+w.y() * q.w() + w.z() * q.x() - w.x() * q.z(),
-					+w.z() * q.w() + w.x() * q.y() - w.y() * q.x(),
-					-w.x() * q.x() - w.y() * q.y() - w.z() * q.z());
+					+w.x * q.w + w.y * q.z - w.z * q.y,
+					+w.y * q.w + w.z * q.x - w.x * q.z,
+					+w.z * q.w + w.x * q.y - w.y * q.x,
+					-w.x * q.x - w.y * q.y - w.z * q.z);
 #endif
 			}
 			AYA_FORCE_INLINE Quaternion operator / (const float &s) const {
@@ -528,10 +528,10 @@ namespace Aya {
 					const float s1 = sinf(sign * t * theta) / d;
 
 					return Quaternion(
-						(m_val[0] * s0 + q.x() * s1),
-						(m_val[1] * s0 + q.y() * s1),
-						(m_val[2] * s0 + q.z() * s1),
-						(m_val[3] * s0 + q.w() * s1));
+						(m_val[0] * s0 + q.x * s1),
+						(m_val[1] * s0 + q.y * s1),
+						(m_val[2] * s0 + q.z * s1),
+						(m_val[3] * s0 + q.w * s1));
 				}
 				else {
 					return *this;

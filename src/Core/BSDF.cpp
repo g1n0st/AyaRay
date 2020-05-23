@@ -85,7 +85,7 @@ namespace Aya {
 	}
 
 	float BSDF::GGX_D(const Vector3 &wh, float alpha) {
-		if (wh.z() <= 0.f)
+		if (wh.z <= 0.f)
 			return 0.f;
 
 		const float root = alpha / (CosTheta2(wh) * (alpha * alpha + TanTheta2(wh)));
@@ -107,7 +107,7 @@ namespace Aya {
 		float phi = u2 * float(M_PI) * 2.f;
 
 		Vector3 dir = BaseVector3::sphericalDirection(sin_1, cos_1, phi);
-		return Vector3(dir.x(), dir.z(), dir.y());
+		return Vector3(dir.x, dir.z, dir.y);
 	}
 
 	float BSDF::SmithG(const Vector3 &v, const Vector3 &wh, float alpha) {
@@ -185,16 +185,16 @@ namespace Aya {
 	Vector3 BSDF::GGX_SampleVisibleNormal(const Vector3 &_wi, float u1, float u2, float *pdf, float alpha) {
 		// Stretch wi
 		Vector3 wi = Vector3(
-			alpha * wi.x(),
-			alpha * wi.y(),
-			wi.z()
+			alpha * _wi.x,
+			alpha * _wi.y,
+			_wi.z
 		).normalize();
 
 		// Get polar coordinates
 		float theta = 0.f, phi = 0.f;
-		if (wi.z() < float(0.99999f)) {
-			theta = std::acosf(wi.z());
-			phi = std::atan2f(wi.y(), wi.x());
+		if (wi.z < float(0.99999f)) {
+			theta = std::acosf(wi.z);
+			phi = std::atan2f(wi.y, wi.x);
 		}
 		float sin_phi = std::sinf(phi);
 		float cos_phi = std::cosf(phi);

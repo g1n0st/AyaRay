@@ -39,23 +39,23 @@ namespace Aya {
 		inline RTCRay toRTCRay(const Ray &ray) const {
 #if (AYA_USE_EMBREE == 3)
 			RTCRay rtc_ray;
-			rtc_ray.org_x = ray.m_ori.x();
-			rtc_ray.org_y = ray.m_ori.y();
-			rtc_ray.org_z = ray.m_ori.z();
-			rtc_ray.dir_x = ray.m_dir.x();
-			rtc_ray.dir_y = ray.m_dir.y();
-			rtc_ray.dir_z = ray.m_dir.z();
+			rtc_ray.org_x = ray.m_ori.x;
+			rtc_ray.org_y = ray.m_ori.y;
+			rtc_ray.org_z = ray.m_ori.z;
+			rtc_ray.dir_x = ray.m_dir.x;
+			rtc_ray.dir_y = ray.m_dir.y;
+			rtc_ray.dir_z = ray.m_dir.z;
 			rtc_ray.tnear = ray.m_mint;
 			rtc_ray.tfar = ray.m_maxt;
 			rtc_ray.flags = 0;
 #elif (AYA_USE_EMBREE == 2)
 			RTCRay rtc_ray;
-			rtc_ray.org[0] = ray.m_ori.x();
-			rtc_ray.org[1] = ray.m_ori.y();
-			rtc_ray.org[2] = ray.m_ori.z();
-			rtc_ray.dir[0] = ray.m_dir.x();
-			rtc_ray.dir[1] = ray.m_dir.y();
-			rtc_ray.dir[2] = ray.m_dir.z();
+			rtc_ray.org[0] = ray.m_ori.x;
+			rtc_ray.org[1] = ray.m_ori.y;
+			rtc_ray.org[2] = ray.m_ori.z;
+			rtc_ray.dir[0] = ray.m_dir.x;
+			rtc_ray.dir[1] = ray.m_dir.y;
+			rtc_ray.dir[2] = ray.m_dir.z;
 			rtc_ray.tnear = ray.m_mint;
 			rtc_ray.tfar = ray.m_maxt;
 			rtc_ray.time = 0.f;

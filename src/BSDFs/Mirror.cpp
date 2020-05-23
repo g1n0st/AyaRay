@@ -23,7 +23,7 @@ namespace Aya {
 		}
 
 		Vector3 wo = intersection.worldToLocal(v_out);
-		Vector3 wi = Vector3(-wo.x(), -wo.y(), wo.z());
+		Vector3 wi = Vector3(-wo.x, -wo.y, wo.z);
 
 		*v_in = intersection.localToWorld(wi);
 		*pdf = 1.f;

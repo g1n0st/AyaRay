@@ -169,19 +169,19 @@ namespace Aya {
 
 				const Vector3 cell_pt = m_cell_size_inv * dist_min;
 				const Vector3 coord_f(
-					std::floorf(cell_pt.x()),
-					std::floorf(cell_pt.y()),
-					std::floorf(cell_pt.z()));
+					std::floorf(cell_pt.x),
+					std::floorf(cell_pt.y),
+					std::floorf(cell_pt.z));
 
-				const int px = int(coord_f.x());
-				const int py = int(coord_f.y());
-				const int pz = int(coord_f.z());
+				const int px = int(coord_f.x);
+				const int py = int(coord_f.y);
+				const int pz = int(coord_f.z);
 
 				const Vector3 fract_coord = cell_pt - coord_f;
 
-				const int pxo = px + (fract_coord.x() < 0.5f ? -1 : +1);
-				const int pyo = py + (fract_coord.y() < 0.5f ? -1 : +1);
-				const int pzo = pz + (fract_coord.z() < 0.5f ? -1 : +1);
+				const int pxo = px + (fract_coord.x < 0.5f ? -1 : +1);
+				const int pyo = py + (fract_coord.y < 0.5f ? -1 : +1);
+				const int pzo = pz + (fract_coord.z < 0.5f ? -1 : +1);
 
 				int found = 0;
 
@@ -231,9 +231,9 @@ namespace Aya {
 			}
 			int getCellIndex(const Point3 &pos) const {
 				Vector3 dis_min = pos - m_bbox.m_pmin;
-				return getCellIndex(FloorToInt(dis_min.x() * m_cell_size_inv),
-					FloorToInt(dis_min.y() * m_cell_size_inv),
-					FloorToInt(dis_min.z() * m_cell_size_inv));
+				return getCellIndex(FloorToInt(dis_min.x * m_cell_size_inv),
+					FloorToInt(dis_min.y * m_cell_size_inv),
+					FloorToInt(dis_min.z * m_cell_size_inv));
 			}
 		};
 

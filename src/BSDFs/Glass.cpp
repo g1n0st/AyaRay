@@ -34,7 +34,7 @@ namespace Aya {
 
 		// reflect
 		if (sample.w <= prob && sample_both || (sample_reflect && !sample_refract)) {
-			wi = Vector3(-wo.x(), -wo.y(), wo.z());
+			wi = Vector3(-wo.x, -wo.y, wo.z);
 
 			*v_in = intersection.localToWorld(wi);
 			*pdf = !sample_both ? 1.f : prob;
@@ -61,7 +61,7 @@ namespace Aya {
 				cost = -cost;
 			float toi = eta;
 
-			wi = Vector3(toi * -wo.x(), toi * -wo.y(), cost);
+			wi = Vector3(toi * -wo.x, toi * -wo.y, cost);
 
 			*v_in = intersection.localToWorld(wi);
 			*pdf = !sample_both ? 1.f : 1.f - prob;

@@ -82,13 +82,13 @@ namespace Aya {
 		return false;
 	}
 	inline bool xBVHCmp(const BVHLeaf &a, const BVHLeaf &b) {
-		return a.m_box.m_pmin.x() < b.m_box.m_pmin.x();
+		return a.m_box.m_pmin.x < b.m_box.m_pmin.x;
 	}
 	inline bool yBVHCmp(const BVHLeaf &a, const BVHLeaf &b) {
-		return a.m_box.m_pmin.y() < b.m_box.m_pmin.y();
+		return a.m_box.m_pmin.y < b.m_box.m_pmin.y;
 	}
 	inline bool zBVHCmp(const BVHLeaf &a, const BVHLeaf &b) {
-		return a.m_box.m_pmin.z() < b.m_box.m_pmin.z();
+		return a.m_box.m_pmin.z < b.m_box.m_pmin.z;
 	}
 
 	void BVHAccel::construct(BVHNode **node, const int &L, const int &R) {

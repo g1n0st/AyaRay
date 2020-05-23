@@ -69,7 +69,7 @@ namespace Aya {
 				u = light_sample.u;
 				v = light_sample.v;
 				Vector3 d = UniformSampleSphere(u, v);
-				*dir = Vector3(d.x(), d.z(), -d.y());
+				*dir = Vector3(d.x, d.z, -d.y);
 				*pdf = UniformSpherePDF();
 			}
 

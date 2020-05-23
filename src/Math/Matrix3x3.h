@@ -408,9 +408,9 @@ namespace Aya {
 
 				return Matrix3x3(v0, v1, v2);
 #else
-				return Matrix3x3(m_el[0].x(), m_el[1].x(), m_el[2].x(),
-					m_el[0].y(), m_el[1].y(), m_el[2].y(),
-					m_el[0].z(), m_el[1].z(), m_el[2].z());
+				return Matrix3x3(m_el[0].x, m_el[1].x, m_el[2].x,
+					m_el[0].y, m_el[1].y, m_el[2].y,
+					m_el[0].z, m_el[1].z, m_el[2].z);
 #endif
 			}
 
@@ -421,9 +421,9 @@ namespace Aya {
 					_mm_and_ps(m_el[2].m_val128, vAbsfMask));
 #else
 				return Matrix3x3(
-					Abs(m_el[0].x()), Abs(m_el[0].y()), Abs(m_el[0].z()),
-					Abs(m_el[1].x()), Abs(m_el[1].y()), Abs(m_el[1].z()),
-					Abs(m_el[2].x()), Abs(m_el[2].y()), Abs(m_el[2].z()));
+					Abs(m_el[0].x), Abs(m_el[0].y), Abs(m_el[0].z),
+					Abs(m_el[1].x), Abs(m_el[1].y), Abs(m_el[1].z),
+					Abs(m_el[2].x), Abs(m_el[2].y), Abs(m_el[2].z));
 #endif
 			}
 			AYA_FORCE_INLINE Matrix3x3 adjoin() const {
@@ -438,9 +438,9 @@ namespace Aya {
 				assert(det != 0.f);
 
 				float s = 1.f / det;
-				return Matrix3x3(co.x() * s, cofac(0, 2, 2, 1) * s, cofac(0, 1, 1, 2) * s,
-					co.y() * s, cofac(0, 0, 2, 2) * s, cofac(0, 2, 1, 0) * s,
-					co.z() * s, cofac(0, 1, 2, 0) * s, cofac(0, 0, 1, 1) * s);
+				return Matrix3x3(co.x * s, cofac(0, 2, 2, 1) * s, cofac(0, 1, 1, 2) * s,
+					co.y * s, cofac(0, 0, 2, 2) * s, cofac(0, 2, 1, 0) * s,
+					co.z * s, cofac(0, 1, 2, 0) * s, cofac(0, 0, 1, 1) * s);
 			}
 
 			AYA_FORCE_INLINE bool operator == (const Matrix3x3 &m) const {
@@ -464,13 +464,13 @@ namespace Aya {
 			}
 
 			AYA_FORCE_INLINE float tdotx(const BaseVector3 &v) const {
-				return m_el[0].x() * v.x() + m_el[1].x() * v.y() + m_el[2].x() * v.z();
+				return m_el[0].x * v.x + m_el[1].x * v.y + m_el[2].x * v.z;
 			}
 			AYA_FORCE_INLINE float tdoty(const BaseVector3 &v) const {
-				return m_el[0].y() * v.x() + m_el[1].y() * v.y() + m_el[2].y() * v.z();
+				return m_el[0].y * v.x + m_el[1].y * v.y + m_el[2].y * v.z;
 			}
 			AYA_FORCE_INLINE float tdotz(const BaseVector3 &v) const {
-				return m_el[0].z() * v.x() + m_el[1].z() * v.y() + m_el[2].z() * v.z();
+				return m_el[0].z * v.x + m_el[1].z * v.y + m_el[2].z * v.z;
 			}
 			AYA_FORCE_INLINE float cofac(const int &r1, const int &c1,
 				const int &r2, const int &c2) const {

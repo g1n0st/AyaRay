@@ -517,10 +517,10 @@ namespace Aya {
 
 				return _mm_add_ps(_mm_movelh_ps(b0, b1), _mm_movehl_ps(b1, b0));
 #else
-				return QuadWord(m_el[0].x() * v.x() + m_el[0].y() * v.y() + m_el[0].z() * v.z() + m_el[0].w() * v.w(),
-					m_el[1].x() * v.x() + m_el[1].y() * v.y() + m_el[1].z() * v.z() + m_el[1].w() * v.w(),
-					m_el[2].x() * v.x() + m_el[2].y() * v.y() + m_el[2].z() * v.z() + m_el[2].w() * v.w(),
-					m_el[3].x() * v.x() + m_el[3].y() * v.y() + m_el[3].z() * v.z() + m_el[3].w() * v.w());
+				return QuadWord(m_el[0].x * v.x + m_el[0].y * v.y + m_el[0].z * v.z + m_el[0].w * v.w,
+					m_el[1].x * v.x + m_el[1].y * v.y + m_el[1].z * v.z + m_el[1].w * v.w,
+					m_el[2].x * v.x + m_el[2].y * v.y + m_el[2].z * v.z + m_el[2].w * v.w,
+					m_el[3].x * v.x + m_el[3].y * v.y + m_el[3].z * v.z + m_el[3].w * v.w);
 #endif
 			}
 			friend AYA_FORCE_INLINE QuadWord operator * (const QuadWord &v, const Matrix4x4 &m) {
@@ -556,10 +556,10 @@ namespace Aya {
 					_mm_unpacklo_ps(t1, t3),
 					_mm_unpackhi_ps(t1, t3));
 #else
-				return Matrix4x4(m_el[0].x(), m_el[1].x(), m_el[2].x(), m_el[3].x(),
-					m_el[0].y(), m_el[1].y(), m_el[2].y(), m_el[3].y(),
-					m_el[0].z(), m_el[1].z(), m_el[2].z(), m_el[3].z(),
-					m_el[0].w(), m_el[1].w(), m_el[2].w(), m_el[3].w());
+				return Matrix4x4(m_el[0].x, m_el[1].x, m_el[2].x, m_el[3].x,
+					m_el[0].y, m_el[1].y, m_el[2].y, m_el[3].y,
+					m_el[0].z, m_el[1].z, m_el[2].z, m_el[3].z,
+					m_el[0].w, m_el[1].w, m_el[2].w, m_el[3].w);
 #endif
 			}
 			AYA_FORCE_INLINE Matrix4x4 absolute() const {
@@ -569,10 +569,10 @@ namespace Aya {
 					_mm_and_ps(m_el[2].m_val128, vAbsfMask),
 					_mm_and_ps(m_el[3].m_val128, vAbsfMask));
 #else
-				return Matrix4x4(Abs(m_el[0].x()), Abs(m_el[0].y()), Abs(m_el[0].z()), Abs(m_el[0].w()),
-					Abs(m_el[1].x()), Abs(m_el[1].y()), Abs(m_el[1].z()), Abs(m_el[1].w()),
-					Abs(m_el[2].x()), Abs(m_el[2].y()), Abs(m_el[2].z()), Abs(m_el[2].w()),
-					Abs(m_el[3].x()), Abs(m_el[3].y()), Abs(m_el[3].z()), Abs(m_el[3].w()));
+				return Matrix4x4(Abs(m_el[0].x), Abs(m_el[0].y), Abs(m_el[0].z), Abs(m_el[0].w),
+					Abs(m_el[1].x), Abs(m_el[1].y), Abs(m_el[1].z), Abs(m_el[1].w),
+					Abs(m_el[2].x), Abs(m_el[2].y), Abs(m_el[2].z), Abs(m_el[2].w),
+					Abs(m_el[3].x), Abs(m_el[3].y), Abs(m_el[3].z), Abs(m_el[3].w));
 #endif
 			}
 			AYA_FORCE_INLINE Matrix4x4 adjoint() const {
@@ -738,16 +738,16 @@ namespace Aya {
 			}
 
 			AYA_FORCE_INLINE float tdotx(const QuadWord &v) const {
-				return m_el[0].x() * v.x() + m_el[1].x() * v.y() + m_el[2].x() * v.z() + m_el[3].x() * v.w();
+				return m_el[0].x * v.x + m_el[1].x * v.y + m_el[2].x * v.z + m_el[3].x * v.w;
 			}
 			AYA_FORCE_INLINE float tdoty(const QuadWord &v) const {
-				return m_el[0].y() * v.x() + m_el[1].y() * v.y() + m_el[2].y() * v.z() + m_el[3].y() * v.w();
+				return m_el[0].y * v.x + m_el[1].y * v.y + m_el[2].y * v.z + m_el[3].y * v.w;
 			}
 			AYA_FORCE_INLINE float tdotz(const QuadWord &v) const {
-				return m_el[0].z() * v.x() + m_el[1].z() * v.y() + m_el[2].z() * v.z() + m_el[3].z() * v.w();
+				return m_el[0].z * v.x + m_el[1].z * v.y + m_el[2].z * v.z + m_el[3].z * v.w;
 			}
 			AYA_FORCE_INLINE float tdotw(const QuadWord &v) const {
-				return m_el[0].w() * v.x() + m_el[1].w() * v.y() + m_el[2].w() * v.z() + m_el[3].w() * v.w();
+				return m_el[0].w * v.x + m_el[1].w * v.y + m_el[2].w * v.z + m_el[3].w * v.w;
 			}
 			AYA_FORCE_INLINE float cofac(const int &r1, const int &c1,
 				const int &r2, const int &c2) const {

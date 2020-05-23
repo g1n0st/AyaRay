@@ -38,11 +38,11 @@ namespace Aya {
 
 			float A[2][2], Bx[2], By[2];
 			int axes[2];
-			if (Abs(n.x()) > Abs(n.y()) && Abs(n.x()) > Abs(n.z())) {
+			if (Abs(n.x) > Abs(n.y) && Abs(n.x) > Abs(n.z)) {
 				axes[0] = 1;
 				axes[1] = 2;
 			}
-			else if (Abs(n.y()) > Abs(n.z())) {
+			else if (Abs(n.y) > Abs(n.z)) {
 				axes[0] = 0;
 				axes[1] = 2;
 			}

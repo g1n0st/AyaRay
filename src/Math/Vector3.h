@@ -52,6 +52,9 @@ namespace Aya {
 #if defined(AYA_USE_SIMD)
 		public:
 			union {
+				struct {
+					float x, y, z, w;
+				};
 				float m_val[4];
 				__m128 m_val128;
 			};
@@ -111,10 +114,6 @@ namespace Aya {
 			AYA_FORCE_INLINE const float& getX() const { return m_val[0]; }
 			AYA_FORCE_INLINE const float& getY() const { return m_val[1]; }
 			AYA_FORCE_INLINE const float& getZ() const { return m_val[2]; }
-			AYA_FORCE_INLINE const float& x() const { return m_val[0]; }
-			AYA_FORCE_INLINE const float& y() const { return m_val[1]; }
-			AYA_FORCE_INLINE const float& z() const { return m_val[2]; }
-			AYA_FORCE_INLINE const float& w() const { return m_val[3]; }
 
 			AYA_FORCE_INLINE float operator [](const int &p) const {
 				assert(p >= 0 && p <= 3);
@@ -449,20 +448,20 @@ namespace Aya {
 					sin_theta * std::sinf(phi) * vZ;
 			}
 			static AYA_FORCE_INLINE float sphericalTheta(const BaseVector3& v) {
-				return std::acosf(Clamp(v.y(), -1.f, 1.f));
+				return std::acosf(Clamp(v.y, -1.f, 1.f));
 			}
 			static AYA_FORCE_INLINE float sphericalPhi(const BaseVector3& v) {
-				float p = std::atan2f(v.z(), v.x());
+				float p = std::atan2f(v.z, v.x);
 				return (p < 0.f) ? p + float(M_PI) * 2.f : p;
 			}
 			static AYA_FORCE_INLINE void coordinateSystem(const BaseVector3 &x, BaseVector3 *y, BaseVector3 *z) {
-				if (Abs(x.x()) > Abs(x.y())) {
-					float inv = 1.f / Sqrt(x.x() * x.x() + x.z() * x.z());
-					*y = BaseVector3(-x.z() * inv, 0.f, x.x() * inv);
+				if (Abs(x.x) > Abs(x.y)) {
+					float inv = 1.f / Sqrt(x.x * x.x + x.z * x.z);
+					*y = BaseVector3(-x.z * inv, 0.f, x.x * inv);
 				}
 				else {
-					float inv = 1.f / Sqrt(x.y() * x.y() + x.z() * x.z());
-					*y = BaseVector3(0.f, x.z() * inv, -x.y() * inv);
+					float inv = 1.f / Sqrt(x.y * x.y + x.z * x.z);
+					*y = BaseVector3(0.f, x.z * inv, -x.y * inv);
 				}
 				*z = x.cross(*y);
 			}
