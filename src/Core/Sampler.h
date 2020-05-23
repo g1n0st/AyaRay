@@ -1,10 +1,10 @@
 #ifndef AYA_CORE_SAMPLER_H
 #define AYA_CORE_SAMPLER_H
 
-#include "../Core/Config.h"
-#include "../Core/Memory.h"
-#include "../Core/RNG.h"
-#include "../Math/Vector2.h"
+#include <Core/Config.h>
+#include <Core/Memory.h>
+#include <Core/RNG.h>
+#include <Math/Vector2.h>
 
 namespace Aya {
 	struct CameraSample {

@@ -1,4 +1,4 @@
-#include "BVH.h"
+#include <Accelerators/BVH.h>
 
 namespace Aya {
 	void BVHAccel::construct(const std::vector<Primitive*> &prims) {

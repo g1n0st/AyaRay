@@ -1,8 +1,8 @@
 #ifndef AYA_MATH_BBOX_H
 #define AYA_MATH_BBOX_H
 
-#include "Vector3.h"
-#include "../Core/Ray.h"
+#include <Math/Vector3.h>
+#include <Core/Ray.h>
 
 namespace Aya {
 #if defined(AYA_USE_SIMD)

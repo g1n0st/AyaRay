@@ -1,7 +1,7 @@
 #ifndef AYA_ACCELERATOR_EMBREEACCLERATOR_H
 #define AYA_ACCELERATOR_EMBREEACCLERATOR_H
 
-#include "../Core/Accelerator.h"
+#include <Core/Accelerator.h>
 
 #if defined AYA_USE_EMBREE
 

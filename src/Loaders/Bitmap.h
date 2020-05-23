@@ -1,11 +1,9 @@
 #ifndef AYA_LOADERS_BITMAP_H
 #define AYA_LOADERS_BITMAP_H
 
-#include "stb_image.h"
-
-#include "../Math/MathUtility.h"
-#include "../Core/Spectrum.h"
-#include "../Core/Memory.h"
+#include <Loaders/stb_image.h>
+#include <Core/Spectrum.h>
+#include <Core/Memory.h>
 
 #include <Windows.h>
 #include <winGDI.h>

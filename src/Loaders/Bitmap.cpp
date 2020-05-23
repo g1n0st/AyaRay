@@ -1,4 +1,4 @@
-#include "Bitmap.h"
+#include <Loaders/Bitmap.h>
 
 namespace Aya {
 	void Bitmap::save(const char *name, const float *data, int width, int height, ImageFormat format) {

@@ -1,14 +1,11 @@
 #ifndef AYA_CORE_TRIANGLEMESH_H
 #define AYA_CORE_TRIANGLEMESH_H
 
-#include "../Math/Vector2.h"
-#include "../Math/Vector3.h"
-#include "../Math/Transform.h"
-#include "../Core/Memory.h"
-#include "../Loaders/ObjMesh.h"
-#include "../Core/Ray.h"
-#include "../Core/Intersection.h"
-#include "../Core/BSDF.h"
+#include <Core/Config.h>
+#include <Math/Transform.h>
+#include <Core/Memory.h>
+#include <Loaders/ObjMesh.h>
+#include <Core/BSDF.h>
 
 namespace Aya {
 	class TriangleMesh {

@@ -1,4 +1,4 @@
-#include "ObjMesh.h"
+#include <Loaders/ObjMesh.h>
 
 namespace Aya {
 	void ObjMesh::parserFramework(const char *filename, std::function<void(char*, char*)> callback) {

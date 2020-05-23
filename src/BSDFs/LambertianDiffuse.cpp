@@ -1,4 +1,4 @@
-#include "LambertianDiffuse.h"
+#include <BSDFs/LambertianDiffuse.h>
 
 namespace Aya {
 	float LambertianDiffuse::evalInner(const Vector3 &wo, const Vector3 &wi, const SurfaceIntersection &intersection, ScatterType types) const {

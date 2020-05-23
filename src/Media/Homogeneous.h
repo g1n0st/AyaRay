@@ -1,7 +1,7 @@
 #ifndef AYA_MEDIUMS_HOMOGENEOUS_H
 #define AYA_MEDIUMS_HOMOGENEOUS_H
 
-#include "../Core/Medium.h"
+#include <Core/Medium.h>
 
 namespace Aya {
 	class HomogeneousMedium : public Medium {

@@ -1,7 +1,7 @@
 #ifndef AYA_INTEGRATORS_PATHTRACING_H
 #define AYA_INTEGRATORS_PATHTRACING_H
 
-#include "../Core/Integrator.h"
+#include <Core/Integrator.h>
 
 namespace Aya {
 	class PathTracingIntegrator : public TiledIntegrator {

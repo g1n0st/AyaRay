@@ -1,8 +1,8 @@
 #ifndef AYA_CORE_RAY_H
 #define AYA_CORE_RAY_H
 
-#include "../Core/Config.h"
-#include "../Math/Vector3.h"
+#include <Core/Config.h>
+#include <Math/Vector3.h>
 
 #define AYA_RAY_EPS 1e-4f
 

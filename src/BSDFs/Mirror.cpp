@@ -1,4 +1,4 @@
-#include "Mirror.h"
+#include <BSDFs/Mirror.h>
 
 namespace Aya {
 	Spectrum Mirror::f(const Vector3 &v_out, const Vector3 &v_in, const SurfaceIntersection &intersection, ScatterType types) const {

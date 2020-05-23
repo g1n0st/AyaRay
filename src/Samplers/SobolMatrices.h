@@ -1,7 +1,7 @@
 #ifndef AYA_SAMPLER_SOBOLMATRICES_H
 #define AYA_SAMPLER_SOBOLMATRICES_H
 
-#include "../Core/Config.h"
+#include <Core/Config.h>
 
 namespace Aya {
 		// data source: https://web.maths.unsw.edu.au/~fkuo/sobol/

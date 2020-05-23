@@ -1,6 +1,5 @@
-#include "Scene.h"
-
-#include "../Lights/AreaLight.h"
+#include <Core/Scene.h>
+#include <Lights/AreaLight.h>
 
 namespace Aya {
 	bool Scene::intersect(const Ray &ray0, Intersection *isect) const {

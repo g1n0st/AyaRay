@@ -1,4 +1,4 @@
-#include "Camera.h"
+#include <Core/Camera.h>
 
 namespace Aya {
 	Camera::Camera(const Point3 &pos, const Point3 &tar, const Vector3 &up, 

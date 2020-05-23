@@ -1,4 +1,4 @@
-#include "Glass.h"
+#include <BSDFs/Glass.h>
 
 namespace Aya {
 	Spectrum Glass::f(const Vector3 &v_out, const Vector3 &v_in, const SurfaceIntersection &intersection, ScatterType types) const {

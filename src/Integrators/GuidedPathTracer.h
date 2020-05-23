@@ -1,7 +1,7 @@
 #ifndef AYA_INTEGRATORS_GUIDEDPATHTRACER_H
 #define AYA_INTEGRATORS_GUIDEDPATHTRACER_H
 
-#include "../Core/Integrator.h"
+#include <Core/Integrator.h>
 
 #include <array>
 #include <atomic>

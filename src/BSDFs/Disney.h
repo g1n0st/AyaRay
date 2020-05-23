@@ -1,7 +1,7 @@
 #ifndef AYA_BSDFS_DISNEY_H
 #define AYA_BSDFS_DISNEY_H
 
-#include "../Core/BSDF.h"
+#include <Core/BSDF.h>
 
 namespace Aya {
 	class Disney : public BSDF {

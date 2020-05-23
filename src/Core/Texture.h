@@ -1,10 +1,11 @@
 #ifndef AYA_CORE_TEXTURE_H
 #define AYA_CORE_TEXTURE_H
 
-#include "../Core/Spectrum.h"
-#include "../Loaders/Bitmap.h"
-#include "../Math/Vector2.h"
-#include "../Core/Memory.h"
+#include <Core/Config.h>
+#include <Math/Vector2.h>
+#include <Core/Spectrum.h>
+#include <Loaders/Bitmap.h>
+#include <Core/Memory.h>
 
 namespace Aya {
 	enum class TextureFilter {

@@ -1,12 +1,11 @@
 #ifndef AYA_CORE_MEDIUM_H
 #define AYA_CORE_MEDIUM_H
 
-#include "../Core/Ray.h"
-#include "../Core/Memory.h"
-#include "../Core/Spectrum.h"
-#include "../Core/Sampler.h"
-#include "../Math/Vector3.h"
-#include "../Math/Vector2.h"
+#include <Core/Config.h>
+#include <Core/Ray.h>
+#include <Core/Memory.h>
+#include <Core/Spectrum.h>
+#include <Core/Sampler.h>
 
 namespace Aya {
 	class PhaseFunctionHG {

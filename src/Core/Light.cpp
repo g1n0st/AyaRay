@@ -1,6 +1,5 @@
-#include "Light.h"
-
-#include "../Core/Scene.h"
+#include <Core/Light.h>
+#include <Core/Scene.h>
 
 namespace Aya {
 	bool VisibilityTester::unoccluded(const Scene *scene) const {

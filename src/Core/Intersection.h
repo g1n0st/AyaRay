@@ -1,10 +1,11 @@
 #ifndef AYA_CORE_INTERSECTION_H
 #define AYA_CORE_INTERSECTION_H
 
-#include "../Math/Vector2.h"
-#include "../Math/Vector3.h"
-#include "../Core/Medium.h"
-#include "../Core/Ray.h"
+#include <Core/Config.h>
+#include <Math/Vector2.h>
+#include <Math/Vector3.h>
+#include <Core/Medium.h>
+#include <Core/Ray.h>
 
 namespace Aya {
 	class BSDF;

@@ -1,4 +1,4 @@
-#include "Filter.h"
+#include <Core/Filter.h>
 
 namespace Aya {
 	const float Filter::getRadius() const {

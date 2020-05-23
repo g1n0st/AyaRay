@@ -1,4 +1,4 @@
-#include "Spectrum.h"
+#include <Core/Spectrum.h>
 
 namespace Aya {
 

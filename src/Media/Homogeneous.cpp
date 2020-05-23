@@ -1,6 +1,5 @@
-#include "Homogeneous.h"
-
-#include "../Core/Intersection.h"
+#include <Media/Homogeneous.h>
+#include <Core/Intersection.h>
 
 namespace Aya {
 	Spectrum HomogeneousMedium::tr(const Ray &ray, Sampler *sampler) const {

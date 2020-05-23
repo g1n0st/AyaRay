@@ -1,4 +1,4 @@
-#include "RandomSampler.h"
+#include <Samplers/RandomSampler.h>
 
 namespace Aya {
 	void RandomSampler::generateSamples(

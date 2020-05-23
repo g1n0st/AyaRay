@@ -1,14 +1,15 @@
 #ifndef AYA_CORE_SCENE_H
 #define AYA_CORE_SCENE_H
 
-#include "../Math/Transform.h"
-#include "../Core/Light.h"
-#include "../Core/Primitive.h"
+#include <Core/Config.h>
+#include <Math/Transform.h>
+#include <Core/Light.h>
+#include <Core/Primitive.h>
 
 #if defined(AYA_USE_EMBREE)
-#include "../Accelerators/EmbreeAccelerator.h"
+#include <Accelerators/EmbreeAccelerator.h>
 #else
-#include "../Accelerators/BVH.h"
+#include <Accelerators/BVH.h>
 #endif
 
 #include <vector>

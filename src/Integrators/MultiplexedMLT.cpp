@@ -1,5 +1,5 @@
-#include "MultiplexedMLT.h"
-#include "BidirectionalPathTracing.h"
+#include <Integrators/MultiplexedMLT.h>
+#include <Integrators/BidirectionalPathTracing.h>
 
 namespace Aya {
 	float MetropolisSampler::get1D() {

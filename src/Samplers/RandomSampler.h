@@ -1,8 +1,7 @@
 #ifndef AYA_SAMPLER_RANDOMSAMPLER_H
 #define AYA_SAMPLER_RANDOMSAMPLER_H
 
-#include "../Core/Sampler.h"
-#include "../Core/RNG.h"
+#include <Core/Sampler.h>
 
 namespace Aya {
 	class RandomSampler : public Sampler {

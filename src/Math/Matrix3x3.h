@@ -1,7 +1,7 @@
 #ifndef AYA_MATH_MATRIX3X3_H
 #define AYA_MATH_MATRIX3X3_H
 
-#include "Vector3.h"
+#include <Math/Vector3.h>
 
 namespace Aya {
 #if defined(AYA_USE_SIMD)

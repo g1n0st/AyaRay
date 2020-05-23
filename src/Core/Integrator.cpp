@@ -1,4 +1,4 @@
-#include "integrator.h"
+#include <Core/integrator.h>
 
 namespace Aya {
 	void TiledIntegrator::render(const Scene *scene, const Camera *camera, Sampler *sampler, Film *film) const {

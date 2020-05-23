@@ -1,8 +1,8 @@
 #ifndef AYA_CORE_FILTER_H
 #define AYA_CORE_FILTER_H
 
-#include "../Core/Config.h"
-#include "../Math/MathUtility.h"
+#include <Core/Config.h>
+#include <Math/MathUtility.h>
 
 namespace Aya {
 	class Filter {

@@ -1,7 +1,7 @@
 #ifndef AYA_BSDFS_ROUGHDIELECTRIC_H
 #define AYA_BSDFS_ROUGHDIELECTRIC_H
 
-#include "../Core/BSDF.h"
+#include <Core/BSDF.h>
 
 namespace Aya {
 	class RoughDielectric : public BSDF {

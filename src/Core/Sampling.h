@@ -1,9 +1,9 @@
 #ifndef AYA_CORE_SAMPLING_H
 #define AYA_CORE_SAMPLING_H
 
-#include "../Math/Vector2.h"
-#include "../Math/Vector3.h"
-#include "../Core/Memory.h"
+#include <Math/Vector2.h>
+#include <Math/Vector3.h>
+#include <Core/Memory.h>
 
 #include <algorithm>
 #include <vector>

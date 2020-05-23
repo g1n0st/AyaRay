@@ -1,12 +1,10 @@
 #ifndef AYA_LIGHTS_AREALIGHT_H
 #define AYA_LIGHTS_AREALIGHT_H
 
-#include "../Core/Light.h"
-#include "../Core/Intersection.h"
-#include "../Core/Primitive.h"
-#include "../Core/Sampler.h"
-#include "../Core/Sampling.h"
-#include "../Accelerators/BVH.h"
+#include <Core/Light.h>
+#include <Core/Primitive.h>
+#include <Core/Sampling.h>
+#include <Accelerators/BVH.h>
 
 namespace Aya {
 	class AreaLight : public Light {

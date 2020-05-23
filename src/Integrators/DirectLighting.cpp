@@ -1,4 +1,4 @@
-#include "DirectLighting.h"
+#include <Integrators/DirectLighting.h>
 
 namespace Aya {
 	Spectrum DirectLightingIntegrator::li(const RayDifferential &ray, const Scene *scene, Sampler *sampler, RNG &rng, MemoryPool &memory) const {

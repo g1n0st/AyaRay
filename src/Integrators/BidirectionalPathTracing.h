@@ -1,7 +1,7 @@
 #ifndef AYA_BIDIRECTIONALINTEGRATORS_PATHTRACING_H
 #define AYA_BIDIRECTIONALINTEGRATORS_PATHTRACING_H
 
-#include "../Core/Integrator.h"
+#include <Core/Integrator.h>
 
 namespace Aya {
 	class BidirectionalPathTracingIntegrator : public TiledIntegrator {

@@ -1,4 +1,4 @@
-#include "BSDF.h"
+#include <Core/BSDF.h>
 
 namespace Aya {
 	BSDF::BSDF(ScatterType t1, BSDFType t2, const Spectrum &color)

@@ -1,7 +1,7 @@
 #ifndef AYA_BSDFS_LAMBERTIANDIFFUSE_H
 #define AYA_BSDFS_LAMBERTIANDIFFUSE_H
 
-#include "../Core/BSDF.h"
+#include <Core/BSDF.h>
 
 namespace Aya {
 	class LambertianDiffuse : public BSDF {

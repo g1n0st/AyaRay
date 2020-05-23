@@ -1,10 +1,8 @@
 #ifndef AYA_LIGHTS_POINTLIGHT_H
 #define AYA_LIGHTS_POINTLIGHT_H
 
-#include "../Core/Light.h"
-#include "../Core/Intersection.h"
-#include "../Core/Sampler.h"
-#include "../Core/Sampling.h"
+#include <Core/Light.h>
+#include <Core/Sampling.h>
 
 namespace Aya {
 	class PointLight : public Light {

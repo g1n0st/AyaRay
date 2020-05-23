@@ -1,7 +1,7 @@
 #ifndef AYA_FILTERS_BOXFILTER_H
 #define AYA_FILTERS_BOXFILTER_H
 
-#include "../Core/Filter.h"
+#include <Core/Filter.h>
 
 namespace Aya {
 	class BoxFilter : public Filter {

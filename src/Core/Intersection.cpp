@@ -1,6 +1,5 @@
-#include "Intersection.h"
-
-#include "../Lights/AreaLight.h"
+#include <Core/Intersection.h>
+#include <Lights/AreaLight.h>
 
 namespace Aya {
 	Spectrum SurfaceIntersection::emit(const Vector3 & dir) const {

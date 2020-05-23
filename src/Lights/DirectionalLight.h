@@ -1,7 +1,9 @@
 #ifndef AYA_LIGHTS_DIRECTIONALLIGHT_H
 #define AYA_LIGHTS_DIRECTIONALLIGHT_H
 
-#include "../Core/Light.h"
+#include <Core/Light.h>
+#include <Core/Sampling.h>
+#include <Core/Scene.h>
 
 namespace Aya {
 	class DirectionalLight : public Light {

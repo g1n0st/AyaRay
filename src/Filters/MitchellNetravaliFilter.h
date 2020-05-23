@@ -1,7 +1,7 @@
 #ifndef AYA_FILTERS_MITCHELLNETRAVALIFILTER_H
 #define AYA_FILTERS_MITCHELLNETRAVALIFILTER_H
 
-#include "../Core/Filter.h"
+#include <Core/Filter.h>
 
 namespace Aya {
 	class MitchellNetravaliFilter : public Filter {

@@ -1,4 +1,4 @@
-#include "SobolSampler.h"
+#include <Samplers/SobolSampler.h>
 
 namespace Aya {
 	void SobolSampler::generateSamples(

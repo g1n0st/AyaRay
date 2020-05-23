@@ -1,14 +1,11 @@
 #ifndef AYA_CORE_BSDF_H
 #define AYA_CORE_BSDF_H
 
-#include "../Core/Ray.h"
-#include "../Core/Intersection.h"
-#include "../Core/Spectrum.h"
-#include "../Core/Sampler.h"
-#include "../Core/Sampling.h"
-#include "../Core/Texture.h"
-#include "../Math/Vector2.h"
-#include "../Math/Vector3.h"
+#include <Core/Config.h>
+#include <Core/Ray.h>
+#include <Core/Intersection.h>
+#include <Core/Sampling.h>
+#include <Core/Texture.h>
 
 namespace Aya {
 	AYA_FORCE_INLINE float CosTheta(const Vector3 &v) {

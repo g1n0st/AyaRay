@@ -1,7 +1,7 @@
 #ifndef AYA_MATH_MATHUTILITY_H
 #define AYA_MATH_MATHUTILITY_H
 
-#include "..\Core\Config.h"
+#include <Core/Config.h>
 
 #define _USE_MATH_DEFINES
 #include <math.h>

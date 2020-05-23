@@ -1,4 +1,4 @@
-#include "EmbreeAccelerator.h"
+#include <Accelerators/EmbreeAccelerator.h>
 
 namespace Aya {
 #if defined AYA_USE_EMBREE

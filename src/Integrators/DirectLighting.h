@@ -1,7 +1,7 @@
 #ifndef AYA_INTEGRATORS_DIRECTLIGHTING_H
 #define AYA_INTEGRATORS_DIRECTLIGHTING_H
 
-#include "../Core/Integrator.h"
+#include <Core/Integrator.h>
 
 namespace Aya {
 	class DirectLightingIntegrator : public TiledIntegrator {

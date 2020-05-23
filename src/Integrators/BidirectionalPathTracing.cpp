@@ -1,4 +1,4 @@
-#include "BidirectionalPathTracing.h"
+#include <Integrators/BidirectionalPathTracing.h>
 
 namespace Aya {
 	// Bidirectional Path Tracing Integrator, implementation refers to the papers:

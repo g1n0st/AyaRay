@@ -1,4 +1,4 @@
-#include "PathTracing.h"
+#include <Integrators/PathTracing.h>
 
 namespace Aya {
 	Spectrum PathTracingIntegrator::li(const RayDifferential &ray, const Scene *scene, Sampler *sampler, RNG &rng, MemoryPool &memory) const {

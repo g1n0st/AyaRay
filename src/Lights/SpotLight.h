@@ -1,7 +1,7 @@
 #ifndef AYA_LIGHTS_SPOTLIGHT_H
 #define AYA_LIGHTS_SPOTLIGHT_H
 
-#include "../Core/Light.h"
+#include <Core/Light.h>
 
 namespace Aya {
 	class SpotLight : public Light {

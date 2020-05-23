@@ -1,10 +1,8 @@
 #ifndef AYA_SAMPLER_SOBOLSAMPLER_H
 #define AYA_SAMPLER_SOBOLSAMPLER_H
 
-#include "SobolMatrices.h"
-
-#include "../Core/Sampler.h"
-#include "../Math/MathUtility.h"
+#include <Samplers/SobolMatrices.h>
+#include <Core/Sampler.h>
 
 namespace Aya {
 	class SobolSampler : public Sampler {

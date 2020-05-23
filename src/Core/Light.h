@@ -1,10 +1,10 @@
 #ifndef AYA_CORE_LIGHT_H
 #define AYA_CORE_LIGHT_H
 
-#include "../Core/Intersection.h"
-#include "../Core/Ray.h"
-#include "../Math/Vector3.h"
-#include "../Core/Sampler.h"
+#include <Core/Config.h>
+#include <Core/Intersection.h>
+#include <Core/Ray.h>
+#include <Core/Sampler.h>
 
 namespace Aya {
 	class Scene;

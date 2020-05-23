@@ -1,7 +1,7 @@
 #ifndef AYA_CORE_MEMORY_H
 #define AYA_CORE_MEMORY_H
 
-#include "../Core/Config.h"
+#include <Core/Config.h>
 
 #include <atomic>
 #include <vector>

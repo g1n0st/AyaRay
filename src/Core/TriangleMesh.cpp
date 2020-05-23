@@ -1,4 +1,4 @@
-#include "TriangleMesh.h"
+#include <Core/TriangleMesh.h>
 
 namespace Aya {
 	void TriangleMesh::loadMesh(const Transform &O2W, const ObjMesh * obj_mesh) {

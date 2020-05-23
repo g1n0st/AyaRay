@@ -1,7 +1,7 @@
 #ifndef AYA_ACCELERATORS_BVH_H
 #define AYA_ACCELERATORS_BVH_H
 
-#include "../Core/Accelerator.h"
+#include <Core/Accelerator.h>
 
 namespace Aya {
 	class BVHTriangle {

@@ -1,7 +1,7 @@
 #ifndef AYA_INTEGRATORS_MULTIPLEXMLT_H
 #define AYA_INTEGRATORS_MULTIPLEXMLT_H
 
-#include "../Core/Integrator.h"
+#include <Core/Integrator.h>
 
 #include <thread>
 #include <mutex>

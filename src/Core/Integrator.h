@@ -1,14 +1,14 @@
 #ifndef AYA_CORE_INTEGRATOR_H
 #define AYA_CORE_INTEGRATOR_H
 
-#include "../Core/Config.h"
-#include "../Core/Camera.h"
-#include "../Core/Scene.h"
-#include "../Core/Film.h"
-#include "../Core/Light.h"
-#include "../Core/Sampler.h"
-#include "../Core/Ray.h"
-#include "../Core/BSDF.h"
+#include <Core/Config.h>
+#include <Core/Camera.h>
+#include <Core/Scene.h>
+#include <Core/Film.h>
+#include <Core/Light.h>
+#include <Core/Sampler.h>
+#include <Core/Ray.h>
+#include <Core/BSDF.h>
 
 #include <vector>
 #include <ppl.h>

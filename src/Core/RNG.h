@@ -1,8 +1,8 @@
 ﻿#ifndef AYA_CORE_RNG_H
 #define AYA_CORE_RNG_H
 
-#include "../Core/Config.h"
-#include "../Math/Vector3.h"
+#include <Core/Config.h>
+#include <Math/Vector3.h>
 
 #include <stdint.h>
 

@@ -1,7 +1,7 @@
 #ifndef AYA_BSDFS_GLASS_H
 #define AYA_BSDFS_GLASS_H
 
-#include "../Core/BSDF.h"
+#include <Core/BSDF.h>
 
 namespace Aya {
 	class Glass : public BSDF {

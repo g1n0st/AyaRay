@@ -1,7 +1,7 @@
 #ifndef AYA_MATH_VECTOR2
 #define AYA_MATH_VECTOR2
 
-#include "MathUtility.h"
+#include <Math/MathUtility.h>
 
 namespace Aya {
 	template<class T>

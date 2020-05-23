@@ -1,13 +1,13 @@
 #ifndef AYA_CORE_CAMERA_H
 #define AYA_CORE_CAMERA_H
 
-#include "../Core/Config.h"
-#include "../Core/Ray.h"
-#include "../Core/RNG.h"
-#include "../Core/Sampling.h"
-#include "../Core/Sampler.h"
-#include "../Math/Transform.h"
-#include "../Loaders/Bitmap.h"
+#include <Core/Config.h>
+#include <Core/Ray.h>
+#include <Core/RNG.h>
+#include <Core/Sampling.h>
+#include <Core/Sampler.h>
+#include <Math/Transform.h>
+#include <Loaders/Bitmap.h>
 
 namespace Aya {
 	class Camera {

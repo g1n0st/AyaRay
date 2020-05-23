@@ -1,4 +1,4 @@
-#include "VertexCM.h"
+#include <Integrators/VertexCM.h>
 
 namespace Aya {
 	VertexCMIntegrator::VertexCMIntegrator(const TaskSynchronizer &task, const uint32_t &spp,

@@ -1,13 +1,12 @@
 #ifndef AYA_MATH_TRANSFORM_H
 #define AYA_MATH_TRANSFORM_H
 
-#include "BBox.h"
-#include "Mathutility.h"
-#include "Matrix4x4.h"
-#include "Matrix3x3.h"
-#include "Quaternion.h"
-
-#include "..\Core\Ray.h"
+#include <Math/BBox.h>
+#include <Math/Mathutility.h>
+#include <Math/Matrix4x4.h>
+#include <Math/Matrix3x3.h>
+#include <Math/Quaternion.h>
+#include <Core/Ray.h>
 
 namespace Aya {
 #if defined(AYA_USE_SIMD)

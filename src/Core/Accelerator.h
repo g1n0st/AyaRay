@@ -1,8 +1,10 @@
 #ifndef AYA_CORE_ACCELERATOR_H
 #define AYA_CORE_ACCELERATOR_H
 
-#include "../Core/Accelerator.h"
-#include "../Core/Primitive.h"
+#include <Core/Config.h>
+#include <Math/BBox.h>
+#include <Core/Accelerator.h>
+#include <Core/Primitive.h>
 
 namespace Aya {
 	class Accelerator {

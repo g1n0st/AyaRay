@@ -1,4 +1,4 @@
-#include "SobolMatrices.h"
+#include <Samplers/SobolMatrices.h>
 
 namespace Aya
 {

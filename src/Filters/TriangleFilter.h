@@ -1,7 +1,7 @@
 #ifndef AYA_FILTERS_TRIANGLEFILTER_H
 #define AYA_FILTERS_TRIANGLEFILTER_H
 
-#include "../Core/Filter.h"
+#include <Core/Filter.h>
 
 namespace Aya {
 	class TriangleFilter : public Filter {

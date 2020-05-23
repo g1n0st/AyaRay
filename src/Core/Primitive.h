@@ -1,9 +1,10 @@
 #ifndef AYA_CORE_PRIMITIVE_H
 #define AYA_CORE_PRIMITIVE_H
 
-#include "../Core/BSDF.h"
-#include "../Core/Medium.h"
-#include "../Core/TriangleMesh.h"
+#include <Core/Config.h>
+#include <Core/BSDF.h>
+#include <Core/Medium.h>
+#include <Core/TriangleMesh.h>
 
 namespace Aya {
 	class AreaLight;

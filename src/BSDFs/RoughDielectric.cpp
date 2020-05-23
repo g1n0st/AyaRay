@@ -1,4 +1,4 @@
-#include "RoughDielectric.h"
+#include <BSDFs/RoughDielectric.h>
 
 namespace Aya {
 	float RoughDielectric::pdf(const Vector3 &v_out, const Vector3 &v_in, const SurfaceIntersection &intersection, ScatterType types) const {

@@ -1,7 +1,7 @@
 #ifndef AYA_MATH_QUATERNION_H
 #define AYA_MATH_QUATERNION_H
 
-#include "Vector3.h"
+#include <Math/Vector3.h>
 
 #define AYA_EULER_DEFAULT_ZYX
 #if defined (AYA_USE_SIMD)

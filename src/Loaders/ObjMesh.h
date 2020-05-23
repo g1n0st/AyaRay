@@ -1,10 +1,10 @@
 #ifndef AYA_LOADERS_OBJMESH_H
 #define AYA_LOADERS_OBJMESH_H
 
-#include "../Math/Vector2.h"
-#include "../Math/Vector3.h"
-#include "../Core/Spectrum.h"
-#include "../Core/Memory.h"
+#include <Math/Vector2.h>
+#include <Math/Vector3.h>
+#include <Core/Spectrum.h>
+#include <Core/Memory.h>
 
 #include <cstring>
 #include <string>

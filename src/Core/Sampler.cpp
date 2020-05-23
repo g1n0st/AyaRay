@@ -1,4 +1,4 @@
-#include "Sampler.h"
+#include <Core/Sampler.h>
 
 namespace Aya {
 	Sample::Sample(RNG &rng) {

@@ -1,9 +1,8 @@
-#include "Primitive.h"
-
-#include "../BSDFs/LambertianDiffuse.h"
-#include "../BSDFs/Glass.h"
-#include "../BSDFs/Mirror.h"
-#include "../BSDFs/Disney.h"
+#include <Core/Primitive.h>
+#include <BSDFs/LambertianDiffuse.h>
+#include <BSDFs/Glass.h>
+#include <BSDFs/Mirror.h>
+#include <BSDFs/Disney.h>
 
 namespace Aya {
 	Primitive::~Primitive() {

@@ -1,7 +1,7 @@
 #ifndef AYA_MATH_VECTOR3_H
 #define AYA_MATH_VECTOR3_H
 
-#include "MathUtility.h"
+#include <Math/MathUtility.h>
 
 #if defined(AYA_USE_SIMD)
 /* expands to the following value */

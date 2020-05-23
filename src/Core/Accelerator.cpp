@@ -1,4 +1,4 @@
-#include "Accelerator.h"
+#include <Core/Accelerator.h>
 
 namespace Aya {
 	Accelerator::~Accelerator() {
