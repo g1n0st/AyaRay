@@ -77,7 +77,7 @@ namespace Aya {
 	template<class T>
 	class Mipmap2D {
 	private:
-		Vector2i m_tex_dims;
+		Vector2i m_texDims;
 		int m_levels;
 
 	public:
@@ -108,8 +108,8 @@ namespace Aya {
 	private:
 		int m_width;
 		int m_height;
-		float m_width_inv, m_height_inv;
-		bool m_has_alpha;
+		float m_widthInv, m_heightInv;
+		bool m_hasAlpha;
 		TextureFilter m_filter;
 		Mipmap2D<TMem> m_texels;
 
@@ -132,7 +132,7 @@ namespace Aya {
 			return m_height;
 		}
 		inline bool hasAlpha() const override {
-			return m_has_alpha;
+			return m_hasAlpha;
 		}
 		inline bool alphaTest(const Vector2f &coord) const override {
 			return alpha(sample(coord, nullptr, TextureFilter::Nearest)) != 0.f;

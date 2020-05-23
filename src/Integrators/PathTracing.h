@@ -6,11 +6,11 @@
 namespace Aya {
 	class PathTracingIntegrator : public TiledIntegrator {
 	private:
-		uint32_t m_max_depth;
+		uint32_t m_maxDepth;
 
 	public:
 		PathTracingIntegrator(const TaskSynchronizer &task, const uint32_t &spp, uint32_t max_depth) :
-			TiledIntegrator(task, spp), m_max_depth(max_depth) {
+			TiledIntegrator(task, spp), m_maxDepth(max_depth) {
 		}
 		~PathTracingIntegrator() {
 		}

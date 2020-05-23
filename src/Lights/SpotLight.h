@@ -8,8 +8,8 @@ namespace Aya {
 	private:
 		Point3 m_pos;
 		Spectrum m_intensity;
-		Frame m_dir_frame;
-		float m_cos_total, m_cos_falloff;
+		Frame m_dirFrame;
+		float m_cosTotal, m_cosFalloff;
 
 	public:
 		SpotLight(const Point3 &pos,
@@ -18,8 +18,8 @@ namespace Aya {
 			const float total,
 			const float falloff,
 			const uint32_t sample_count = 1) :
-			Light(sample_count), m_pos(pos), m_intensity(intens), m_dir_frame(dir.normalize()),
-				m_cos_total(std::cos(Radian(total))), m_cos_falloff(std::cos(Radian(falloff))) {
+			Light(sample_count), m_pos(pos), m_intensity(intens), m_dirFrame(dir.normalize()),
+				m_cosTotal(std::cos(Radian(total))), m_cosFalloff(std::cos(Radian(falloff))) {
 		}
 
 		Spectrum illuminate(const Scatter &scatter,
@@ -38,7 +38,7 @@ namespace Aya {
 			if (cos_at_light)
 				*cos_at_light = 1.f;
 			if (emit_pdf_w)
-				*emit_pdf_w = UniformConePDF(m_cos_total);
+				*emit_pdf_w = UniformConePDF(m_cosTotal);
 
 			return m_intensity * falloff(-*dir);
 		}
@@ -50,11 +50,11 @@ namespace Aya {
 			float *pdf,
 			float *direct_pdf = nullptr) const override {
 			Vector3 dir = UniformSampleCone(light_sample0.u, light_sample0.v, 
-				m_cos_total,
-				m_dir_frame.U(), m_dir_frame.V(), m_dir_frame.W());
+				m_cosTotal,
+				m_dirFrame.U(), m_dirFrame.V(), m_dirFrame.W());
 			*ray = Ray(m_pos, dir);
 			*normal = dir;
-			*pdf = UniformConePDF(m_cos_total);
+			*pdf = UniformConePDF(m_cosTotal);
 			if (direct_pdf)
 				*direct_pdf = 1.f;
 
@@ -81,14 +81,14 @@ namespace Aya {
 
 	private:
 		float falloff(const Vector3 &w) const {
-			Vector3 wl = m_dir_frame.worldToLocal(w).normalize();
+			Vector3 wl = m_dirFrame.worldToLocal(w).normalize();
 			float cos_theta = CosTheta(wl);
-			if (cos_theta < m_cos_total)
+			if (cos_theta < m_cosTotal)
 				return 0.f;
-			if (cos_theta >= m_cos_falloff)
+			if (cos_theta >= m_cosFalloff)
 				return 1.f;
 
-			float delta = (cos_theta - m_cos_total) / (m_cos_falloff - m_cos_total);
+			float delta = (cos_theta - m_cosTotal) / (m_cosFalloff - m_cosTotal);
 			return (delta * delta) * (delta * delta);
 		}
 	};

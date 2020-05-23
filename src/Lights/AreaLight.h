@@ -11,8 +11,8 @@ namespace Aya {
 	private:
 		Primitive *mp_prim;
 		Spectrum m_intensity;
-		uint32_t m_triangle_count;
-		float m_area, m_area_inv;
+		uint32_t m_triangleCount;
+		float m_area, m_areaInv;
 		UniquePtr<BVHAccel> m_BVH;
 
 	public:
@@ -20,14 +20,14 @@ namespace Aya {
 			const Spectrum &intens,
 			const uint32_t sample_count = 1) :
 			Light(sample_count), mp_prim(prim), m_intensity(intens) {
-			m_triangle_count = mp_prim->getMesh()->getTriangleCount();
+			m_triangleCount = mp_prim->getMesh()->getTriangleCount();
 			m_area = 0.f;
-			for (uint32_t i = 0; i < m_triangle_count; i++) {
+			for (uint32_t i = 0; i < m_triangleCount; i++) {
 				float area = triangleArea(i);
 				m_area += area;
 			}
 
-			m_area_inv = 1.f / m_area;
+			m_areaInv = 1.f / m_area;
 			mp_prim->setAreaLight(this);
 
 			m_BVH = MakeUnique<BVHAccel>();
@@ -42,8 +42,8 @@ namespace Aya {
 			float *cos_at_light = nullptr,
 			float *emit_pdf_w = nullptr) const override {
 			const Point3 &pos = scatter.p;
-			uint32_t tri_id = uint32_t(light_sample.w * m_triangle_count);
-			tri_id = Clamp(tri_id, 0, m_triangle_count - 1);
+			uint32_t tri_id = uint32_t(light_sample.w * m_triangleCount);
+			tri_id = Clamp(tri_id, 0, m_triangleCount - 1);
 
 			float b0, b1;
 			UniformSampleTriangle(light_sample.u, light_sample.v, &b0, &b1);
@@ -58,7 +58,7 @@ namespace Aya {
 			tester->setMedium(scatter.m_mediumInterface.getMedium(*dir, scatter.n));
 
 			const float dist2 = light_v.length2();
-			*pdf = dist2 / Abs(light_n.dot(-*dir)) * m_area_inv;
+			*pdf = dist2 / Abs(light_n.dot(-*dir)) * m_areaInv;
 
 			const float cos = light_n.dot(-*dir);
 			if (cos < 1e-6f)
@@ -67,7 +67,7 @@ namespace Aya {
 			if (cos_at_light)
 				*cos_at_light = cos;
 			if (emit_pdf_w)
-				*emit_pdf_w = CosineHemispherePDF(cos) * m_area_inv;
+				*emit_pdf_w = CosineHemispherePDF(cos) * m_areaInv;
 
 			return m_intensity;
 		}
@@ -78,8 +78,8 @@ namespace Aya {
 			Normal3 *normal,
 			float *pdf,
 			float *direct_pdf = nullptr) const override {
-			uint32_t tri_id = uint32_t(light_sample0.w * m_triangle_count);
-			tri_id = Clamp(tri_id, 0, m_triangle_count - 1);
+			uint32_t tri_id = uint32_t(light_sample0.w * m_triangleCount);
+			tri_id = Clamp(tri_id, 0, m_triangleCount - 1);
 
 			float b0, b1;
 			UniformSampleTriangle(light_sample0.u, light_sample0.v, &b0, &b1);
@@ -96,10 +96,10 @@ namespace Aya {
 			Vector3 world_dir_out = light_frame.localToWorld(local_dir_out);
 
 			*ray = Ray(light_p, world_dir_out);
-			*pdf = m_area_inv * CosineHemispherePDF(CosTheta(local_dir_out));
+			*pdf = m_areaInv * CosineHemispherePDF(CosTheta(local_dir_out));
 
 			if (direct_pdf)
-				*direct_pdf = m_area_inv;
+				*direct_pdf = m_areaInv;
 
 			return m_intensity * CosTheta(local_dir_out);
 		}
@@ -112,9 +112,9 @@ namespace Aya {
 				return Spectrum(0.f);
 
 			if (direct_pdf)
-				*direct_pdf = m_area_inv;
+				*direct_pdf = m_areaInv;
 			if (pdf)
-				*pdf = m_area_inv * CosineHemispherePDF(normal, dir);
+				*pdf = m_areaInv * CosineHemispherePDF(normal, dir);
 
 			return m_intensity;
 		}
@@ -125,7 +125,7 @@ namespace Aya {
 			if (m_BVH->intersect(ray, &isect)) {
 				mp_prim->postIntersect(ray, &isect);
 				const float dist = isect.dist;
-				return (dist * dist) / Abs(isect.gn.dot(-dir)) * m_area_inv;
+				return (dist * dist) / Abs(isect.gn.dot(-dir)) * m_areaInv;
 			}
 			else
 				return 0.f;

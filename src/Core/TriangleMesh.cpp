@@ -14,8 +14,8 @@ namespace Aya {
 			mp_vertices[i].n = (*o2w)(vertex.n);
 			mp_vertices[i].uv = vertex.uv;
 		}
-		mp_vert_idx = new uint32_t[3 * m_tris];
-		std::memcpy(mp_vert_idx, obj_mesh->getIndexAt(0), sizeof(uint32_t) * 3 * m_tris);
+		mp_vertIdx = new uint32_t[3 * m_tris];
+		std::memcpy(mp_vertIdx, obj_mesh->getIndexAt(0), sizeof(uint32_t) * 3 * m_tris);
 	}
 	void TriangleMesh::loadSphere(const Transform & O2W, const float radius, const uint32_t slices, const uint32_t stacks) {
 		o2w = MakeUnique<Transform>(O2W);
@@ -42,18 +42,18 @@ namespace Aya {
 			theta += theta_step;
 		}
 
-		mp_vert_idx = new uint32_t[stacks * slices * 6];
+		mp_vertIdx = new uint32_t[stacks * slices * 6];
 
 		for (auto i = (uint32_t)0; i < stacks; ++i) {
 			for (auto j = (uint32_t)0; j < slices; ++j) {
 				auto idx = (i * slices + j) * 6;
-				mp_vert_idx[idx + 0] = i * (slices + 1) + j;
-				mp_vert_idx[idx + 1] = i * (slices + 1) + j + 1;
-				mp_vert_idx[idx + 2] = (i + 1) * (slices + 1) + j;
+				mp_vertIdx[idx + 0] = i * (slices + 1) + j;
+				mp_vertIdx[idx + 1] = i * (slices + 1) + j + 1;
+				mp_vertIdx[idx + 2] = (i + 1) * (slices + 1) + j;
 
-				mp_vert_idx[idx + 3] = i * (slices + 1) + j + 1;
-				mp_vert_idx[idx + 4] = (i + 1) * (slices + 1) + j + 1;
-				mp_vert_idx[idx + 5] = (i + 1) * (slices + 1) + j;
+				mp_vertIdx[idx + 3] = i * (slices + 1) + j + 1;
+				mp_vertIdx[idx + 4] = (i + 1) * (slices + 1) + j + 1;
+				mp_vertIdx[idx + 5] = (i + 1) * (slices + 1) + j;
 			}
 		}
 
@@ -73,13 +73,13 @@ namespace Aya {
 		mp_vertices[2] = MeshVertex((*o2w)(Point3(length_2, 0.f, -length_2)), n, 1.f, 1.f);
 		mp_vertices[3] = MeshVertex((*o2w)(Point3(length_2, 0.f, length_2)), n, 1.f, 0.f);
 
-		mp_vert_idx = new uint32_t[6];
-		mp_vert_idx[0] = 0;
-		mp_vert_idx[1] = 2;
-		mp_vert_idx[2] = 1;
-		mp_vert_idx[3] = 2;
-		mp_vert_idx[4] = 0;
-		mp_vert_idx[5] = 3;
+		mp_vertIdx = new uint32_t[6];
+		mp_vertIdx[0] = 0;
+		mp_vertIdx[1] = 2;
+		mp_vertIdx[2] = 1;
+		mp_vertIdx[3] = 2;
+		mp_vertIdx[4] = 0;
+		mp_vertIdx[5] = 3;
 
 		m_verts = (uint32_t)4;
 		m_tris = (uint32_t)2;

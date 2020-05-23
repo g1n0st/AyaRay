@@ -12,7 +12,7 @@ namespace Aya {
 				L += estimateDirectLighting(intersection, -ray.m_dir, light, scene, sampler);
 			}
 
-			if (ray.m_depth < m_max_depth) {
+			if (ray.m_depth < m_maxDepth) {
 				L += specularReflect(this, scene, sampler, ray, intersection, rng, memory);
 				L += specularTransmit(this, scene, sampler, ray, intersection, rng, memory);
 			}

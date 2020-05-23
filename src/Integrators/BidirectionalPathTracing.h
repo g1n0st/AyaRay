@@ -33,14 +33,14 @@ namespace Aya {
 			float dvc;
 		};
 	private:
-		uint32_t m_max_depth;
+		uint32_t m_maxDepth;
 		const Camera *mp_cam;
 		Film *mp_film;
 
 	public:
 		BidirectionalPathTracingIntegrator(const TaskSynchronizer &task, const uint32_t &spp, uint32_t max_depth,
 			const Camera *camera, Film *film) :
-			TiledIntegrator(task, spp), m_max_depth(max_depth),
+			TiledIntegrator(task, spp), m_maxDepth(max_depth),
 			mp_cam(camera), mp_film(film) {
 		}
 		~BidirectionalPathTracingIntegrator() {

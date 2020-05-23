@@ -16,10 +16,10 @@ namespace Aya {
 	}
 
 	void SobolSampler::advanceSampleIndex() {
-		m_sample_idx++;
+		m_sampleIdx++;
 	}
 	void SobolSampler::startPixel(const int px, const int py) {
-		m_sobol_idx = enumerateSampleIndex(px, py);
+		m_sobolIdx = enumerateSampleIndex(px, py);
 		m_dim = 0;
 	}
 
@@ -48,7 +48,7 @@ namespace Aya {
 	}
 
 	UniquePtr<Sampler> SobolSampler::clone(const int seed) const {
-		return MakeUnique<SobolSampler>(m_res, m_log2_res, m_scramble, m_sample_idx);
+		return MakeUnique<SobolSampler>(m_res, m_log2Res, m_scramble, m_sampleIdx);
 	}
 	UniquePtr<Sampler> SobolSampler::deepClone() const {
 		SobolSampler *copy = new SobolSampler();
@@ -57,26 +57,26 @@ namespace Aya {
 	}
 
 	uint64_t SobolSampler::enumerateSampleIndex(const uint32_t px, const uint32_t py) const {
-		if (m_log2_res == 0) {
+		if (m_log2Res == 0) {
 			return 0;
 		}
 
-		const uint32_t m2 = m_log2_res << 1;
-		uint64_t idx = m_sample_idx;
+		const uint32_t m2 = m_log2Res << 1;
+		uint64_t idx = m_sampleIdx;
 		uint64_t idx2 = idx << m2;
 
 		uint64_t delta = 0;
 		for (int c = 0; idx; idx >>= 1, c++) {
 			if (idx & 1)  // Add flipped column m + c + 1.
-				delta ^= VdC_sobol_matrices[m_log2_res - 1][c];
+				delta ^= VdC_sobol_matrices[m_log2Res - 1][c];
 		}
 
 		// Flipped b
-		uint64_t b = (((uint64_t)px << m_log2_res) | py) ^ delta;
+		uint64_t b = (((uint64_t)px << m_log2Res) | py) ^ delta;
 
 		for (int c = 0; b; b >>= 1, c++) {
 			if (b & 1)  // Add column 2 * m - c.
-				idx2 ^= VdC_sobol_matrices_inv[m_log2_res - 1][c];
+				idx2 ^= VdC_sobol_matrices_inv[m_log2Res - 1][c];
 		}
 
 		return idx2;
@@ -85,7 +85,7 @@ namespace Aya {
 	float SobolSampler::sobolSample(const int dimension) const {
 		if (dimension < num_sobol_dimensions) {
 			uint64_t v = m_scramble;
-			uint64_t idx = m_sobol_idx;
+			uint64_t idx = m_sobolIdx;
 			for (int i = dimension * sobol_matrix_size + sobol_matrix_size - 1; idx != 0; idx >>= 1, i--) {
 				if (idx & 1)
 					v ^= sobol_matrices32[i];

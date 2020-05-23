@@ -5,14 +5,14 @@
 namespace Aya {
 	template<class T>
 	inline void Mipmap2D<T>::generate(const Vector2i &dims, const T *raw_tex) {
-		m_tex_dims = dims;
+		m_texDims = dims;
 		m_levels = CeilLog2(Max(dims.x, dims.y));
 		SetMax(m_levels, 1);
 
 		mp_leveled_texels = new BlockedArray<T>[m_levels];
 		mp_leveled_texels[0].init(dims.y, dims.x, raw_tex);
 
-		Vector2i level_dims = m_tex_dims;
+		Vector2i level_dims = m_texDims;
 		for (auto l = 1; l < m_levels; l++) {
 			level_dims.x = Max(level_dims.x >> 1, 1);
 			level_dims.y = Max(level_dims.y >> 1, 1);
@@ -140,10 +140,10 @@ namespace Aya {
 			}
 		}
 
-		m_has_alpha = (channel == 4);
+		m_hasAlpha = (channel == 4);
 		m_texels.generate(Vector2i(m_width, m_height), pixels);
-		m_width_inv = 1.f / float(m_width);
-		m_height_inv = 1.f / float(m_height);
+		m_widthInv = 1.f / float(m_width);
+		m_heightInv = 1.f / float(m_height);
 
 		SafeDeleteArray(pixels);
 	}
@@ -151,9 +151,9 @@ namespace Aya {
 	ImageTexture2D<TRet, TMem>::ImageTexture2D(const TMem *pixels, const int width, const int height) {
 		m_width = width;
 		m_height = height;
-		m_width_inv = 1.f / float(m_width);
-		m_height_inv = 1.f / float(m_height);
-		m_has_alpha = false;
+		m_widthInv = 1.f / float(m_width);
+		m_heightInv = 1.f / float(m_height);
+		m_hasAlpha = false;
 		m_texels.generate(Vector2i(m_width, m_height), pixels);
 	}
 
@@ -267,8 +267,8 @@ namespace Aya {
 		TMem ret;
 		Vector2f uv;
 		for (int i = 0; i < (int)ratio_of_anisotropy; i++) {
-			uv.u = (start_u + step_u * (i + 0.5f)) * m_width_inv;
-			uv.v = (start_v + step_v * (i + 0.5f)) * m_height_inv;
+			uv.u = (start_u + step_u * (i + 0.5f)) * m_widthInv;
+			uv.v = (start_v + step_v * (i + 0.5f)) * m_heightInv;
 			float lin = LOD - lod1;
 			if (lin < 0.2f)
 				ret += m_texels.levelLinearSample(uv, lod1) * inv_rate;

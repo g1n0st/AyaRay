@@ -8,8 +8,8 @@ namespace Aya {
 		const float radius_factor,
 		const float radius_alpha) :
 		Integrator(task, spp),
-		m_min_depth(min_depth),
-		m_max_depth(max_depth),
+		m_minDepth(min_depth),
+		m_maxDepth(max_depth),
 		mp_cam(camera),
 		mp_film(film),
 		m_useVC(false),
@@ -35,8 +35,8 @@ namespace Aya {
 			break;
 		}
 		
-		m_base_radius = radius_factor;
-		m_radius_alpha = radius_alpha;
+		m_baseRadius = radius_factor;
+		m_radiusAlpha = radius_alpha;
 
 		// While we have the same number of pixels (camera paths)
 		// and light paths, we do keep them separate for clarity reasons
@@ -70,8 +70,8 @@ namespace Aya {
 			int width = m_task.getY();
 
 			// Setup our radius, 1st iteration has aIteration == 0, thus offset
-			float radius = m_base_radius * scene_radius;
-			radius /= std::powf(float(spp + 1), .5f * (1.f - m_radius_alpha));
+			float radius = m_baseRadius * scene_radius;
+			radius /= std::powf(float(spp + 1), .5f * (1.f - m_radiusAlpha));
 			// Purely for numeric stability
 			radius = Max(radius, 1e-7f);
 			const float radius_sqr = radius * radius;
@@ -107,10 +107,10 @@ namespace Aya {
 						sampler->startPixel(x, y);
 
 						// Randomly select a light source, and generate the light path
-						PathVertex *light_path = memory.alloc<PathVertex>(m_max_depth);
+						PathVertex *light_path = memory.alloc<PathVertex>(m_maxDepth);
 						int light_vertex_cnt;
 						int light_path_len = generateLightPath(scene, sampler, rng,
-							mp_cam, mp_film, m_max_depth + 1,
+							mp_cam, mp_film, m_maxDepth + 1,
 							light_path, &light_vertex_cnt);
 						{
 							std::lock_guard<std::mutex> lck(mutex);
@@ -169,7 +169,7 @@ namespace Aya {
 								if (!scene->intersect(path_ray, &local_isect)) {
 									// miss intersecting, but directly hitting IBL
 									if (scene->getEnviromentLight()) {
-										if (cam_path.path_len >= m_min_depth)
+										if (cam_path.path_len >= m_minDepth)
 											L += cam_path.throughput *
 												hittingLightSource(scene, rng, path_ray, local_isect, scene->getEnviromentLight(), cam_path);
 									}
@@ -190,20 +190,20 @@ namespace Aya {
 
 								// Add contribution when directly hitting a light source
 								if (local_isect.arealight != nullptr) {
-									if (cam_path.path_len >= m_min_depth)
+									if (cam_path.path_len >= m_minDepth)
 										L += cam_path.throughput *
 											hittingLightSource(scene, rng, path_ray, local_isect, (Light*)local_isect.arealight, cam_path);
 									break;
 								}
 
-								if (++cam_path.path_len >= m_max_depth + 1)
+								if (++cam_path.path_len >= m_maxDepth + 1)
 									break;
 
 								const BSDF *bsdf = local_isect.bsdf;
 								// Vertex connection
 								if (!bsdf->isSpecular() && m_useVC) {
 									// Connect to light source
-									if (cam_path.path_len >= m_min_depth)
+									if (cam_path.path_len >= m_minDepth)
 										L += cam_path.throughput *
 											connectToLight(scene, sampler, rng, path_ray, local_isect, cam_path);
 
@@ -212,13 +212,13 @@ namespace Aya {
 									for (auto i = range.x; i < range.y; ++i) {
 										const PathVertex &light_vertex = light_vertices[i];
 										
-										if (light_vertex.path_len + cam_path.path_len < m_min_depth)
+										if (light_vertex.path_len + cam_path.path_len < m_minDepth)
 											continue;
 
 										// Light vertices are stored in increasing path length
 										// order; once we go above the max path length, we can
 										// skip the rest
-										if (light_vertex.path_len + cam_path.path_len > m_max_depth)
+										if (light_vertex.path_len + cam_path.path_len > m_maxDepth)
 											break;
 
 										L += cam_path.throughput * light_vertex.throughput *
@@ -360,7 +360,7 @@ namespace Aya {
 
 				// Connect to camera
 				if (m_useVC) {
-					if (connect_to_cam && light_path.path_len + 1 >= m_min_depth) {
+					if (connect_to_cam && light_path.path_len + 1 >= m_minDepth) {
 						Point3 raster;
 						Spectrum L =
 							connectToCamera(scene, sampler, rng, camera, film, intersection, light_vertex, &raster);

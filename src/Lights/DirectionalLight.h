@@ -10,8 +10,8 @@ namespace Aya {
 	private:
 		Spectrum m_intensity;
 		Vector3 m_dir;
-		Frame m_dir_frame;
-		float m_cone_cos;
+		Frame m_dirFrame;
+		float m_coneCos;
 		const Scene *mp_scene;
 
 	public:
@@ -21,8 +21,8 @@ namespace Aya {
 			const float cone_deg = 0.f,
 			const uint32_t sample_count = 1) :
 			Light(sample_count), m_intensity(intens),
-			m_dir(-dir.normalize()), m_dir_frame(-dir.normalize()),
-			mp_scene(scene), m_cone_cos(std::cos(Radian(cone_deg))) {
+			m_dir(-dir.normalize()), m_dirFrame(-dir.normalize()),
+			mp_scene(scene), m_coneCos(std::cos(Radian(cone_deg))) {
 				}
 
 		Spectrum illuminate(const Scatter &scatter,
@@ -34,11 +34,11 @@ namespace Aya {
 			float *emit_pdf_w = nullptr) const override {
 			const Point3 &pos = scatter.p;
 			*dir = UniformSampleCone(light_sample.u, light_sample.v,
-				m_cone_cos,
-				m_dir_frame.U(),
-				m_dir_frame.V(),
-				m_dir_frame.W());
-			*pdf = UniformConePDF(m_cone_cos);
+				m_coneCos,
+				m_dirFrame.U(),
+				m_dirFrame.V(),
+				m_dirFrame.W());
+			*pdf = UniformConePDF(m_coneCos);
 
 			Point3 center;
 			float radius;
@@ -68,17 +68,17 @@ namespace Aya {
 			mp_scene->worldBound().boundingSphere(&center, &radius);
 
 			Point3 origin = center + radius * 
-				(f1 * m_dir_frame.U() + 
-				 f2 * m_dir_frame.V());
+				(f1 * m_dirFrame.U() + 
+				 f2 * m_dirFrame.V());
 			Vector3 dir = -UniformSampleCone(light_sample1.u, light_sample1.v,
-				m_cone_cos,
-				m_dir_frame.U(),
-				m_dir_frame.V(),
-				m_dir_frame.W());
+				m_coneCos,
+				m_dirFrame.U(),
+				m_dirFrame.V(),
+				m_dirFrame.W());
 			*ray = Ray(origin + radius * m_dir, dir);
 			*normal = dir;
 
-			float dir_pdf = UniformConePDF(m_cone_cos);
+			float dir_pdf = UniformConePDF(m_coneCos);
 			*pdf = ConcentricDiscPdf() / (radius * radius) * dir_pdf;
 			if (direct_pdf)
 				*direct_pdf = dir_pdf;
@@ -90,8 +90,8 @@ namespace Aya {
 			const Normal3 &normal = Normal3(0.f, 0.f, 0.f),
 			float *pdf = nullptr,
 			float *direct_pdf = nullptr) const override {
-			if (dir.dot(-m_dir) > m_cone_cos) {
-				float dir_pdf = UniformConePDF(m_cone_cos);
+			if (dir.dot(-m_dir) > m_coneCos) {
+				float dir_pdf = UniformConePDF(m_coneCos);
 				if (pdf) {
 					Point3 center;
 					float radius;
@@ -106,8 +106,8 @@ namespace Aya {
 		}
 
 		float pdf(const Point3 &pos, const Vector3 &dir) const override {
-			if (dir.dot(-m_dir) > m_cone_cos)
-				return UniformConePDF(m_cone_cos);
+			if (dir.dot(-m_dir) > m_coneCos)
+				return UniformConePDF(m_coneCos);
 			return 0.f;
 		}
 
@@ -115,7 +115,7 @@ namespace Aya {
 			return true;
 		}
 		bool isDelta() const override {
-			return m_cone_cos == 1.f;
+			return m_coneCos == 1.f;
 		}
 		bool isFinite() const override {
 			return false;

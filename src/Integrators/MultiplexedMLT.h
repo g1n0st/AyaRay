@@ -31,15 +31,15 @@ namespace Aya {
 		std::vector<PrimarySample> m_samples;
 
 		const float m_sigma;						// Parameter used to control the pace of mutation
-		const float m_large_step_prob;
+		const float m_largeStepProb;
 
-		int m_sample_idx;
-		int m_stream_idx;
+		int m_sampleIdx;
+		int m_streamIdx;
 		const int stream_count		= 3;
 
-		uint64_t m_large_step_time	= 0u;		// Number of accepted mutations after last large step
+		uint64_t m_largeStepTime	= 0u;		// Number of accepted mutations after last large step
 		uint64_t m_time				= 0u;		// Current number of accepted mutations
-		bool m_large_step			= true;
+		bool m_largeStep			= true;
 
 		RNG m_rng;
 
@@ -49,14 +49,14 @@ namespace Aya {
 			int sample_idx, int stream_idx,
 			uint64_t large_step_time, uint64_t time, bool large_step, RNG rng,
 			std::vector<PrimarySample> samples) 
-			: m_sigma(sigma), m_large_step_prob(large_step_prob), m_rng(rng),
-			m_sample_idx(sample_idx), m_stream_idx(stream_idx), 
-			m_large_step_time(large_step_time), m_time(time), m_large_step(large_step),
+			: m_sigma(sigma), m_largeStepProb(large_step_prob), m_rng(rng),
+			m_sampleIdx(sample_idx), m_streamIdx(stream_idx), 
+			m_largeStepTime(large_step_time), m_time(time), m_largeStep(large_step),
 			m_samples(samples) {
 		}
 		MetropolisSampler(const float sigma,
 			const float large_step_prob,
-			const int seed) : m_sigma(sigma), m_large_step_prob(large_step_prob), m_rng(seed) {
+			const int seed) : m_sigma(sigma), m_largeStepProb(large_step_prob), m_rng(seed) {
 		}
 
 		float get1D() override;
@@ -74,13 +74,13 @@ namespace Aya {
 
 		void startStream(const int idx) {
 			assert(idx < stream_count);
-			m_stream_idx = idx;
-			m_sample_idx = 0;
+			m_streamIdx = idx;
+			m_sampleIdx = 0;
 		}
 
 	private:
 		int getNextIndex() {
-			return m_stream_idx + stream_count * m_sample_idx++;
+			return m_streamIdx + stream_count * m_sampleIdx++;
 		}
 	};
 
@@ -88,12 +88,12 @@ namespace Aya {
 	private:
 		const Camera *mp_camera;
 		Film *mp_film;
-		uint32_t m_max_depth;
+		uint32_t m_maxDepth;
 
-		int m_num_bootstrap;
-		int m_num_chains;
+		int m_numBootstrap;
+		int m_numChains;
 		float m_sigma;
-		float m_large_step_prob;
+		float m_largeStepProb;
 
 		mutable std::mutex m_mutex;
 
@@ -102,9 +102,9 @@ namespace Aya {
 			uint32_t max_depth, const Camera *camera, Film *film,
 			int num_bootstrap = 1 << 17, int num_chains = 1 << 11, float sigma = .01f, float large_step_prob = .3f)
 			: Integrator(task, spp),
-			m_max_depth(max_depth), mp_camera(camera), mp_film(film),
-			m_num_bootstrap(num_bootstrap), m_num_chains(num_chains),
-			m_sigma(sigma), m_large_step_prob(large_step_prob) {
+			m_maxDepth(max_depth), mp_camera(camera), mp_film(film),
+			m_numBootstrap(num_bootstrap), m_numChains(num_chains),
+			m_sigma(sigma), m_largeStepProb(large_step_prob) {
 		}
 		~MultiplexMLTIntegrator() = default;
 

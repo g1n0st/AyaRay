@@ -30,7 +30,7 @@ namespace Aya {
 						L += tp * scene->getEnviromentLight()->emit(-path_ray.m_dir);
 				}
 
-				if (!intersected || bounce >= m_max_depth)
+				if (!intersected || bounce >= m_maxDepth)
 					break;
 
 				auto bsdf = intersection.bsdf;
@@ -71,7 +71,7 @@ namespace Aya {
 					estimateDirectLighting(medium, -path_ray.m_dir, scene->getLight(light_idx), scene, sampler) *
 					float(scene->getLightCount());
 
-				if (bounce >= m_max_depth)
+				if (bounce >= m_maxDepth)
 					break;
 
 				auto func = medium.mp_func;

@@ -14,7 +14,7 @@ namespace Aya {
 		std::vector<float> m_pdf;
 		std::vector<float> m_cdf;
 		int m_count = -1;
-		float m_integral_value;
+		float m_integralValue;
 		friend class Distribution2D;
 
 	public:
@@ -43,9 +43,9 @@ namespace Aya {
 				m_cdf[i] = m_cdf[i - 1] + m_pdf[i - 1] * inv_size;
 			}
 
-			m_integral_value = m_cdf[size];
-			if (m_integral_value > 0.f) {
-				float inv_value = 1.f / m_integral_value;
+			m_integralValue = m_cdf[size];
+			if (m_integralValue > 0.f) {
+				float inv_value = 1.f / m_integralValue;
 				for (auto i = 1; i < m_cdf.size(); i++) {
 					m_cdf[i] *= inv_value;
 				}
@@ -56,7 +56,7 @@ namespace Aya {
 			const int idx = int(std::lower_bound(m_cdf.begin(), m_cdf.end(), u) - m_cdf.begin());
 			int offset = Clamp(idx - 1, 0, m_count - 1);
 			if (pdf)
-				*pdf = m_pdf[offset] / m_integral_value;
+				*pdf = m_pdf[offset] / m_integralValue;
 			if (p_offset)
 				*p_offset = offset;
 
@@ -67,12 +67,12 @@ namespace Aya {
 			const int idx = int(std::lower_bound(m_cdf.begin(), m_cdf.end(), u) - m_cdf.begin());
 			int offset = Clamp(idx - 1, 0, m_count - 1);
 			if (pdf)
-				*pdf = m_pdf[offset] / (m_integral_value * m_count);
+				*pdf = m_pdf[offset] / (m_integralValue * m_count);
 
 			return offset;
 		}
 		float getIntegral() const {
-			return m_integral_value;
+			return m_integralValue;
 		}
 	};
 

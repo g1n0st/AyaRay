@@ -119,8 +119,8 @@ namespace Aya {
 					current_mtl = int(idx_iter - m_materials.begin());
 				}
 
-				m_subset_start_idx.push_back(int(m_indices.size()));
-				m_subset_mtl_idx.push_back(current_mtl);
+				m_subsetStartIdx.push_back(int(m_indices.size()));
+				m_subsetMtlIdx.push_back(current_mtl);
 				m_subsetCount++;
 			}
 			else if (0 == std::strcmp(cmd_header, "f")) {
@@ -213,7 +213,7 @@ namespace Aya {
 
 				face.smoothing_group = smoothing_group;
 				m_faces.push_back(face);
-				m_material_idx.push_back(current_mtl);
+				m_materialIdx.push_back(current_mtl);
 
 				if (vertex_count == 4) {
 					// Trianglarize quad
@@ -234,7 +234,7 @@ namespace Aya {
 
 					quad_face.smoothing_group = smoothing_group;
 					m_faces.push_back(quad_face);
-					m_material_idx.push_back(current_mtl);
+					m_materialIdx.push_back(current_mtl);
 				}
 			}
 			else {
@@ -243,14 +243,14 @@ namespace Aya {
 		});
 
 		if (m_subsetCount == 0) {
-			m_subset_start_idx.push_back(0);
-			m_subset_mtl_idx.push_back(0);
+			m_subsetStartIdx.push_back(0);
+			m_subsetMtlIdx.push_back(0);
 			m_subsetCount = 1;
 		}
 
-		m_subset_start_idx.push_back(uint32_t(m_indices.size()));
-		m_vertex_count = uint32_t(m_vertices.size());
-		m_triangle_count = uint32_t(m_indices.size()) / 3;
+		m_subsetStartIdx.push_back(uint32_t(m_indices.size()));
+		m_vertexCount = uint32_t(m_vertices.size());
+		m_triangleCount = uint32_t(m_indices.size()) / 3;
 
 		// Recomputed pre-vertex normals
 		if (force_compute_normal || has_smooth_group || !m_normaled)
@@ -503,7 +503,7 @@ namespace Aya {
 			}
 		}
 
-		m_vertex_count = uint32_t(m_vertices.size());
+		m_vertexCount = uint32_t(m_vertices.size());
 		m_normaled = true;
 	}
 }

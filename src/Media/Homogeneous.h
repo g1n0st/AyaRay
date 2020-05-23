@@ -6,12 +6,12 @@
 namespace Aya {
 	class HomogeneousMedium : public Medium {
 	private:
-		const Spectrum m_sigma_a, m_sigma_s, m_sigma_t;
+		const Spectrum m_sigmaA, m_sigmaS, m_sigmaT;
 	public:
 		HomogeneousMedium(const Spectrum &sigma_a, const Spectrum &sigma_s, const float g)
-			: m_sigma_a(sigma_a),
-			m_sigma_s(sigma_s),
-			m_sigma_t(sigma_s + sigma_a),
+			: m_sigmaA(sigma_a),
+			m_sigmaS(sigma_s),
+			m_sigmaT(sigma_s + sigma_a),
 			Medium(g) {}
 
 		Spectrum tr(const Ray &ray, Sampler *sampler) const override;

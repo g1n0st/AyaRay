@@ -99,7 +99,7 @@ namespace Aya {
 
 	class ObjMesh {
 	protected:
-		uint32_t m_vertex_count, m_triangle_count;
+		uint32_t m_vertexCount, m_triangleCount;
 
 		std::vector<MeshVertex> m_vertices;
 		std::vector<uint32_t> m_indices;
@@ -107,9 +107,9 @@ namespace Aya {
 		std::vector<Cache*> m_caches;
 
 		std::vector<ObjMaterial> m_materials;
-		std::vector<uint32_t> m_material_idx;
-		std::vector<uint32_t> m_subset_start_idx;
-		std::vector<uint32_t> m_subset_mtl_idx;
+		std::vector<uint32_t> m_materialIdx;
+		std::vector<uint32_t> m_subsetStartIdx;
+		std::vector<uint32_t> m_subsetMtlIdx;
 		uint32_t m_subsetCount;
 
 		bool m_normaled;
@@ -117,8 +117,8 @@ namespace Aya {
 
 	public:
 		ObjMesh() :
-			m_vertex_count(0),
-			m_triangle_count(0),
+			m_vertexCount(0),
+			m_triangleCount(0),
 			m_subsetCount(0),
 			m_normaled(false),
 			m_textured(false) {}
@@ -144,10 +144,10 @@ namespace Aya {
 			return m_vertices;
 		}
 		inline uint32_t getVertexCount() const {
-			return m_vertex_count;
+			return m_vertexCount;
 		}
 		inline uint32_t getTriangleCount() const {
-			return m_triangle_count;
+			return m_triangleCount;
 		}
 		inline bool isNormaled() const {
 			return m_normaled;
@@ -160,20 +160,20 @@ namespace Aya {
 			return m_materials;
 		}
 		inline const std::vector<uint32_t>& getMaterialIdxBuff() const {
-			return m_material_idx;
+			return m_materialIdx;
 		}
 		inline uint32_t getMaterialIdx(int idx) const {
-			return m_material_idx[idx];
+			return m_materialIdx[idx];
 		}
 
 		inline const uint32_t getSubsetCount() const {
 			return m_subsetCount;
 		}
 		inline const uint32_t getSubsetStartIdx(int idx) const {
-			return m_subset_start_idx[idx];
+			return m_subsetStartIdx[idx];
 		}
 		inline const uint32_t getSubsetMtlIdx(int idx) const {
-			return m_subset_mtl_idx[idx];
+			return m_subsetMtlIdx[idx];
 		}
 
 	private:

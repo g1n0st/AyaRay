@@ -15,10 +15,10 @@ namespace Aya {
 	Spectrum BidirectionalPathTracingIntegrator::li(const RayDifferential &ray, 
 		const Scene *scene, Sampler *sampler, RNG &rng, MemoryPool &memory) const {
 		// Randomly select a light source, and generate the light path
-		PathVertex *light_path = memory.alloc<PathVertex>(m_max_depth);
+		PathVertex *light_path = memory.alloc<PathVertex>(m_maxDepth);
 		int light_vertex_cnt;
 		int light_path_len = generateLightPath(scene, sampler, rng,
-			mp_cam, mp_film, m_max_depth + 1,
+			mp_cam, mp_film, m_maxDepth + 1,
 			light_path, &light_vertex_cnt);
 
 		// Initialize camera path with eye ray
@@ -56,7 +56,7 @@ namespace Aya {
 					hittingLightSource(scene, rng, path_ray, local_isect, (Light*)local_isect.arealight, cam_path);
 				break;
 			}
-			if (++cam_path.path_len >= m_max_depth + 2)
+			if (++cam_path.path_len >= m_maxDepth + 2)
 				break;
 
 			const BSDF *bsdf = local_isect.bsdf;
@@ -69,7 +69,7 @@ namespace Aya {
 				// Connect to light vertices
 				for (auto i = 0; i < light_vertex_cnt; ++i) {
 					const PathVertex &light_vertex = light_path[i];
-					if (light_vertex.path_len + cam_path.path_len > m_max_depth + 2)
+					if (light_vertex.path_len + cam_path.path_len > m_maxDepth + 2)
 						break;
 
 					L += cam_path.throughput * light_vertex.throughput * 

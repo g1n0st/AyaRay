@@ -11,13 +11,13 @@ namespace Aya {
 	class TriangleMesh {
 		UniquePtr<Transform> w2o, o2w;
 		uint32_t m_tris, m_verts;
-		uint32_t *mp_vert_idx;
+		uint32_t *mp_vertIdx;
 		MeshVertex *mp_vertices;
 
 	public:
 		TriangleMesh()
 			: m_tris(0), m_verts(0),
-			mp_vert_idx(nullptr),
+			mp_vertIdx(nullptr),
 			mp_vertices(nullptr) {}
 		~TriangleMesh() {
 			release();
@@ -38,30 +38,30 @@ namespace Aya {
 		inline const Point3& getPositionAt(uint32_t idx) const {
 			assert(idx < 3 * m_tris);
 			assert(mp_vertices);
-			assert(mp_vert_idx);
-			return mp_vertices[mp_vert_idx[idx]].p;
+			assert(mp_vertIdx);
+			return mp_vertices[mp_vertIdx[idx]].p;
 		}
 		inline const Normal3& getNormalAt(uint32_t idx) const {
 			assert(idx < 3 * m_tris);
 			assert(mp_vertices);
-			assert(mp_vert_idx);
-			return mp_vertices[mp_vert_idx[idx]].n;
+			assert(mp_vertIdx);
+			return mp_vertices[mp_vertIdx[idx]].n;
 		}
 		inline const Vector2f& getUVAt(uint32_t idx) const {
 			assert(idx < 3 * m_tris);
 			assert(mp_vertices);
-			assert(mp_vert_idx);
-			return mp_vertices[mp_vert_idx[idx]].uv;
+			assert(mp_vertIdx);
+			return mp_vertices[mp_vertIdx[idx]].uv;
 		}
 		inline const uint32_t *getIndexAt(uint32_t idx) const {
 			assert(idx < 3 * m_tris);
 			assert(mp_vertices);
-			assert(mp_vert_idx);
-			return &mp_vert_idx[3 * idx];
+			assert(mp_vertIdx);
+			return &mp_vertIdx[3 * idx];
 		}
 
 		inline const uint32_t* getIndexBuffer() const {
-			return mp_vert_idx;
+			return mp_vertIdx;
 		}
 		inline const MeshVertex* getVertexBuffer() const {
 			return mp_vertices;

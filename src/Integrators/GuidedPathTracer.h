@@ -361,13 +361,13 @@ namespace Aya {
 			}
 		} m_atomic;
 
-		int m_maxdepth;
+		int m_maxDepth;
 
 	public:
 		DTree() {
 			m_atomic.sum.store(0.f, std::memory_order::memory_order_relaxed);
 			m_atomic.statistical_weight.store(0.f, std::memory_order::memory_order_relaxed);
-			m_maxdepth = 0;
+			m_maxDepth = 0;
 			m_nodes.emplace_back();
 			m_nodes.front().setSum(0.f);
 		}
@@ -418,7 +418,7 @@ namespace Aya {
 		}
 
 		int depth() const {
-			return m_maxdepth;
+			return m_maxDepth;
 		}
 
 		Point2f sample(Sampler *sampler) const {
@@ -448,7 +448,7 @@ namespace Aya {
 
 		void reset(const DTree &previous_DTree, int maxdepth, float subdivision_threshold) {
 			m_atomic = Atomic{};
-			m_maxdepth = 0;
+			m_maxDepth = 0;
 			m_nodes.clear();
 			m_nodes.emplace_back();
 
@@ -470,7 +470,7 @@ namespace Aya {
 				StackNode node = node_indices.top();
 				node_indices.pop();
 
-				m_maxdepth = Max(m_maxdepth, node.depth);
+				m_maxDepth = Max(m_maxDepth, node.depth);
 
 				for (int i = 0; i < 4; i++) {
 					const QuadTreeNode &other_node = node.other_DTree->m_nodes[node.other_index];

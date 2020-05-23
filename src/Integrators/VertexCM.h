@@ -76,8 +76,8 @@ namespace Aya {
 
 			void process(const PathVertex &light_vertex) {
 				// Reject if full path length below/above min/max path length
-				if ((light_vertex.path_len + m_cam_state.path_len > m_VCM.m_max_depth) ||
-					(light_vertex.path_len + m_cam_state.path_len < m_VCM.m_min_depth))
+				if ((light_vertex.path_len + m_cam_state.path_len > m_VCM.m_maxDepth) ||
+					(light_vertex.path_len + m_cam_state.path_len < m_VCM.m_minDepth))
 					return;
 
 				const Vector3 light_dir = light_vertex.isect.n;
@@ -297,8 +297,8 @@ namespace Aya {
 		bool m_useVC;				// Vertex connection (BPT) is used
 		bool m_PPM;					// Do PPM, same terminates camera after first merge
 
-		float m_radius_alpha;		// Radius reduction rate parameter
-		float m_base_radius;			// Initial merging radius
+		float m_radiusAlpha;		// Radius reduction rate parameter
+		float m_baseRadius;			// Initial merging radius
 		float m_light_path_count;	// Number of light sub-paths
 		float m_screen_pixel_count;	// Number of pixels
 
@@ -306,8 +306,8 @@ namespace Aya {
 		mutable float m_MIS_VM_weight;		// Weight of vertex connection (used in VM)
 		mutable float m_VM_normalization;	// 1 / (Pi * radius^2 * light_path_count)
 
-		uint32_t m_max_depth;
-		uint32_t m_min_depth;
+		uint32_t m_maxDepth;
+		uint32_t m_minDepth;
 		const Camera *mp_cam;
 		Film *mp_film;
 

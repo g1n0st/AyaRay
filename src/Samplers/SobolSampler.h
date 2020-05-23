@@ -7,8 +7,8 @@
 namespace Aya {
 	class SobolSampler : public Sampler {
 	private:
-		int m_res, m_log2_res;
-		uint64_t m_sample_idx, m_sobol_idx;
+		int m_res, m_log2Res;
+		uint64_t m_sampleIdx, m_sobolIdx;
 		uint32_t m_dim;
 		uint64_t m_scramble;
 
@@ -17,14 +17,14 @@ namespace Aya {
 	public:
 		SobolSampler() = default;
 		SobolSampler(const int rx, const int ry) :
-			m_sample_idx(0), m_sobol_idx(0), m_dim(0), m_scramble(0) {
+			m_sampleIdx(0), m_sobolIdx(0), m_dim(0), m_scramble(0) {
 			m_res = RoundUpToPowerOfTwo(Max(rx, ry));
-			m_log2_res = FloorLog2(m_res);
-			assert(m_res == 1 << m_log2_res);
+			m_log2Res = FloorLog2(m_res);
+			assert(m_res == 1 << m_log2Res);
 		}
 		SobolSampler(const int res, const int log2_res, const uint64_t scramble, const uint64_t sample_idx) :
-			m_sample_idx(sample_idx), m_res(res), m_log2_res(log2_res), m_scramble(scramble),
-			m_sobol_idx(0), m_dim(0) {}
+			m_sampleIdx(sample_idx), m_res(res), m_log2Res(log2_res), m_scramble(scramble),
+			m_sobolIdx(0), m_dim(0) {}
 
 		void generateSamples(
 			const int pixel_x,

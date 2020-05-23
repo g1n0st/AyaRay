@@ -26,23 +26,23 @@ namespace Aya {
 	}
 
 	UniquePtr<Sampler> MetropolisSampler::clone(const int seed) const {
-		return MakeUnique<MetropolisSampler>(m_sigma, m_large_step_prob, seed);
+		return MakeUnique<MetropolisSampler>(m_sigma, m_largeStepProb, seed);
 	}
 	UniquePtr<Sampler> MetropolisSampler::deepClone() const {
-		return MakeUnique<MetropolisSampler>(m_sigma, m_large_step_prob,
-			m_sample_idx, m_stream_idx,
-			m_large_step_time, m_time, m_large_step, m_rng, 
+		return MakeUnique<MetropolisSampler>(m_sigma, m_largeStepProb,
+			m_sampleIdx, m_streamIdx,
+			m_largeStepTime, m_time, m_largeStep, m_rng, 
 			m_samples);
 	}
 
 	void MetropolisSampler::startIteration() {
-		m_large_step = m_rng.drand48() < m_large_step_prob;
+		m_largeStep = m_rng.drand48() < m_largeStepProb;
 		m_time++;
 	}
 
 	void MetropolisSampler::accept() {
-		if (m_large_step)
-			m_large_step_time = m_time;
+		if (m_largeStep)
+			m_largeStepTime = m_time;
 	}
 	void MetropolisSampler::reject() {
 		for (auto &it : m_samples) {
@@ -57,13 +57,13 @@ namespace Aya {
 			m_samples.resize(idx + 1);
 		
 		PrimarySample &sample = m_samples[idx];
-		if (sample.modify < m_large_step_time) {
-			sample.modify = m_large_step_time;
+		if (sample.modify < m_largeStepTime) {
+			sample.modify = m_largeStepTime;
 			sample.value = m_rng.drand48();
 		}
 
 		sample.backup();			// save state
-		if (m_large_step) {		// large step
+		if (m_largeStep) {		// large step
 			sample.value = m_rng.drand48();
 		}
 		else {					// small step
@@ -84,20 +84,20 @@ namespace Aya {
 
 	void MultiplexMLTIntegrator::render(const Scene *scene, const Camera *camera, Sampler *sampler, Film *film) const {
 		// Generate bootstrap samples and compute normalization constant b
-		int num_bootstrap_samples = m_num_bootstrap * (int(m_max_depth) + 1);
+		int num_bootstrap_samples = m_numBootstrap * (int(m_maxDepth) + 1);
 		std::vector<float> bootstrap_weights(num_bootstrap_samples, 0.f);
 
-		concurrency::parallel_for(0, m_num_bootstrap, [&](int i) {
-		//for (int i = 0; i < m_num_bootstrap; i++) {
+		concurrency::parallel_for(0, m_numBootstrap, [&](int i) {
+		//for (int i = 0; i < m_numBootstrap; i++) {
 			RNG rng(i);
 			MemoryPool memory;
 
-			for (int depth = 0; depth <= int(m_max_depth); ++depth) {
+			for (int depth = 0; depth <= int(m_maxDepth); ++depth) {
 				if (m_task.aborted())
 					return;
 
-				int seed = depth + i * (m_max_depth + 1);
-				MetropolisSampler sampler(m_sigma, m_large_step_prob, seed);
+				int seed = depth + i * (m_maxDepth + 1);
+				MetropolisSampler sampler(m_sigma, m_largeStepProb, seed);
 
 				Vector2f raster_pos;
 				bootstrap_weights[seed] = evalSample(scene, &sampler, depth, &raster_pos, rng, memory).luminance();
@@ -111,30 +111,30 @@ namespace Aya {
 			return;
 
 		Distribution1D bootstrap_distribution(bootstrap_weights.data(), int(bootstrap_weights.size()));
-		float b = bootstrap_distribution.getIntegral() * (m_max_depth + 1);
+		float b = bootstrap_distribution.getIntegral() * (m_maxDepth + 1);
 
 		// Mutations per chain roughly equals to samples per pixel
 		float mutations_per_pixel = m_spp;
 		uint64_t total_mutations = m_spp * mp_film->getPixelCount();
 		uint64_t total_samples	 = 0u;
 
-		concurrency::parallel_for(0, m_num_chains, [&](int i) {
-		//for (int i = 0; i < m_num_chains; i++) {
+		concurrency::parallel_for(0, m_numChains, [&](int i) {
+		//for (int i = 0; i < m_numChains; i++) {
 			if (m_task.aborted())
 				return;
 
 			uint64_t chain_mutations =
-				Min((i + 1) * total_mutations / m_num_chains, total_mutations) -
-				i * total_mutations / m_num_chains;
+				Min((i + 1) * total_mutations / m_numChains, total_mutations) -
+				i * total_mutations / m_numChains;
 
 			RNG rng(i);
 			MemoryPool memory;
 
 			int bootstrap_idx = bootstrap_distribution.sampleDiscrete(rng.drand48(), nullptr);
-			int depth = bootstrap_idx % (m_max_depth + 1);	// Target the bootstrap corresponding depth
+			int depth = bootstrap_idx % (m_maxDepth + 1);	// Target the bootstrap corresponding depth
 
 			// Initialize local variables for selected state
-			MetropolisSampler sampler(m_sigma, m_large_step_prob, bootstrap_idx); // bootstrap_idx equals to the seed
+			MetropolisSampler sampler(m_sigma, m_largeStepProb, bootstrap_idx); // bootstrap_idx equals to the seed
 
 			Vector2f current_raster;
 			Spectrum current_Li = evalSample(scene, &sampler, depth, &current_raster, rng, memory);
