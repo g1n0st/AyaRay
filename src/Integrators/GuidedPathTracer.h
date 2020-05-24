@@ -49,13 +49,13 @@ namespace Aya {
 	class AdamOptimizer {
 	private:
 		struct State {
-			int iter = 0;
-			float first_moment = 0.f;
-			float second_moment = 0.f;
-			float variable = 0.f;
+			int iter = { 0 };
+			float first_moment = { 0.f };
+			float second_moment = { 0.f };
+			float variable = { 0.f };
 
-			float batch_accumulation = 0.f;
-			float batch_gradient = 0.f;
+			float batch_accumulation = { 0.f };
+			float batch_gradient = { 0.f };
 		} m_state;
 
 		struct Hyperparameters {
@@ -164,7 +164,7 @@ namespace Aya {
 		}
 
 		int childIndex(Point2f &p) const {
-			int res = 0;
+			int res = { 0 };
 			for (int i = 0; i < 2; ++i) {
 				if (p[i] < .5f) {
 					p[i] *= 2.f;
@@ -225,7 +225,7 @@ namespace Aya {
 		}
 
 		Point2f sample(Sampler *sampler, const std::vector<QuadTreeNode> &nodes) const {
-			int idx = 0;
+			int idx = { 0 };
 
 			float top_left = sum(0);
 			float top_right = sum(1);
@@ -367,7 +367,7 @@ namespace Aya {
 		DTree() {
 			m_atomic.sum.store(0.f, std::memory_order::memory_order_relaxed);
 			m_atomic.statistical_weight.store(0.f, std::memory_order::memory_order_relaxed);
-			m_maxDepth = 0;
+			m_maxDepth = { 0 };
 			m_nodes.emplace_back();
 			m_nodes.front().setSum(0.f);
 		}
@@ -491,7 +491,7 @@ namespace Aya {
 						m_nodes.back().setSum(other_node.sum(i) / 4.f);
 
 						if (m_nodes.size() > (std::numeric_limits<uint16_t>::max)()) {
-							std::exception("DTreeWrapper hit maximum children count.");
+							std::runtime_error("DTreeWrapper hit maximum children count.");
 							node_indices = std::stack<StackNode>();
 							break;
 						}
@@ -683,6 +683,269 @@ namespace Aya {
 			bsdfSamplingFractionOptimizer.append(loss_gradient, rec.statistical_weight);
 
 			m_lock.unlock();
+		}
+	};
+
+	struct STreeNode {
+		bool is_leaf;
+		DTreeWrapper dTree;
+		int axis;
+		std::array<uint32_t, 2> children;
+
+		STreeNode() {
+			children = {};
+			is_leaf = true;
+			axis = 0;
+		}
+
+		int childIndex(Point3 &p) const {
+			if (p[axis] < .5f) {
+				p[axis] *= 2.f;
+				return 0;
+			}
+			else {
+				p[axis] = (p[axis] - .5f) * 2.f;
+				return 1;
+			}
+		}
+
+		int nodeIndex(Point3 &p) const {
+			return children[childIndex(p)];
+		}
+
+		DTreeWrapper* dTreeWrapper(Point3 &p, Vector3 &size, std::vector<STreeNode> &nodes) {
+			assert(p[axis] >= 0.f && p[axis] <= 1.f);
+			if (is_leaf) {
+				return &dTree;
+			}
+			else {
+				size[axis] /= 2.f;
+				return nodes[nodeIndex(p)].dTreeWrapper(p, size, nodes);
+			}
+		}
+
+		const DTreeWrapper* dTreeWrapper() const {
+			return &dTree;
+		}
+
+		int depth(Point3 &p, const std::vector<STreeNode> &nodes) const {
+			assert(p[axis] >= 0.f && p[axis] <= 1.f);
+			if (is_leaf) {
+				return 1;
+			}
+			else {
+				return 1 + nodes[nodeIndex(p)].depth(p, nodes);
+			}
+		}
+
+		int depth(const std::vector<STreeNode> &nodes) const {
+			int result = 1;
+
+			if (!is_leaf) {
+				for (auto c : children) {
+					result = Max(result, 1 + nodes[c].depth(nodes));
+				}
+			}
+
+			return result;
+		}
+
+		void forEachLeaf(
+			std::function<void(const DTreeWrapper *, const Point3 &, const Vector3 &)> func,
+			Point3 p, Vector3 size, const std::vector<STreeNode> &nodes) const {
+
+			if (is_leaf) {
+				func(&dTree, p, size);
+			}
+			else {
+				size[axis] /= 2.f;
+				for (int i = 0; i < 2; ++i) {
+					Point3 child_p = p;
+					if (i == 1) {
+						child_p[axis] += size[axis];
+					}
+
+					nodes[children[i]].forEachLeaf(func, child_p, size, nodes);
+				}
+			}
+		}
+
+		float computeOverlappingVolume(const Point3 &min1, const Point3 &max1, const Point3 &min2, const Point3 &max2) {
+			float lengths[3];
+			for (int i = 0; i < 3; ++i) {
+				lengths[i] = Max(Min(max1[i], max2[i]) - Max(min1[i], min2[i]), 0.f);
+			}
+			return lengths[0] * lengths[1] * lengths[2];
+		}
+
+		void record(const Point3 &min1, const Point3 &max1, Point3 &min2, Vector3 size2,
+			const DTreeRecord &rec, DirectionalFilter directional_filter, BsdfSamplingFractionLoss sampling_loss, std::vector<STreeNode> &nodes) {
+			float w = computeOverlappingVolume(min1, max1, min2, min2 + size2);
+			if (w > 0.f) {
+				if (is_leaf) {
+					dTree.record({rec.d, rec.radiance, rec.product, rec.wo_pdf, rec.bsdf_pdf, rec.DTree_pdf, rec.statistical_weight * w, rec.is_delta}, 
+						directional_filter, sampling_loss);
+				}
+				else {
+					size2[axis] /= 2.f;
+					for (int i = 0; i < 2; ++i) {
+						if (i & 1) {
+							min2[axis] += size2[axis];
+						}
+
+						nodes[children[i]].record(min1, max1, min2, size2, rec, directional_filter, sampling_loss, nodes);
+					}
+				}
+			}
+		}
+	};
+
+	class STree {
+	private:
+		std::vector<STreeNode> m_nodes;
+		BBox m_aabb;
+
+	public:
+		STree(const BBox &aabb) {
+			clear();
+
+			m_aabb = aabb;
+
+			// Enlarge AABB to turn it into a cube. This has the effect
+			// of nicer hierarchical subdivisions.
+			Vector3 size = m_aabb.m_pmax - m_aabb.m_pmin;
+			float max_size = Max(Max(size.x, size.y), size.z);
+			m_aabb.m_pmax = m_aabb.m_pmin + Vector3(max_size);
+		}
+
+		void clear() {
+			m_nodes.clear();
+			m_nodes.emplace_back();
+		}
+
+		void subdivideAll() {
+			for (size_t i = 0; i < m_nodes.size(); ++i) {
+				if (m_nodes[i].is_leaf) {
+					subdivide((int)i, m_nodes);
+				}
+			}
+		}
+
+		void subdivide(int node_idx, std::vector<STreeNode> &nodes) {
+			// Add 2 child nodes
+			nodes.resize(nodes.size() + 2);
+
+			if (nodes.size() > (std::numeric_limits<uint32_t>::max)()) {
+				std::runtime_error("DTreeWrapper hit maximum children count.");
+			}
+
+			STreeNode &cur = nodes[node_idx];
+			for (int i = 0; i < 2; ++i) {
+				uint32_t idx = static_cast<uint32_t>(nodes.size()) - 2 + i;
+				cur.children[i] = idx;
+				nodes[idx].axis = (cur.axis + 1) % 3;
+				nodes[idx].dTree = cur.dTree;
+				nodes[idx].dTree.setStatisticalWeightBuilding(nodes[idx].dTree.statisticalWeightBuilding() / 2.f);
+			}
+			cur.is_leaf = false;
+			cur.dTree = {}; // Reset to an empty dtree to save memory.
+		}
+
+		DTreeWrapper* dTreeWrapper(Point3 p, Vector3 &size) {
+			size = m_aabb.m_pmax - m_aabb.m_pmin;
+			p = Point3(p - m_aabb.m_pmin);
+			p.x /= size.x;
+			p.y /= size.y;
+			p.z /= size.z;
+
+			return m_nodes[0].dTreeWrapper(p, size, m_nodes);
+		}
+
+		DTreeWrapper* dTreeWrapper(Point3 p) {
+			Vector3 size;
+			return dTreeWrapper(p, size);
+		}
+
+		void forEachDTreeWrapperConst(std::function<void(const DTreeWrapper *)> func) const {
+			for (auto &node : m_nodes) {
+				if (node.is_leaf) {
+					func(&node.dTree);
+				}
+			}
+		}
+
+		void forEachDTreeWrapperConstP(std::function<void(const DTreeWrapper *, const Point3 &, const Vector3 &)> func) const {
+			m_nodes[0].forEachLeaf(func, m_aabb.m_pmin, m_aabb.m_pmax - m_aabb.m_pmin, m_nodes);
+		}
+
+		void forEachDTreeWrapperParallel(std::function<void(const DTreeWrapper *)> func) {
+#pragma omp parallel for
+			for (size_t i = 0; i < m_nodes.size(); ++i) {
+				if (m_nodes[i].is_leaf) {
+					func(&m_nodes[i].dTree);
+				}
+			}
+		}
+
+		void record(const Point3 &p, const Vector3 &voxel_size, DTreeRecord rec, DirectionalFilter directional_filter, BsdfSamplingFractionLoss sampling_loss) {
+			float volume = { 1.f };
+			for (int i = 0; i < 3; ++i) {
+				volume *= voxel_size[i];
+			}
+
+			rec.statistical_weight /= volume;
+			m_nodes[0].record(p - voxel_size * .5f, p + voxel_size * .5f, m_aabb.m_pmin, m_aabb.m_pmax - m_aabb.m_pmin, rec, directional_filter, sampling_loss, m_nodes);
+		}
+
+		bool shallSplit(const STreeNode &node, int depth, size_t samples_required) {
+			return m_nodes.size() < (std::numeric_limits<uint32_t>::max)() - 1 && node.dTree.statisticalWeightBuilding() > samples_required;
+		}
+
+		void refine(size_t sTree_threshold, int maxMB) {
+			if (maxMB >= 0) {
+				size_t approxMemoryFootprint = { 0 };
+				for (const auto &node : m_nodes) {
+					approxMemoryFootprint += node.dTreeWrapper()->approxMemoryFootprint();
+				}
+
+				if (approxMemoryFootprint / 1000000 >= static_cast<size_t>(maxMB)) {
+					return;
+				}
+			}
+
+			struct StackNode {
+				size_t index;
+				int depth;
+			};
+
+			std::stack<StackNode> node_indices;
+			node_indices.push({ 0, 1 });
+			while (!node_indices.empty()) {
+				StackNode node = node_indices.top();
+				node_indices.pop();
+
+				// Subdivide if needed and leaf
+				if (m_nodes[node.index].is_leaf) {
+					if (shallSplit(m_nodes[node.index], node.depth, sTree_threshold)) {
+						subdivide((int)node.index, m_nodes);
+					}
+				}
+
+				// Add children to stack if we're not
+				if (!m_nodes[node.index].is_leaf) {
+					const STreeNode &s_node = m_nodes[node.index];
+					for (int i = 0; i < 2; ++i) {
+						node_indices.push({ s_node.children[i], node.depth + 1 });
+					}
+				}
+			}
+
+			// Uncomment once memory becomes an issue.
+			//m_nodes.shrink_to_fit();
+		}
+
+		const BBox& aabb() const {
+			return m_aabb;
 		}
 	};
 }
