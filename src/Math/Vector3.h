@@ -148,6 +148,13 @@ namespace Aya {
 				m_val[3] = .0f;
 				numericValid(1);
 			}
+			AYA_FORCE_INLINE BaseVector3(const float &val) {
+				m_val[0] = val;
+				m_val[1] = val;
+				m_val[2] = val;
+				m_val[3] = .0f;
+				numericValid(1);
+			}
 
 #if defined(AYA_USE_SIMD)
 			AYA_FORCE_INLINE BaseVector3(const __m128 &v128) {

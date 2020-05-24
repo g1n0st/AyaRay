@@ -61,9 +61,9 @@ namespace Aya {
 		m_worldToRaster = m_rasterToWorld.inverse();
 
 		m_dxCam = rasterToCamera(Point3(1.f, 0.f, 0.f))
-			- rasterToCamera(Point3(0.f, 0.f, 0.f));
+			- rasterToCamera(Point3(0.f));
 		m_dyCam = rasterToCamera(Point3(0.f, 1.f, 0.f))
-			- rasterToCamera(Point3(0.f, 0.f, 0.f));
+			- rasterToCamera(Point3(0.f));
 
 		float tanHalfAngle = tanf(Radian(m_FOV * .5f));
 		m_imagePlaneDist = m_resY * .5f / tanHalfAngle;
@@ -72,7 +72,7 @@ namespace Aya {
 	bool Camera::generateRay(const CameraSample &sample, Ray *ray, const bool force_pinhole) const {
 		Point3 cam_coord = rasterToCamera(Point3(sample.image_x, sample.image_y, 0.f));
 
-		ray->m_ori = Point3(0.f, 0.f, 0.f);
+		ray->m_ori = Point3(0.f);
 		ray->m_dir = cam_coord.normalize();
 
 		if (m_CoCRadius > 0.f && !force_pinhole) {
@@ -108,7 +108,7 @@ namespace Aya {
 	bool Camera::generateRayDifferential(const CameraSample &sample, RayDifferential *ray) const {
 		Point3 cam_coord = rasterToCamera(Point3(sample.image_x, sample.image_y, 0.f));
 
-		ray->m_ori = Point3(0.f, 0.f, 0.f);
+		ray->m_ori = Point3(0.f);
 		ray->m_dir = cam_coord.normalize();
 
 		if (m_CoCRadius > 0.f) {

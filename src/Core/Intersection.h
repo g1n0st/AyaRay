@@ -54,7 +54,7 @@ namespace Aya {
 		MediumInterface m_mediumInterface;
 
 	public:
-		Scatter(const Point3 pos = Point3(0.f, 0.f, 0.f), 
+		Scatter(const Point3 pos = Point3(0.f), 
 			const Normal3 norm = Normal3(0.f, 0.f, 1.f),
 			const MediumInterface &medium_interface = MediumInterface()) :
 			p(pos), n(pos), m_mediumInterface(medium_interface) {}
@@ -109,10 +109,10 @@ namespace Aya {
 		const PhaseFunctionHG *mp_func;
 
 	public:
-		MediumIntersection(const Vector3 &pos = Vector3(0.f, 0.f, 0.f), 
+		MediumIntersection(const Vector3 &pos = Vector3(0.f), 
 			PhaseFunctionHG *func = nullptr, 
 			const MediumInterface &medium_interface = MediumInterface())
-			: Scatter(pos, Normal3(0.f, 0.f, 0.f), medium_interface) ,
+			: Scatter(pos, Normal3(0.f), medium_interface) ,
 			mp_func(func) {}
 
 		bool isValid() {

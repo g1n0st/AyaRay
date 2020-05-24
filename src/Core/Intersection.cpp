@@ -67,7 +67,7 @@ namespace Aya {
 
 		} while (0);
 
-		dpdx = dpdy = Vector3(0.f, 0.f, 0.f);
+		dpdx = dpdy = Vector3(0.f);
 		dudx = dudy = dvdx = dvdy = 0.f;
 	}
 }

@@ -21,9 +21,9 @@ namespace Aya {
 		Vector2f uv;
 
 		MeshVertex() {
-			p = Point3(0.f, 0.f, 0.f);
-			n = Normal3(0.f, 0.f, 0.f);
-			uv = Vector2f(0.f, 0.f);
+			p = Point3(0.f);
+			n = Normal3(0.f);
+			uv = Vector2f(0.f);
 		}
 		MeshVertex(const Point3 &pp, const Normal3 &nn, const float uu, const float vv) :
 			p(pp), n(nn), uv(uu, vv) {}

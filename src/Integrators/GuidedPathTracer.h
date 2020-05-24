@@ -301,7 +301,7 @@ namespace Aya {
 				if (i & 1) { child_origin[0] += child_size; }
 				if (i & 2) { child_origin[1] += child_size; }
 
-				float w = computeOverlappingArea(origin, origin + Point2f(size, size), child_origin, child_origin + Point2f(child_size, child_size));
+				float w = computeOverlappingArea(origin, origin + Point2f(size), child_origin, child_origin + Point2f(child_size));
 				if (w > 0.f) {
 					if (isLeaf(i)) {
 						addToAtomicFloat(m_sum[i], value * w);
@@ -399,7 +399,7 @@ namespace Aya {
 						Point2f origin = p;
 						origin.x -= size / 2.f;
 						origin.y -= size / 2.f;
-						m_nodes[0].record(origin, size, Point2f(0.f, 0.f), 1.f, irradiance * statistical_weight / (size * size), m_nodes);
+						m_nodes[0].record(origin, size, Point2f(0.f), 1.f, irradiance * statistical_weight / (size * size), m_nodes);
 					}
 				}
 			}
@@ -589,7 +589,7 @@ namespace Aya {
 
 		static Point2f dirToCanonical(const Vector3 &d) {
 			if (!std::isfinite(d.x) || !std::isfinite(d.y) || !std::isfinite(d.z)) {
-				return Point2f(0, 0);
+				return Point2f(0.f);
 			}
 
 			const float cos_theta = Clamp(d.z, -1.f, 1.f);

@@ -15,6 +15,7 @@ namespace Aya {
 	public:
 		AYA_FORCE_INLINE Vector2() : x(0), y(0) {}
 		AYA_FORCE_INLINE Vector2(const T &x1, const T &y1) : x(x1), y(y1) {}
+		AYA_FORCE_INLINE Vector2(const T &val) : x(val), y(val) {}
 		AYA_FORCE_INLINE Vector2(const Vector2 &rhs) : x(rhs.x), y(rhs.y) {}
 		AYA_FORCE_INLINE Vector2& operator =(const Vector2 &rhs) {
 			x = rhs.x;
