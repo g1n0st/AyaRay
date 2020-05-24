@@ -23,7 +23,7 @@ namespace Aya {
 		uint32_t m_sampleCount;
 		BlockedArray<RGBSpectrum> m_pixelBuffer;
 		BlockedArray<Pixel> m_accumulateBuffer;
-		UniquePtr<Filter> mp_filter;
+		std::unique_ptr<Filter> mp_filter;
 
 		mutable std::mutex m_mt;
 

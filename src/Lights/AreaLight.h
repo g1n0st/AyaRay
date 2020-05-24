@@ -13,7 +13,7 @@ namespace Aya {
 		Spectrum m_intensity;
 		uint32_t m_triangleCount;
 		float m_area, m_areaInv;
-		UniquePtr<BVHAccel> m_BVH;
+		std::unique_ptr<BVHAccel> m_BVH;
 
 	public:
 		AreaLight(Primitive *prim,
@@ -30,7 +30,7 @@ namespace Aya {
 			m_areaInv = 1.f / m_area;
 			mp_prim->setAreaLight(this);
 
-			m_BVH = MakeUnique<BVHAccel>();
+			m_BVH = std::make_unique<BVHAccel>();
 			m_BVH->construct({ mp_prim });
 		}
 

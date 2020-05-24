@@ -38,7 +38,7 @@ namespace Aya {
 		Transform m_rasterToCamera, m_cameraToRaster;
 		Transform m_rasterToWorld, m_worldToRaster;
 
-		UniquePtr<Distribution2D> mp_aperture;
+		std::unique_ptr<Distribution2D> mp_aperture;
 
 	public:
 		Camera() = default;

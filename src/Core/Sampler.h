@@ -37,8 +37,8 @@ namespace Aya {
 		virtual Vector2f get2D() = 0;
 		virtual Sample getSample() = 0;
 
-		virtual UniquePtr<Sampler> clone(const int seed) const = 0;
-		virtual UniquePtr<Sampler> deepClone() const = 0;
+		virtual std::unique_ptr<Sampler> clone(const int seed) const = 0;
+		virtual std::unique_ptr<Sampler> deepClone() const = 0;
 	};
 }
 #endif

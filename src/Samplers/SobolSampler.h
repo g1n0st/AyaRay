@@ -39,8 +39,8 @@ namespace Aya {
 		Vector2f get2D() override;
 		Sample getSample() override;
 
-		UniquePtr<Sampler> clone(const int seed) const override;
-		UniquePtr<Sampler> deepClone() const override;
+		std::unique_ptr<Sampler> clone(const int seed) const override;
+		std::unique_ptr<Sampler> deepClone() const override;
 
 	private:
 		uint64_t enumerateSampleIndex(const uint32_t pixel_x, const uint32_t pixel_y) const;

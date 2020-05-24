@@ -11,7 +11,7 @@ namespace Aya {
 			//for (int i = 0; i < tiles_count; i++) {
 				const RenderTile& tile = m_task.getTile(i);
 
-				UniquePtr<Sampler> tile_sampler(sampler->clone(spp * tiles_count + i));
+				std::unique_ptr<Sampler> tile_sampler(sampler->clone(spp * tiles_count + i));
 
 				RNG rng;
 				MemoryPool memory;

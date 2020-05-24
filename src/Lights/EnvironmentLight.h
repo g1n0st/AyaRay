@@ -9,8 +9,8 @@
 namespace Aya {
 	class EnvironmentLight : public Light {
 	private:
-		UniquePtr<Texture2D<Spectrum>> mp_map;
-		UniquePtr<Distribution2D> mp_distribution;
+		std::unique_ptr<Texture2D<Spectrum>> mp_map;
+		std::unique_ptr<Distribution2D> mp_distribution;
 		BlockedArray<float> m_luminance;
 		const Scene *mp_scene;
 		bool is_texture;
@@ -26,7 +26,7 @@ namespace Aya {
 			mp_scene = scene;
 			is_texture = false;
 			m_scale = 1.f;
-			mp_map = MakeUnique<ConstantTexture2D<Spectrum>>(intens);
+			mp_map = std::make_unique<ConstantTexture2D<Spectrum>>(intens);
 		}
 		EnvironmentLight(const char *path,
 			const Scene *scene,
@@ -38,7 +38,7 @@ namespace Aya {
 			is_texture = true;
 			m_scale = scale;
 			m_rotation = Radian(rotate);
-			mp_map = MakeUnique<ImageTexture2D<Spectrum, Spectrum>>(path, 1.f);
+			mp_map = std::make_unique<ImageTexture2D<Spectrum, Spectrum>>(path, 1.f);
 			calcLuminanceDistribution();
 		}
 
@@ -242,7 +242,7 @@ namespace Aya {
 				}
 			}
 
-			mp_distribution = MakeUnique<Distribution2D>(m_luminance.data(), width, height);
+			mp_distribution = std::make_unique<Distribution2D>(m_luminance.data(), width, height);
 		}
 
 		inline float applyRotation(const float phi, const float scl = 1.f) const {

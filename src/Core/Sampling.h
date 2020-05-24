@@ -78,8 +78,8 @@ namespace Aya {
 
 	class Distribution2D {
 	private:
-		std::vector<UniquePtr<Distribution1D>> m_conditional;
-		UniquePtr<Distribution1D> mp_marginal;
+		std::vector<std::unique_ptr<Distribution1D>> m_conditional;
+		std::unique_ptr<Distribution1D> mp_marginal;
 
 	public:
 		Distribution2D(const float *func, int count_x, int count_y) {
@@ -89,14 +89,14 @@ namespace Aya {
 
 			m_conditional.resize(count_y);
 			for (auto i = 0; i < count_y; i++) {
-				m_conditional[i] = MakeUnique<Distribution1D>(&func[i * count_x], count_x);
+				m_conditional[i] = std::make_unique<Distribution1D>(&func[i * count_x], count_x);
 			}
 
 			float *marginal = new float[count_y];
 			for (auto i = 0; i < count_y; i++) {
 				marginal[i] = m_conditional[i]->getIntegral();
 			}
-			mp_marginal = MakeUnique<Distribution1D>(marginal, count_y);
+			mp_marginal = std::make_unique<Distribution1D>(marginal, count_y);
 			SafeDeleteArray(marginal);
 		}
 

@@ -57,7 +57,7 @@ namespace Aya {
 		// For light path belonging to pixel index [x] it stores
 		// where it's light vertices end (begin is at [x-1])
 		BlockedArray<Vector2i> ranges;
-		BlockedArray<UniquePtr<Sampler>> pixel_samplers;
+		BlockedArray<std::unique_ptr<Sampler>> pixel_samplers;
 
 		HashGrid grid;
 
@@ -93,7 +93,7 @@ namespace Aya {
 				//for (int i = 0; i < tiles_count; i++) {
 				const RenderTile& tile = m_task.getTile(i);
 
-				UniquePtr<Sampler> tile_sampler = sampler->clone(spp * tiles_count + i);
+				std::unique_ptr<Sampler> tile_sampler = sampler->clone(spp * tiles_count + i);
 
 				RNG rng;
 				MemoryPool memory;

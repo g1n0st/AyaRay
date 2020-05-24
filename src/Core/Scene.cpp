@@ -33,7 +33,7 @@ namespace Aya {
 	}
 	void Scene::addPrimitive(Primitive *prim) {
 		m_primitves.resize(m_primitves.size() + 1);
-		m_primitves[m_primitves.size() - 1] = UniquePtr<Primitive>(prim);
+		m_primitves[m_primitves.size() - 1] = std::unique_ptr<Primitive>(prim);
 	}
 	void Scene::addLight(Light *light) {
 		if (light->isEnvironmentLight()) {
@@ -50,19 +50,19 @@ namespace Aya {
 		}
 		else if (light->isAreaLight()) {
 			m_primitves.resize(m_primitves.size() + 1);
-			m_primitves[m_primitves.size() - 1] = UniquePtr<Primitive>(((AreaLight*)light)->getPrimitive());
+			m_primitves[m_primitves.size() - 1] = std::unique_ptr<Primitive>(((AreaLight*)light)->getPrimitive());
 		}
 		
 		m_lights.resize(m_lights.size() + 1);
-		m_lights[m_lights.size() - 1] = UniquePtr<Light>(light);
+		m_lights[m_lights.size() - 1] = std::unique_ptr<Light>(light);
 	}
 
 	void Scene::initAccelerator() {
 		if (m_dirty) {
 #if defined(AYA_USE_EMBREE)
-			mp_accel = MakeUnique<EmbreeAccel>();
+			mp_accel = std::make_unique<EmbreeAccel>();
 #else
-			mp_accel = MakeUnique<BVHAccel>();
+			mp_accel = std::make_unique<BVHAccel>();
 #endif
 			std::vector<Primitive*> prims;
 			for (const auto& it : m_primitves) {

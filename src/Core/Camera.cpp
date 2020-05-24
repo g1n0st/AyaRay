@@ -43,7 +43,7 @@ namespace Aya {
 			}
 		}
 
-		mp_aperture = MakeUnique<Distribution2D>(apeture_func.data(), size, size);
+		mp_aperture = std::make_unique<Distribution2D>(apeture_func.data(), size, size);
 	}
 	void Camera::resize(int width, int height) {
 		m_resX = width;
@@ -149,7 +149,7 @@ namespace Aya {
 	void Camera::setApertureFunc(const char *path) {
 		int width, height, channel;
 		float *func = Bitmap::read<float>(path, &width, &height, &channel);
-		mp_aperture = MakeUnique<Distribution2D>(func, height, width);
+		mp_aperture = std::make_unique<Distribution2D>(func, height, width);
 		SafeDeleteArray(func);
 	}
 }

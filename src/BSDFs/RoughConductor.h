@@ -6,13 +6,13 @@
 namespace Aya {
 	class RoughConductor : public BSDF {
 	private:
-		UniquePtr<Texture2D<float>> m_roughness;
+		std::unique_ptr<Texture2D<float>> m_roughness;
 
 	public:
 		RoughConductor(const Spectrum &color = Spectrum(), float roughness = .3f)
 			: BSDF(ScatterType(BSDF_REFLECTION | BSDF_GLOSSY), BSDFType::RoughConductor, color),
 			m_roughness(new ConstantTexture2D<float>(roughness)) {}
-		RoughConductor(UniquePtr<Texture2D<Spectrum>> tex, UniquePtr<Texture2D<RGBSpectrum>> normal, float roughness = .3f)
+		RoughConductor(std::unique_ptr<Texture2D<Spectrum>> tex, std::unique_ptr<Texture2D<RGBSpectrum>> normal, float roughness = .3f)
 			: BSDF(ScatterType(BSDF_REFLECTION | BSDF_GLOSSY), BSDFType::RoughConductor, std::move(tex), std::move(normal)),
 			m_roughness(new ConstantTexture2D<float>(roughness)) {}
 		RoughConductor(const char *texture_file, float roughness = .3f)
@@ -25,7 +25,7 @@ namespace Aya {
 		RoughConductor(const Spectrum &color, char *roughness_texture)
 			: BSDF(ScatterType(BSDF_REFLECTION | BSDF_GLOSSY), BSDFType::RoughConductor, color),
 			m_roughness(new ImageTexture2D<float, float>(roughness_texture)) {}
-		RoughConductor(UniquePtr<Texture2D<Spectrum>> tex, UniquePtr<Texture2D<RGBSpectrum>> normal, char *roughness_texture)
+		RoughConductor(std::unique_ptr<Texture2D<Spectrum>> tex, std::unique_ptr<Texture2D<RGBSpectrum>> normal, char *roughness_texture)
 			: BSDF(ScatterType(BSDF_REFLECTION | BSDF_GLOSSY), BSDFType::RoughConductor, std::move(tex), std::move(normal)),
 			m_roughness(new ImageTexture2D<float, float>(roughness_texture)) {}
 		RoughConductor(const char *texture_file, char *roughness_texture)
@@ -35,16 +35,16 @@ namespace Aya {
 			: BSDF(ScatterType(BSDF_REFLECTION | BSDF_GLOSSY), BSDFType::RoughConductor, texture_file, normal_file),
 			m_roughness(new ImageTexture2D<float, float>(roughness_texture)) {}
 
-		RoughConductor(const Spectrum &color, UniquePtr<Texture2D<float>> roughness)
+		RoughConductor(const Spectrum &color, std::unique_ptr<Texture2D<float>> roughness)
 			: BSDF(ScatterType(BSDF_REFLECTION | BSDF_GLOSSY), BSDFType::RoughConductor, color),
 			m_roughness(std::move(roughness)) {}
-		RoughConductor(UniquePtr<Texture2D<Spectrum>> tex, UniquePtr<Texture2D<RGBSpectrum>> normal, UniquePtr<Texture2D<float>> roughness)
+		RoughConductor(std::unique_ptr<Texture2D<Spectrum>> tex, std::unique_ptr<Texture2D<RGBSpectrum>> normal, std::unique_ptr<Texture2D<float>> roughness)
 			: BSDF(ScatterType(BSDF_REFLECTION | BSDF_GLOSSY), BSDFType::RoughConductor, std::move(tex), std::move(normal)),
 			m_roughness(std::move(roughness)) {}
-		RoughConductor(const char *texture_file, UniquePtr<Texture2D<float>> roughness)
+		RoughConductor(const char *texture_file, std::unique_ptr<Texture2D<float>> roughness)
 			: BSDF(ScatterType(BSDF_REFLECTION | BSDF_GLOSSY), BSDFType::RoughConductor, texture_file),
 			m_roughness(std::move(roughness)) {}
-		RoughConductor(const char *texture_file, const char *normal_file, UniquePtr<Texture2D<float>> roughness)
+		RoughConductor(const char *texture_file, const char *normal_file, std::unique_ptr<Texture2D<float>> roughness)
 			: BSDF(ScatterType(BSDF_REFLECTION | BSDF_GLOSSY), BSDFType::RoughConductor, texture_file, normal_file),
 			m_roughness(std::move(roughness)) {}
 

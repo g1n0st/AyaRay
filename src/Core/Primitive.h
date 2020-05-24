@@ -13,9 +13,9 @@ namespace Aya {
 	private:
 		friend class Scene;
 
-		UniquePtr<TriangleMesh> mp_mesh;
+		std::unique_ptr<TriangleMesh> mp_mesh;
 
-		std::vector<UniquePtr<BSDF>> mp_BSDFs;
+		std::vector<std::unique_ptr<BSDF>> mp_BSDFs;
 		//std::vector<UniquePtr<BSSRDF>> mp_BSSRDFs;
 		const AreaLight *mp_light = nullptr;
 
@@ -33,17 +33,17 @@ namespace Aya {
 
 		void loadMesh(const Transform &o2w,
 			const char *path,
-			std::function<UniquePtr<BSDF>(const ObjMaterial&)> mtl_parser,
+			std::function<std::unique_ptr<BSDF>(const ObjMaterial&)> mtl_parser,
 			const bool force_compute_normal = false,
 			const bool left_handed = true,
 			const MediumInterface &medium_interface = MediumInterface());
 		void loadSphere(const Transform &o2w,
 			const float radius,
-			UniquePtr<BSDF> bsdf,
+			std::unique_ptr<BSDF> bsdf,
 			const MediumInterface &medium_interface = MediumInterface());
 		void loadPlane(const Transform &o2w,
 			const float length,
-			UniquePtr<BSDF> bsdf,
+			std::unique_ptr<BSDF> bsdf,
 			const MediumInterface &medium_interface = MediumInterface());
 
 		void postIntersect(const RayDifferential &ray, SurfaceIntersection *intersection) const;
@@ -54,7 +54,7 @@ namespace Aya {
 		const MediumInterface* getMediumInterface(const uint32_t id) const {
 			return &m_mediumInterface[mp_materialIdx[id]];
 		}
-		void setBSDF(const uint32_t id, UniquePtr<BSDF> bsdf) {
+		void setBSDF(const uint32_t id, std::unique_ptr<BSDF> bsdf) {
 			mp_BSDFs[mp_materialIdx[id]] = std::move(bsdf);
 		}
 		void setMediumInterface(const uint32_t id, const MediumInterface &medium_interface) {
@@ -82,7 +82,7 @@ namespace Aya {
 		}
 
 	private:
-		void setBSDF(UniquePtr<BSDF> bsdf,
+		void setBSDF(std::unique_ptr<BSDF> bsdf,
 			const MediumInterface &medium_interface = MediumInterface());
 	};
 }

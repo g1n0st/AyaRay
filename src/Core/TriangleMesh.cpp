@@ -2,8 +2,8 @@
 
 namespace Aya {
 	void TriangleMesh::loadMesh(const Transform &O2W, const ObjMesh * obj_mesh) {
-		o2w = MakeUnique<Transform>(O2W);
-		w2o = MakeUnique<Transform>(O2W.inverse());
+		o2w = std::make_unique<Transform>(O2W);
+		w2o = std::make_unique<Transform>(O2W.inverse());
 
 		m_verts = obj_mesh->getVertexCount();
 		m_tris = obj_mesh->getTriangleCount();
@@ -18,8 +18,8 @@ namespace Aya {
 		std::memcpy(mp_vertIdx, obj_mesh->getIndexAt(0), sizeof(uint32_t) * 3 * m_tris);
 	}
 	void TriangleMesh::loadSphere(const Transform & O2W, const float radius, const uint32_t slices, const uint32_t stacks) {
-		o2w = MakeUnique<Transform>(O2W);
-		w2o = MakeUnique<Transform>(O2W.inverse());
+		o2w = std::make_unique<Transform>(O2W);
+		w2o = std::make_unique<Transform>(O2W.inverse());
 
 		const float theta_step = float(M_PI) / float(stacks);
 		const float phi_step = float(M_PI) * 2.f / float(slices);
@@ -61,8 +61,8 @@ namespace Aya {
 		m_tris = stacks * slices * 2;
 	}
 	void TriangleMesh::loadPlane(const Transform & O2W, const float length) {
-		o2w = MakeUnique<Transform>(O2W);
-		w2o = MakeUnique<Transform>(O2W.inverse());
+		o2w = std::make_unique<Transform>(O2W);
+		w2o = std::make_unique<Transform>(O2W.inverse());
 
 		const float length_2 = length * .5f;
 		const Normal3 n = (*o2w)(Normal3(0.f, 1.f, 0.f));

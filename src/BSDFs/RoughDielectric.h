@@ -6,7 +6,7 @@
 namespace Aya {
 	class RoughDielectric : public BSDF {
 	private:
-		UniquePtr<Texture2D<float>> m_roughness;
+		std::unique_ptr<Texture2D<float>> m_roughness;
 		float m_etai, m_etat;
 
 		static const ScatterType reflect_scatter = ScatterType(BSDF_REFLECTION | BSDF_GLOSSY);
@@ -17,7 +17,7 @@ namespace Aya {
 			: BSDF(ScatterType(BSDF_REFLECTION | BSDF_TRANSMISSION | BSDF_GLOSSY), BSDFType::RoughDielectric, color),
 			m_roughness(new ConstantTexture2D<float>(roughness)),
 			m_etai(etai), m_etat(etat) {}
-		RoughDielectric(UniquePtr<Texture2D<Spectrum>> tex, UniquePtr<Texture2D<RGBSpectrum>> normal, float roughness = .3f, float etai = 1.0f, float etat = 1.5f)
+		RoughDielectric(std::unique_ptr<Texture2D<Spectrum>> tex, std::unique_ptr<Texture2D<RGBSpectrum>> normal, float roughness = .3f, float etai = 1.0f, float etat = 1.5f)
 			: BSDF(ScatterType(BSDF_REFLECTION | BSDF_TRANSMISSION | BSDF_GLOSSY), BSDFType::RoughDielectric, std::move(tex), std::move(normal)),
 			m_roughness(new ConstantTexture2D<float>(roughness)),
 			m_etai(etai), m_etat(etat) {}
@@ -34,7 +34,7 @@ namespace Aya {
 			: BSDF(ScatterType(BSDF_REFLECTION | BSDF_TRANSMISSION | BSDF_GLOSSY), BSDFType::RoughDielectric, color),
 			m_roughness(new ImageTexture2D<float, float>(roughness_texture)),
 			m_etai(etai), m_etat(etat) {}
-		RoughDielectric(UniquePtr<Texture2D<Spectrum>> tex, UniquePtr<Texture2D<RGBSpectrum>> normal, char *roughness_texture, float etai = 1.0f, float etat = 1.5f)
+		RoughDielectric(std::unique_ptr<Texture2D<Spectrum>> tex, std::unique_ptr<Texture2D<RGBSpectrum>> normal, char *roughness_texture, float etai = 1.0f, float etat = 1.5f)
 			: BSDF(ScatterType(BSDF_REFLECTION | BSDF_TRANSMISSION | BSDF_GLOSSY), BSDFType::RoughDielectric, std::move(tex), std::move(normal)),
 			m_roughness(new ImageTexture2D<float, float>(roughness_texture)),
 			m_etai(etai), m_etat(etat) {}
@@ -47,19 +47,19 @@ namespace Aya {
 			m_roughness(new ImageTexture2D<float, float>(roughness_texture)),
 			m_etai(etai), m_etat(etat) {}
 
-		RoughDielectric(const Spectrum &color, UniquePtr<Texture2D<float>> roughness, float etai = 1.0f, float etat = 1.5f)
+		RoughDielectric(const Spectrum &color, std::unique_ptr<Texture2D<float>> roughness, float etai = 1.0f, float etat = 1.5f)
 			: BSDF(ScatterType(BSDF_REFLECTION | BSDF_TRANSMISSION | BSDF_GLOSSY), BSDFType::RoughDielectric, color),
 			m_roughness(std::move(roughness)),
 			m_etai(etai), m_etat(etat) {}
-		RoughDielectric(UniquePtr<Texture2D<Spectrum>> tex, UniquePtr<Texture2D<RGBSpectrum>> normal, UniquePtr<Texture2D<float>> roughness, float etai = 1.0f, float etat = 1.5f)
+		RoughDielectric(std::unique_ptr<Texture2D<Spectrum>> tex, std::unique_ptr<Texture2D<RGBSpectrum>> normal, std::unique_ptr<Texture2D<float>> roughness, float etai = 1.0f, float etat = 1.5f)
 			: BSDF(ScatterType(BSDF_REFLECTION | BSDF_TRANSMISSION | BSDF_GLOSSY), BSDFType::RoughDielectric, std::move(tex), std::move(normal)),
 			m_roughness(std::move(roughness)),
 			m_etai(etai), m_etat(etat) {}
-		RoughDielectric(const char *texture_file, UniquePtr<Texture2D<float>> roughness, float etai = 1.0f, float etat = 1.5f)
+		RoughDielectric(const char *texture_file, std::unique_ptr<Texture2D<float>> roughness, float etai = 1.0f, float etat = 1.5f)
 			: BSDF(ScatterType(BSDF_REFLECTION | BSDF_TRANSMISSION | BSDF_GLOSSY), BSDFType::RoughDielectric, texture_file),
 			m_roughness(std::move(roughness)),
 			m_etai(etai), m_etat(etat) {}
-		RoughDielectric(const char *texture_file, const char *normal_file, UniquePtr<Texture2D<float>> roughness, float etai = 1.0f, float etat = 1.5f)
+		RoughDielectric(const char *texture_file, const char *normal_file, std::unique_ptr<Texture2D<float>> roughness, float etai = 1.0f, float etat = 1.5f)
 			: BSDF(ScatterType(BSDF_REFLECTION | BSDF_TRANSMISSION | BSDF_GLOSSY), BSDFType::RoughDielectric, texture_file, normal_file),
 			m_roughness(std::move(roughness)),
 			m_etai(etai), m_etat(etat) {}

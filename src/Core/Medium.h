@@ -27,11 +27,11 @@ namespace Aya {
 	class MediumIntersection;
 	class Medium {
 	protected:
-		UniquePtr<PhaseFunctionHG> mp_func;
+		std::unique_ptr<PhaseFunctionHG> mp_func;
 
 	public:
 		Medium(const float g) {
-			mp_func = MakeUnique<PhaseFunctionHG>(g);
+			mp_func = std::make_unique<PhaseFunctionHG>(g);
 		}
 
 		virtual Spectrum tr(const Ray &ray, Sampler *sampler) const = 0;

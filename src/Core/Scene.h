@@ -17,12 +17,12 @@
 namespace Aya {
 	class Scene {
 	private:
-		std::vector<UniquePtr<Primitive>> m_primitves;
-		std::vector<UniquePtr<Light>> m_lights;
+		std::vector<std::unique_ptr<Primitive>> m_primitves;
+		std::vector<std::unique_ptr<Light>> m_lights;
 		Light* mp_envLight;
-		UniquePtr<Accelerator> mp_accel;
+		std::unique_ptr<Accelerator> mp_accel;
 		bool m_dirty;
-		std::vector<UniquePtr<const Medium>> m_media;
+		std::vector<std::unique_ptr<const Medium>> m_media;
 
 		Transform m_sceneScale, m_sceneScaleInv;
 
@@ -39,10 +39,10 @@ namespace Aya {
 		void addPrimitive(Primitive *prim);
 		void addLight(Light *light);
 
-		inline const std::vector<UniquePtr<Primitive>>& getPrimitives() const {
+		inline const std::vector<std::unique_ptr<Primitive>>& getPrimitives() const {
 			return m_primitves;
 		}
-		inline const std::vector<UniquePtr<Light>>& getLights() const {
+		inline const std::vector<std::unique_ptr<Light>>& getLights() const {
 			return m_lights;
 		}
 		inline const Light* getLight(const uint32_t idx) const {

@@ -13,13 +13,13 @@ namespace Aya {
 
 	void Primitive::loadMesh(const Transform &o2w,
 		const char *path,
-		std::function<UniquePtr<BSDF>(const ObjMaterial&)> mtl_parser,
+		std::function<std::unique_ptr<BSDF>(const ObjMaterial&)> mtl_parser,
 		const bool force_compute_normal,
 		const bool left_handed,
 		const MediumInterface &medium_interface) {
 		ObjMesh *mesh = new ObjMesh;
 		mesh->loadObj(path, force_compute_normal, left_handed);
-		mp_mesh = MakeUnique<TriangleMesh>();
+		mp_mesh = std::make_unique<TriangleMesh>();
 		mp_mesh->loadMesh(o2w, mesh);
 
 		const auto& mtl_info = mesh->getMaterialBuff();
@@ -48,18 +48,18 @@ namespace Aya {
 	}
 	void Primitive::loadSphere(const Transform &o2w,
 		const float radius,
-		UniquePtr<BSDF> bsdf,
+		std::unique_ptr<BSDF> bsdf,
 		const MediumInterface &medium_interface) {
-		mp_mesh = MakeUnique<TriangleMesh>();
+		mp_mesh = std::make_unique<TriangleMesh>();
 		mp_mesh->loadSphere(o2w, radius);
 
 		setBSDF(std::move(bsdf), medium_interface);
 	}
 	void Primitive::loadPlane(const Transform &o2w,
 		const float length,
-		UniquePtr<BSDF> bsdf,
+		std::unique_ptr<BSDF> bsdf,
 		const MediumInterface &medium_interface) {
-		mp_mesh = MakeUnique<TriangleMesh>();
+		mp_mesh = std::make_unique<TriangleMesh>();
 		mp_mesh->loadPlane(o2w, length);
 
 		setBSDF(std::move(bsdf), medium_interface);
@@ -72,7 +72,7 @@ namespace Aya {
 		intersection->m_mediumInterface = m_mediumInterface[mp_materialIdx[intersection->tri_id]];
 		mp_mesh->postIntersect(ray, intersection);
 	}
-	void Primitive::setBSDF(UniquePtr<BSDF> bsdf, const MediumInterface &medium_interface) {
+	void Primitive::setBSDF(std::unique_ptr<BSDF> bsdf, const MediumInterface &medium_interface) {
 		mp_BSDFs.resize(1);
 		mp_BSDFs[0] = std::move(bsdf);
 		m_mediumInterface.emplace_back(medium_interface);

@@ -9,7 +9,7 @@
 
 namespace Aya {
 	class TriangleMesh {
-		UniquePtr<Transform> w2o, o2w;
+		std::unique_ptr<Transform> w2o, o2w;
 		uint32_t m_tris, m_verts;
 		uint32_t *mp_vertIdx;
 		MeshVertex *mp_vertices;

@@ -85,12 +85,12 @@ namespace Aya {
 	protected:
 		const ScatterType m_scatterType;
 		const BSDFType m_bsdfType;
-		UniquePtr<Texture2D<Spectrum>> mp_texture;
-		UniquePtr<Texture2D<RGBSpectrum>> mp_normalMap;
+		std::unique_ptr<Texture2D<Spectrum>> mp_texture;
+		std::unique_ptr<Texture2D<RGBSpectrum>> mp_normalMap;
 
 	public:
 		BSDF(ScatterType t1, BSDFType t2, const Spectrum &color);
-		BSDF(ScatterType t1, BSDFType t2, UniquePtr<Texture2D<Spectrum>> tex, UniquePtr<Texture2D<RGBSpectrum>> normal);
+		BSDF(ScatterType t1, BSDFType t2, std::unique_ptr<Texture2D<Spectrum>> tex, std::unique_ptr<Texture2D<RGBSpectrum>> normal);
 		BSDF(ScatterType t1, BSDFType t2, const char *texture_file);
 		BSDF(ScatterType t1, BSDFType t2, const char *texture_file, const char *normal_file);
 		virtual ~BSDF() = default;
@@ -102,13 +102,13 @@ namespace Aya {
 			return (ScatterType(BSDF_SPECULAR | BSDF_DIFFUSE | BSDF_GLOSSY) & m_scatterType) == ScatterType(BSDF_SPECULAR);
 		}
 		void setNormalMap(const char *normal_file) {
-			mp_normalMap = MakeUnique<ImageTexture2D<RGBSpectrum, byteSpectrum>>(normal_file, 1.f);
+			mp_normalMap = std::make_unique<ImageTexture2D<RGBSpectrum, byteSpectrum>>(normal_file, 1.f);
 		}
 		void setTexture(const char *image_file) {
-			mp_texture = MakeUnique<ImageTexture2D<Spectrum, byteSpectrum>>(image_file);
+			mp_texture = std::make_unique<ImageTexture2D<Spectrum, byteSpectrum>>(image_file);
 		}
 		void setTexture(const Spectrum &color) {
-			mp_texture = MakeUnique<ConstantTexture2D<Spectrum>>(color);
+			mp_texture = std::make_unique<ConstantTexture2D<Spectrum>>(color);
 		}
 
 		virtual Spectrum f(const Vector3 &v_out, const Vector3 &v_in, const SurfaceIntersection &intersection, ScatterType types = BSDF_ALL) const;
@@ -140,10 +140,10 @@ namespace Aya {
 			return mp_normalMap.get();
 		}
 
-		UniquePtr<Texture2D<Spectrum>> moveTexture() {
+		std::unique_ptr<Texture2D<Spectrum>> moveTexture() {
 			return std::move(mp_texture);
 		}
-		UniquePtr<Texture2D<RGBSpectrum>> moveNormalMap() {
+		std::unique_ptr<Texture2D<RGBSpectrum>> moveNormalMap() {
 			return std::move(mp_normalMap);
 		}
 

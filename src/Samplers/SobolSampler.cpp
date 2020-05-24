@@ -47,13 +47,13 @@ namespace Aya {
 		return ret;
 	}
 
-	UniquePtr<Sampler> SobolSampler::clone(const int seed) const {
-		return MakeUnique<SobolSampler>(m_res, m_log2Res, m_scramble, m_sampleIdx);
+	std::unique_ptr<Sampler> SobolSampler::clone(const int seed) const {
+		return std::make_unique<SobolSampler>(m_res, m_log2Res, m_scramble, m_sampleIdx);
 	}
-	UniquePtr<Sampler> SobolSampler::deepClone() const {
+	std::unique_ptr<Sampler> SobolSampler::deepClone() const {
 		SobolSampler *copy = new SobolSampler();
 		memcpy_s(copy, sizeof(SobolSampler), this, sizeof(SobolSampler));
-		return UniquePtr<SobolSampler>(copy);
+		return std::unique_ptr<SobolSampler>(copy);
 	}
 
 	uint64_t SobolSampler::enumerateSampleIndex(const uint32_t px, const uint32_t py) const {

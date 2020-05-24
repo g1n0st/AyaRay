@@ -64,8 +64,8 @@ namespace Aya {
 		Sample getSample() override;
 		void generateSamples(const int pixel_x, const int pixel_y, CameraSample *samples, RNG &rng) override;
 
-		UniquePtr<Sampler> clone(const int seed) const override;
-		UniquePtr<Sampler> deepClone() const override;
+		std::unique_ptr<Sampler> clone(const int seed) const override;
+		std::unique_ptr<Sampler> deepClone() const override;
 
 		void startIteration();
 		void accept();

@@ -3,7 +3,7 @@
 namespace Aya {
 	BSDF::BSDF(ScatterType t1, BSDFType t2, const Spectrum &color)
 		: m_scatterType(t1), m_bsdfType(t2), mp_texture(new ConstantTexture2D<Spectrum>(color)) {}
-	BSDF::BSDF(ScatterType t1, BSDFType t2, UniquePtr<Texture2D<Spectrum>> tex, UniquePtr<Texture2D<RGBSpectrum>> normal)
+	BSDF::BSDF(ScatterType t1, BSDFType t2, std::unique_ptr<Texture2D<Spectrum>> tex, std::unique_ptr<Texture2D<RGBSpectrum>> normal)
 		: m_scatterType(t1), m_bsdfType(t2), 
 		mp_texture(std::move(tex)), mp_normalMap(std::move(normal)) {}
 	BSDF::BSDF(ScatterType t1, BSDFType t2, const char *texture_file)

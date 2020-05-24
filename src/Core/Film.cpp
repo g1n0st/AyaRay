@@ -7,7 +7,7 @@ namespace Aya {
 	void Film::init(int width, int height, Filter *filter) {
 		resize(width, height);
 		mp_filter.reset();
-		mp_filter = UniquePtr<Filter>(filter);
+		mp_filter = std::unique_ptr<Filter>(filter);
 	}
 	void Film::resize(int width, int height) {
 		m_width = width;

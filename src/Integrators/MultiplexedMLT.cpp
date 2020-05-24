@@ -25,11 +25,11 @@ namespace Aya {
 		samples->time   = get1D();
 	}
 
-	UniquePtr<Sampler> MetropolisSampler::clone(const int seed) const {
-		return MakeUnique<MetropolisSampler>(m_sigma, m_largeStepProb, seed);
+	std::unique_ptr<Sampler> MetropolisSampler::clone(const int seed) const {
+		return std::make_unique<MetropolisSampler>(m_sigma, m_largeStepProb, seed);
 	}
-	UniquePtr<Sampler> MetropolisSampler::deepClone() const {
-		return MakeUnique<MetropolisSampler>(m_sigma, m_largeStepProb,
+	std::unique_ptr<Sampler> MetropolisSampler::deepClone() const {
+		return std::make_unique<MetropolisSampler>(m_sigma, m_largeStepProb,
 			m_sampleIdx, m_streamIdx,
 			m_largeStepTime, m_time, m_largeStep, m_rng, 
 			m_samples);

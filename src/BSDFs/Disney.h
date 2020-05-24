@@ -6,8 +6,8 @@
 namespace Aya {
 	class Disney : public BSDF {
 	private:
-		UniquePtr<Texture2D<float>> mp_roughness;
-		UniquePtr<Texture2D<float>> mp_specular;
+		std::unique_ptr<Texture2D<float>> mp_roughness;
+		std::unique_ptr<Texture2D<float>> mp_specular;
 		float m_metallic;
 		float m_specularTint;
 		float m_sheen;
@@ -18,8 +18,8 @@ namespace Aya {
 
 	public:
 		Disney(const Spectrum &reflectance,
-			UniquePtr<Texture2D<float>> roughness,
-			UniquePtr<Texture2D<float>> specular,
+			std::unique_ptr<Texture2D<float>> roughness,
+			std::unique_ptr<Texture2D<float>> specular,
 			float metallic					= 0.0f,
 			float specular_tint				= 0.0f,
 			float sheen						= 0.0f,
@@ -38,10 +38,10 @@ namespace Aya {
 			m_clearCoat(clear_coat),
 			m_clearCoatGloss(clear_coat_gloss) {}
 
-		Disney(UniquePtr<Texture2D<Spectrum>> texture,
-			UniquePtr<Texture2D<RGBSpectrum>> normal,
-			UniquePtr<Texture2D<float>> roughness,
-			UniquePtr<Texture2D<float>> specular,
+		Disney(std::unique_ptr<Texture2D<Spectrum>> texture,
+			std::unique_ptr<Texture2D<RGBSpectrum>> normal,
+			std::unique_ptr<Texture2D<float>> roughness,
+			std::unique_ptr<Texture2D<float>> specular,
 			float metallic					= 0.0f,
 			float specular_tint				= 0.0f,
 			float sheen						= 0.0f,
@@ -60,8 +60,8 @@ namespace Aya {
 			m_clearCoat(clear_coat),
 			m_clearCoatGloss(clear_coat_gloss) {}
 		Disney(const char *file_tex,
-			UniquePtr<Texture2D<float>> roughness,
-			UniquePtr<Texture2D<float>> specular,
+			std::unique_ptr<Texture2D<float>> roughness,
+			std::unique_ptr<Texture2D<float>> specular,
 			float metallic					= 0.0f,
 			float specular_tint				= 0.0f,
 			float sheen						= 0.0f,
@@ -81,8 +81,8 @@ namespace Aya {
 			m_clearCoatGloss(clear_coat_gloss) {}
 		Disney(const char *file_tex,
 			const char *file_normal,
-			UniquePtr<Texture2D<float>> roughness,
-			UniquePtr<Texture2D<float>> specular,
+			std::unique_ptr<Texture2D<float>> roughness,
+			std::unique_ptr<Texture2D<float>> specular,
 			float metallic					= 0.0f,
 			float specular_tint				= 0.0f,
 			float sheen						= 0.0f,
@@ -108,16 +108,16 @@ namespace Aya {
 		Spectrum evaluate(const Vector3 &l_out, const Vector3 &l_in, const SurfaceIntersection &intersection, ScatterType types = BSDF_ALL) const;
 
 		void setRoughness(const char *path) {
-			mp_roughness = MakeUnique<ImageTexture2D<float, float>>(path);
+			mp_roughness = std::make_unique<ImageTexture2D<float, float>>(path);
 		}
 		void setRoughness(const float roughness) {
-			mp_roughness = MakeUnique<ConstantTexture2D<float>>(roughness);
+			mp_roughness = std::make_unique<ConstantTexture2D<float>>(roughness);
 		}
 		void setSpecular(const char *path) {
-			mp_specular = MakeUnique<ImageTexture2D<float, float>>(path);
+			mp_specular = std::make_unique<ImageTexture2D<float, float>>(path);
 		}
 		void setSpecular(const float specular) {
-			mp_specular = MakeUnique<ConstantTexture2D<float>>(specular);
+			mp_specular = std::make_unique<ConstantTexture2D<float>>(specular);
 		}
 		
 	private:

@@ -25,12 +25,12 @@ namespace Aya {
 		return Sample(rng);
 	}
 
-	UniquePtr<Sampler> RandomSampler::clone(const int seed) const {
-		return MakeUnique<RandomSampler>(seed);
+	std::unique_ptr<Sampler> RandomSampler::clone(const int seed) const {
+		return std::make_unique<RandomSampler>(seed);
 	}
-	UniquePtr<Sampler> RandomSampler::deepClone() const {
+	std::unique_ptr<Sampler> RandomSampler::deepClone() const {
 		RandomSampler *copy = new RandomSampler();
 		memcpy_s(copy, sizeof(RandomSampler), this, sizeof(RandomSampler));
-		return UniquePtr<RandomSampler>(copy);
+		return std::unique_ptr<RandomSampler>(copy);
 	}
 }

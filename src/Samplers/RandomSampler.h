@@ -24,8 +24,8 @@ namespace Aya {
 		Vector2f get2D() override;
 		Sample getSample() override;
 
-		UniquePtr<Sampler> clone(const int seed) const override;
-		UniquePtr<Sampler> deepClone() const override;
+		std::unique_ptr<Sampler> clone(const int seed) const override;
+		std::unique_ptr<Sampler> deepClone() const override;
 	};
 }
 #endif
