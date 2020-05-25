@@ -442,7 +442,7 @@ namespace Aya {
 			return m_atomic.statistical_weight;
 		}
 
-		float setStatisticalWeight(float statistical_weight) {
+		void setStatisticalWeight(float statistical_weight) {
 			m_atomic.statistical_weight = statistical_weight;
 		}
 
@@ -637,8 +637,8 @@ namespace Aya {
 			return building.statisticalWeight();
 		}
 
-		float setStatisticalWeightBuilding(float statistical_weight) {
-			return building.setStatisticalWeight(statistical_weight);
+		void setStatisticalWeightBuilding(float statistical_weight) {
+			building.setStatisticalWeight(statistical_weight);
 		}
 
 		size_t approxMemoryFootprint() const {
@@ -1066,8 +1066,10 @@ namespace Aya {
 		*/
 		BsdfSamplingFractionLoss m_bsdfSamplingFractionLoss;
 
+		int m_maxDepth;
+
 	public:
-		GuidedPathTracerIntegrator(const TaskSynchronizer &task, const uint32_t &spp, uint32_t max_depth,
+		GuidedPathTracerIntegrator(const TaskSynchronizer &task, const uint32_t &spp, int maxDepth,
 			GuidedPathTracerIntegrator::Nee nee = GuidedPathTracerIntegrator::Nee::Always,
 			SampleCombination sampleCombination = SampleCombination::InverseVariance,
 			SpatialFilter spatialFilter = SpatialFilter::StochasticBox,
@@ -1079,8 +1081,8 @@ namespace Aya {
 			float dTreeThreshold = 0.01f,
 			float bsdfSamplingFraction = 0.5f) :
 			Integrator(task, spp) {
+			m_maxDepth = { maxDepth };
 			m_nee = { nee };
-
 			m_sampleCombination = { sampleCombination };
 			m_spatialFilter = { spatialFilter };
 			m_directionalFilter = { directionalFilter };
@@ -1094,8 +1096,8 @@ namespace Aya {
 		}
 
 		void render(const Scene *scene, const Camera *camera, Sampler *sampler, Film *film) override;
-		void renderPasses(float &variance, int num_passes, const Scene *scene, const Camera *camera, Sampler *sampler, Film *film);
-		Spectrum li(const RayDifferential &ray, const Scene *scene, Sampler *sampler, RNG& rng, MemoryPool &memory) const;
+		bool renderPasses(float &variance, int num_passes, const Scene *scene, const Camera *camera, Sampler *sampler, Film *film);
+		Spectrum li(const RayDifferential &ray, const Scene *scene, Sampler *sampler, RNG &rng, MemoryPool &memory) const;
 
 	private:
 		void resetSDTree();
