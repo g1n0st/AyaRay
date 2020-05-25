@@ -1,7 +1,7 @@
 #include <Core/integrator.h>
 
 namespace Aya {
-	void TiledIntegrator::render(const Scene *scene, const Camera *camera, Sampler *sampler, Film *film) const {
+	void TiledIntegrator::render(const Scene *scene, const Camera *camera, Sampler *sampler, Film *film) {
 		for (uint32_t spp = 0; spp < m_spp; spp++) {
 			int tiles_count = m_task.getTilesCount();
 			int height = m_task.getX();

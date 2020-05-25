@@ -82,7 +82,7 @@ namespace Aya {
 		sample.modify = m_time;
 	}
 
-	void MultiplexMLTIntegrator::render(const Scene *scene, const Camera *camera, Sampler *sampler, Film *film) const {
+	void MultiplexMLTIntegrator::render(const Scene *scene, const Camera *camera, Sampler *sampler, Film *film) {
 		// Generate bootstrap samples and compute normalization constant b
 		int num_bootstrap_samples = m_numBootstrap * (int(m_maxDepth) + 1);
 		std::vector<float> bootstrap_weights(num_bootstrap_samples, 0.f);

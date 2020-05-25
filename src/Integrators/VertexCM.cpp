@@ -40,11 +40,11 @@ namespace Aya {
 
 		// While we have the same number of pixels (camera paths)
 		// and light paths, we do keep them separate for clarity reasons
-		m_light_path_count = float(film->getPixelCount());
-		m_screen_pixel_count = float(film->getPixelCount());
+		m_lightPathCount = float(film->getPixelCount());
+		m_screenPixelCount = float(film->getPixelCount());
 	}
 
-	void VertexCMIntegrator::render(const Scene *scene, const Camera *camera, Sampler *sampler, Film *film) const {
+	void VertexCMIntegrator::render(const Scene *scene, const Camera *camera, Sampler *sampler, Film *film) {
 		Point3 scene_center;
 		float scene_radius;
 		scene->worldBound().boundingSphere(&scene_center, &scene_radius);
@@ -78,10 +78,10 @@ namespace Aya {
 
 			// Factor used to normalise vertex merging contribution.
 			// We divide the summed up energy by disk radius and number of light paths
-			m_VM_normalization = 1.f / (radius_sqr * float(M_PI) * m_light_path_count);
+			m_VM_normalization = 1.f / (radius_sqr * float(M_PI) * m_lightPathCount);
 
 			// MIS weight constant [tech. rep. (20)], with n_VC = 1 and n_VM = mLightPathCount
-			const float etaVCM = (radius_sqr * float(M_PI)) * m_light_path_count;
+			const float etaVCM = (radius_sqr * float(M_PI)) * m_lightPathCount;
 			m_MIS_VM_weight = m_useVM ? MIS(etaVCM)			: 0.f;
 			m_MIS_VC_weight = m_useVC ? MIS(1.f / etaVCM)	: 0.f;
 

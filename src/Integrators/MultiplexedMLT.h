@@ -108,7 +108,7 @@ namespace Aya {
 		}
 		~MultiplexMLTIntegrator() = default;
 
-		void render(const Scene *scene, const Camera *camera, Sampler *sampler, Film *film) const override;
+		void render(const Scene *scene, const Camera *camera, Sampler *sampler, Film *film) override;
 
 	public:
 		Spectrum evalSample(const Scene *scene, MetropolisSampler *sampler,

@@ -267,7 +267,7 @@ namespace Aya {
 			const float radius_alpha = .75f);
 		~VertexCMIntegrator() = default;
 
-		void render(const Scene *scene, const Camera *camera, Sampler *sampler, Film *film) const override;
+		void render(const Scene *scene, const Camera *camera, Sampler *sampler, Film *film) override;
 
 		PathState sampleLightSource(const Scene *scene, Sampler *sampler, RNG &rng) const;
 		int generateLightPath(const Scene *scene, Sampler *sampler, RNG &rng,
@@ -299,8 +299,8 @@ namespace Aya {
 
 		float m_radiusAlpha;		// Radius reduction rate parameter
 		float m_baseRadius;			// Initial merging radius
-		float m_light_path_count;	// Number of light sub-paths
-		float m_screen_pixel_count;	// Number of pixels
+		float m_lightPathCount;	// Number of light sub-paths
+		float m_screenPixelCount;	// Number of pixels
 
 		mutable float m_MIS_VC_weight;		// Weight of vertex merging (used in VC)
 		mutable float m_MIS_VM_weight;		// Weight of vertex connection (used in VM)

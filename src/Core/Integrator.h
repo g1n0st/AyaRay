@@ -85,7 +85,7 @@ namespace Aya {
 		Integrator(const TaskSynchronizer &task, const uint32_t &spp)
 			: m_task(task), m_spp(spp) {}
 
-		virtual void render(const Scene *scene, const Camera *camera, Sampler *sampler, Film *film) const = 0;
+		virtual void render(const Scene *scene, const Camera *camera, Sampler *sampler, Film *film) = 0;
 		virtual ~Integrator() {}
 
 	public:
@@ -105,7 +105,7 @@ namespace Aya {
 			: Integrator(task, spp) {
 		}
 
-		virtual void render(const Scene *scene, const Camera *camera, Sampler *sampler, Film *film) const override;
+		virtual void render(const Scene *scene, const Camera *camera, Sampler *sampler, Film *film) override;
 		virtual Spectrum li(const RayDifferential &ray, const Scene *scene, Sampler *sampler, RNG& rng, MemoryPool &memory) const = 0;
 		virtual ~TiledIntegrator() {}
 	};
