@@ -77,6 +77,22 @@ namespace Aya {
 				m_pmin -= Point3(d, d, d);
 #endif
 			}
+			AYA_FORCE_INLINE void clip(const BBox &b) {
+#if defined(AYA_USE_SIMD)
+				m_pmax.m_val128 = _mm_min_ps(m_pmax.m_val128, b.m_pmax.m_val128);
+				m_pmin.m_val128 = _mm_max_ps(m_pmin.m_val128, b.m_pmin.m_val128);
+#else
+				m_pmax = Point3(Min(m_pmax.x, b.m_pmax.x), Min(m_pmax.y, b.m_pmax.y), Min(m_pmax.z, b.m_pmax.z));
+				m_pmin = Point3(Max(m_pmin.x, b.m_pmin.x), Max(m_pmax.y, b.m_pmin.y), Max(m_pmax.z, b.m_pmin.z));
+#endif
+			}
+			AYA_FORCE_INLINE Point3 clip(const Point3 &p) const {
+#if defined(AYA_USE_SIMD)
+				return _mm_min_ps(_mm_max_ps(p.m_val128, m_pmin.m_val128), m_pmax.m_val128);
+#else
+				return Point3(Clamp(p.x, m_pmin.x, m_pmax.x), Clamp(p.y, m_pmin.y, m_pmax.y), Clamp(p.z, m_pmin.z, m_pmax.z));
+#endif
+			}
 			AYA_FORCE_INLINE BBox unity(const Point3 &p) {
 #if defined(AYA_USE_SIMD)
 				m_pmax.m_val128 = _mm_max_ps(m_pmax.m_val128, p.m_val128);
