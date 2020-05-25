@@ -19,9 +19,19 @@ namespace Aya {
 		m_accumulateBuffer.init(width, height);
 		m_sampleCount = 0;
 	}
-	void Film::release() {
-	}
 	void Film::clear() {
+		std::lock_guard<std::mutex> lck(m_mt);
+
+		concurrency::parallel_for(0, m_height, [this](int y) {
+			for (int x = 0; x < m_width; x++) {
+				Pixel &pixel = m_accumulateBuffer(x, y);
+				pixel = { Spectrum(0.f), Spectrum(0.f), 0.f };
+			}
+		});
+
+		m_sampleCount = 0;
+	}
+	void Film::free() {
 		m_sampleCount = 0;
 		m_pixelBuffer.free();
 		m_accumulateBuffer.free();

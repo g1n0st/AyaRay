@@ -5,6 +5,7 @@
 #include <Core/Filter.h>
 #include <Core/Memory.h>
 #include <Core/Spectrum.h>
+#include <Math/Vector2.h>
 
 #include <ppl.h>
 #include <thread>
@@ -35,15 +36,18 @@ namespace Aya {
 			init(width, height, filter);
 		}
 		virtual ~Film() {
-			release();
+			free();
 		}
 		virtual void init(int width, int height, Filter *filter);
 		virtual void resize(int width, int height);
-		virtual void clear();
+		virtual void free();
 
-		void release();
+		virtual void clear();
 		int getPixelCount() const {
 			return m_width * m_height;
+		}
+		Vector2i getSize() const {
+			return { m_width, m_height };
 		}
 
 		virtual void addSample(float x, float y, const Spectrum &L);
@@ -57,6 +61,16 @@ namespace Aya {
 
 		const RGBSpectrum* getPixelBuffer() const {
 			return m_pixelBuffer.data();
+		}
+		const Spectrum getPixel(int x, int y) const {
+			const Pixel &pixel = m_accumulateBuffer(x, y);
+			return pixel.color / (pixel.weight + float(AYA_EPSILON)) + pixel.splat / static_cast<float>(m_sampleCount);
+		}
+		void setPixel(int x, int y, const Spectrum &L) {
+			Pixel &pixel = m_accumulateBuffer(x, y);
+			pixel.color = L;
+			pixel.weight = 1.f;
+			pixel.splat = Spectrum(0.f);
 		}
 		const int getSampleCount() const {
 			return m_sampleCount;
