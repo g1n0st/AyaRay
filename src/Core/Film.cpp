@@ -39,13 +39,32 @@ namespace Aya {
 
 		for (auto i = min_y; i <= max_y; i++) {
 			for (auto j = min_x; j <= max_x; j++) {
-				Pixel& pixel = m_accumulateBuffer(j, m_height - 1 - i);
+				Pixel &pixel = m_accumulateBuffer(j, m_height - 1 - i);
 				float weight = mp_filter->evaluate(j - x, i - y);
 				pixel.weight += weight;
 				pixel.color += weight * L;
 			}
 		}
 	}
+
+	void Film::addFilm(const Film *film, float weight) {
+		assert(m_width == film->m_width && m_height == film->m_height);
+		std::lock_guard<std::mutex> lck(m_mt);
+
+		concurrency::parallel_for(0, m_height, [this, film, weight](int y) {
+			for (int x = 0; x < m_width; x++) {
+				Pixel &pixel = m_accumulateBuffer(x, y);
+				const Pixel &pixel0 = film->m_accumulateBuffer(x, y);
+
+				pixel.color += pixel0.color * weight;
+				pixel.weight += pixel0.weight * weight;
+				pixel.splat += pixel0.splat * weight;
+			}
+		});
+
+		m_sampleCount += film->m_sampleCount;
+	}
+
 	void Film::splat(float x, float y, const Spectrum& L) {
 		std::lock_guard<std::mutex> lck(m_mt);
 

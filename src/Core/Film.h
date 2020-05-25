@@ -47,6 +47,7 @@ namespace Aya {
 		}
 
 		virtual void addSample(float x, float y, const Spectrum &L);
+		virtual void addFilm(const Film *film, float weight = 1.f);
 		virtual void splat(float x, float y, const Spectrum &L);
 		void updateDisplay(const float splat_scale = 0.f);
 		inline void addSampleCount() {
