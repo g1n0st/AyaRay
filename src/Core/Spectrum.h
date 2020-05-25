@@ -530,6 +530,23 @@ namespace Aya {
 #endif
 			return true;
 		}
+		bool isValid() const {
+#if defined(AYA_USE_SIMD)
+			Chip mx = c[0];
+			for (int i = 1; i < nChips; i++) {
+				mx.m_val128 = _mm_max_ps(mx.m_val128, c[i].m_val128);
+			}
+			return std::isfinite(mx.m_val[0])
+				&& std::isfinite(mx.m_val[1])
+				&& std::isfinite(mx.m_val[2])
+				&& std::isfinite(mx.m_val[3]);
+#else
+			for (int i = 0; i < nSamples; i++) {
+				if (!std::isfinite(c[i])) return false;
+			}
+#endif
+			return true;
+		}
 
 		void toRGB(float rgb[3]) const {
 			float xyz[3];
@@ -562,9 +579,9 @@ namespace Aya {
 		}
 	};
 
-	class RGBSpectrum : public CoefficientSpectrum<4> {
+	class RGBSpectrum : public CoefficientSpectrum<3> {
 	public:
-		RGBSpectrum(const float val = 0.f) noexcept : CoefficientSpectrum<4>(val) {
+		RGBSpectrum(const float val = 0.f) noexcept : CoefficientSpectrum<3>(val) {
 			(*this)[0] = val;
 			(*this)[1] = val;
 			(*this)[2] = val;
@@ -576,7 +593,7 @@ namespace Aya {
 			(*this)[2] = b;
 			(*this)[3] = 1.f;
 		}
-		RGBSpectrum(const CoefficientSpectrum<4> &s) noexcept : CoefficientSpectrum<4>(s) {
+		RGBSpectrum(const CoefficientSpectrum<3> &s) noexcept : CoefficientSpectrum<3>(s) {
 			(*this)[3] = 1.f;
 		}
 		RGBSpectrum(const RGBSpectrum &s, SpectrumType type = SpectrumType::Reflectance) noexcept {
@@ -656,6 +673,11 @@ namespace Aya {
 				|| std::isnan((*this)[0])
 				|| std::isnan((*this)[1])
 				|| std::isnan((*this)[2]);
+		}
+		bool isValid() const {
+			return	std::isfinite((*this)[0])
+				&& std::isfinite((*this)[1])
+				&& std::isfinite((*this)[2]);
 		}
 
 		friend inline std::ostream &operator << (std::ostream &os, const RGBSpectrum &s) {
