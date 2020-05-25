@@ -878,7 +878,7 @@ namespace Aya {
 			m_nodes[0].forEachLeaf(func, m_aabb.m_pmin, m_aabb.m_pmax - m_aabb.m_pmin, m_nodes);
 		}
 
-		void forEachDTreeWrapperParallel(std::function<void(const DTreeWrapper *)> func) {
+		void forEachDTreeWrapperParallel(std::function<void(DTreeWrapper *)> func) {
 #pragma omp parallel for
 			for (size_t i = 0; i < m_nodes.size(); ++i) {
 				if (m_nodes[i].is_leaf) {
@@ -947,6 +947,163 @@ namespace Aya {
 		const BBox& aabb() const {
 			return m_aabb;
 		}
+	};
+
+	class GuidedPathTracerIntegrator : public Integrator {
+	private:
+		// The datastructure for guiding paths.
+		std::unique_ptr<STree> m_sdTree;
+
+		// The squared values of our currently rendered image. Used to estimate variance.
+		mutable std::shared_ptr<Film> m_squaredImage;
+		// The currently rendered image. Used to estimate variance.
+		mutable std::shared_ptr<Film> m_image;
+
+		std::vector<std::shared_ptr<Film>> m_images;
+		std::vector<float> m_variances;
+
+		// This contains the currently estimated variance.
+		mutable std::shared_ptr<Film> m_varianceBuffer;
+
+		// The modes of NEE which are supported.
+		enum Nee {
+			Never,
+			Kickstart,
+			Always,
+		};
+
+		/**
+			How to perform next event estimation (NEE). The following values are valid:
+			- "never":     Never performs NEE.
+			- "kickstart": Performs NEE for the first few iterations to initialize
+						   the SDTree with good direct illumination estimates.
+			- "always":    Always performs NEE.
+			Default = "always"
+		*/
+		Nee m_nee;
+
+		// Whether Li should currently perform NEE (automatically set during rendering based on m_nee).
+		bool m_doNee;
+
+		bool m_isBuilt = false;
+		int m_iter;
+		bool m_isFinalIter = false;
+
+		int m_sppPerPass;
+
+		int m_passesRendered;
+		int m_passesRenderedThisIter;
+
+		/**
+			How to combine the samples from all path-guiding iterations:
+			- "discard":    Discard all but the last iteration.
+			- "automatic":  Discard all but the last iteration, but automatically assign an appropriately
+							larger budget to the last [Mueller et al. 2018].
+			- "inversevar": Combine samples of the last 4 iterations based on their
+							mean pixel variance [Mueller et al. 2018].
+			Default = "inversevar"
+		*/
+
+		SampleCombination m_sampleCombination;
+
+		// Maximum memory footprint of the SDTree in MB. Stops subdividing once reached. -1 to disable.
+		int m_sdTreeMaxMemory;
+
+		/**
+			The spatial filter to use when splatting radiance samples into the SDTree.
+			The following values are valid:
+			- "nearest":    No filtering [Mueller et al. 2017].
+			- "stochastic": Stochastic box filter; improves upon Mueller et al. [2017]
+							at nearly no computational cost.
+			- "box":        Box filter; improves the quality further at significant
+							additional computational cost.
+			Default = "stochastic"
+		*/
+		SpatialFilter m_spatialFilter;
+
+		/**
+			The directional filter to use when splatting radiance samples into the SDTree.
+			The following values are valid:
+			- "nearest":    No filtering [Mueller et al. 2017].
+			- "box":        Box filter; improves upon Mueller et al. [2017]
+							at nearly no computational cost.
+			Default     = "box"
+		*/
+		DirectionalFilter m_directionalFilter;
+
+		/**
+			Leaf nodes of the spatial binary tree are subdivided if the number of samples
+			they received in the last iteration exceeds c * sqrt(2^k) where c is this value
+			and k is the iteration index. The first iteration has k==0.
+			Default = 4000
+		*/
+		int m_sTreeThreshold;
+
+		/**
+			Leaf nodes of the directional quadtree are subdivided if the fraction
+			of energy they carry exceeds this value.
+			Default = 0.01 (1%)
+		*/
+		float m_dTreeThreshold;
+
+		/**
+			When guiding, we perform MIS with the balance heuristic between the guiding
+			distribution and the BSDF, combined with probabilistically choosing one of the
+			two sampling methods. This factor controls how often the BSDF is sampled
+			vs. how often the guiding distribution is sampled.
+			Default = 0.5 (50%)
+		*/
+		float m_bsdfSamplingFraction;
+
+		/**
+			The loss function to use when learning the bsdfSamplingFraction using gradient
+			descent, following the theory of Neural Importance Sampling [Mueller et al. 2018].
+			The following values are valid:
+			- "none":  No learning (uses the fixed `m_bsdfSamplingFraction`).
+			- "kl":    Optimizes bsdfSamplingFraction w.r.t. the KL divergence.
+			- "var":   Optimizes bsdfSamplingFraction w.r.t. variance.
+			Default     = "kl" (for reproducibility)
+		*/
+		BsdfSamplingFractionLoss m_bsdfSamplingFractionLoss;
+
+	public:
+		GuidedPathTracerIntegrator(const TaskSynchronizer &task, const uint32_t &spp, uint32_t max_depth,
+			GuidedPathTracerIntegrator::Nee nee = GuidedPathTracerIntegrator::Nee::Always,
+			SampleCombination sampleCombination = SampleCombination::InverseVariance,
+			SpatialFilter spatialFilter = SpatialFilter::StochasticBox,
+			DirectionalFilter directionalFilter = DirectionalFilter::Box,
+			BsdfSamplingFractionLoss bsdfSamplingFractionLoss = BsdfSamplingFractionLoss::KL,
+			int sppPerPass = 4,
+			int sdTreeMaxMemory = -1,
+			int sTreeThreshold = 4000,
+			float dTreeThreshold = 0.01f,
+			float bsdfSamplingFraction = 0.5f) :
+			Integrator(task, spp) {
+			m_nee = { nee };
+
+			m_sampleCombination = { sampleCombination };
+			m_spatialFilter = { spatialFilter };
+			m_directionalFilter = { directionalFilter };
+			m_bsdfSamplingFractionLoss = { bsdfSamplingFractionLoss };
+
+			m_sppPerPass = { sppPerPass };
+			m_sdTreeMaxMemory = { sdTreeMaxMemory };
+			m_sTreeThreshold = { sTreeThreshold };
+			m_dTreeThreshold = { dTreeThreshold };
+			m_bsdfSamplingFraction = { bsdfSamplingFraction };
+		}
+
+		void render(const Scene *scene, const Camera *camera, Sampler *sampler, Film *film) override;
+		void renderPasses(float &variance, int num_passes, const Scene *scene, const Camera *camera, Sampler *sampler, Film *film);
+		Spectrum li(const RayDifferential &ray, const Scene *scene, Sampler *sampler, RNG& rng, MemoryPool &memory) const;
+
+	private:
+		void resetSDTree();
+		void buildSDTree();
+
+		bool doNeeWithSpp(int spp);
+
+		// ...
 	};
 }
 
