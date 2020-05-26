@@ -219,6 +219,8 @@ namespace Aya {
 	}
 
 	Spectrum GuidedPathTracerIntegrator::li(const RayDifferential &ray, const Scene *scene, Sampler *sampler, RNG &rng, MemoryPool &memory) const {
+		return Spectrum(1.f);
+
 		struct Vertex {
 			DTreeWrapper *dTree;
 			Vector3 voxel_size;
@@ -291,17 +293,12 @@ namespace Aya {
 		static const int MAX_NUM_VERTICES = 32;
 		std::array<Vertex, MAX_NUM_VERTICES> vertices;
 
-		SurfaceIntersection local_isect;
-		MediumIntersection medium_isect;
 		Spectrum Li(0.f);
 		float eta = 1.f;
-
-		/* Perform the first ray intersection (or ignore if the
-		intersection has already been provided). */
-		scene->intersect(ray, &local_isect);
 		
 		Spectrum throughput(1.f);
 		bool scattered = false;
+		bool spec_bounce = true;
 
 		int nVertices = 0;
 
@@ -312,8 +309,145 @@ namespace Aya {
 			}
 		};
 
-		for (int depth = 0; depth <= m_maxDepth || m_maxDepth < 0; ++depth) {
-			// ...
+		int depth = 0;
+		RayDifferential path_ray = ray;
+		while (depth <= m_maxDepth || m_maxDepth < 0) {
+			// ignored medium sampling ...
+
+			SurfaceIntersection intersection;
+			bool intersected = scene->intersect(path_ray, &intersection);
+
+			MediumIntersection medium;
+			if (path_ray.mp_medium) {
+				throughput *= path_ray.mp_medium->sample(path_ray, sampler, &medium);
+			}
+
+			if (!medium.isValid()) {
+				if (intersected)
+					scene->postIntersect(path_ray, &intersection);
+				
+				if (spec_bounce) {
+					if (intersected)
+						recordRadiance(throughput * intersection.emit(-path_ray.m_dir));
+					else if (scene->getEnviromentLight())
+						recordRadiance(throughput * scene->getEnviromentLight()->emit(-path_ray.m_dir));
+				}
+
+				if (!intersected || (depth >= m_maxDepth && m_maxDepth != -1))
+					break;
+
+				const BSDF *bsdf = intersection.bsdf;
+
+				Vector3 voxel_size;
+				DTreeWrapper *dTree = nullptr;
+
+				// We only guide smooth BRDFs for now. Analytic product sampling
+				// would be conceivable for discrete decisions such as refraction vs
+				// reflection.
+				if (bsdf->getScatterType() & !bsdf->isSpecular()) {
+					dTree = m_sdTree->dTreeWrapper(intersection.p, voxel_size);
+				}
+
+				float sampling_fraction = m_bsdfSamplingFraction;
+				if (dTree && m_bsdfSamplingFractionLoss != BsdfSamplingFractionLoss::None) {
+					sampling_fraction = dTree->bsdfSamplingFraction();
+				}
+
+				// BSDF sampling
+
+				float wo_pdf, bsdf_pdf, dTree_pdf;
+				Vector3 out = -path_ray.m_dir;
+				Vector3 in;
+				Spectrum bsdf_weight;
+				ScatterType sample_types;
+				Sample sample = sampler->getSample();
+
+				do {
+					if (!m_isBuilt || !dTree || bsdf->isSpecular()) {
+						bsdf_weight = bsdf->sample_f(out, sample, intersection, &in, &bsdf_pdf, ScatterType::BSDF_ALL, &sample_types);
+						wo_pdf = bsdf_pdf;
+						dTree_pdf = 0.f;
+						break;
+					}
+
+					if (sample.u < sampling_fraction) {
+						sample.u /= sampling_fraction;
+						bsdf_weight = bsdf->sample_f(out, sample, intersection, &in, &bsdf_pdf, ScatterType::BSDF_ALL, &sample_types);
+						if (bsdf_weight.isBlack()) {
+							wo_pdf = bsdf_pdf = dTree_pdf = 0.f;
+							break;
+						}
+
+						// If we sampled a delta component, then we have a 0 probability
+						// of sampling that direction via guiding, thus we can return early.
+						else if (bsdf->isSpecular()) {
+							dTree_pdf = 0.f;
+							wo_pdf = bsdf_pdf * sampling_fraction;
+							bsdf_weight /= sampling_fraction;
+							break;
+						}
+
+						bsdf_weight *= bsdf_pdf;
+					}
+					else {
+						sample.u = (sample.u - sampling_fraction) / (1.f - sampling_fraction);
+						in = dTree->sample(sampler);
+						bsdf_weight = bsdf->f(out, in, intersection);
+					}
+
+					{
+						bsdf_pdf = bsdf->pdf(out, in, intersection);
+						if (!std::isfinite(bsdf_pdf)) {
+							dTree_pdf = 0.f;
+							wo_pdf = 0.f;
+						}
+						else {
+							dTree_pdf = dTree->pdf(out);
+							wo_pdf = sampling_fraction * bsdf_pdf + (1.f - sampling_fraction) * dTree_pdf;
+						}
+					}
+					if (wo_pdf == 0.f) {
+						bsdf_weight = Spectrum(0.f);
+					}
+
+					bsdf_weight /= wo_pdf;
+				} while (0);
+
+				// Luminaire sampling
+				// Estimate the direct illumination if this is requested
+				if (m_doNee && !!bsdf->isSpecular()) {
+					float sample1d = sampler->get1D();
+					int light_idx = Min(int(sample1d * scene->getLightCount()), int(scene->getLightCount() - 1));
+					Spectrum value = estimateDirectLighting(intersection, -path_ray.m_dir, scene->getLight(light_idx), scene, sampler) *
+						float(scene->getLightCount());
+
+					if (!value.isBlack()) {
+						float woDotGN = intersection.gn.dot(in);
+
+						//const Spectrum bsdf_val = bsdf->f()
+						// ...
+					}
+				}
+
+				// BSDF handling
+				if (bsdf_weight.isBlack())
+					break;
+
+				// Trace a ray in this direction
+				path_ray = Ray(intersection.p, in, intersection.m_mediumInterface.getMedium(in, intersection.n));
+				
+				// Keep track of the throughput, medium, and relative
+				//	refractive index along the path
+				throughput *= bsdf_weight;
+				recordRadiance(throughput);
+				// eta update ...
+
+				Spectrum value(0.f);
+
+			}
+			else {
+				// ...
+			}
 		}
 
 		return Li;
