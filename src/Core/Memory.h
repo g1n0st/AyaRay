@@ -86,6 +86,9 @@ namespace Aya {
 		AYA_FORCE_INLINE const T* data() const {
 			return m_data;
 		}
+		AYA_FORCE_INLINE T* data() {
+			return m_data;
+		}
 		AYA_FORCE_INLINE int x() const {
 			return u_res;
 		}
