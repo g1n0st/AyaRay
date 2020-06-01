@@ -40,30 +40,30 @@ void ayaInit() {
 	//Aya::SampledSpectrum::init();
 }
 
-UniquePtr<BSDF> scene_parser_lambertian(const ObjMaterial &mtl) {
-	UniquePtr<BSDF> bsdf;
+std::unique_ptr<BSDF> scene_parser_lambertian(const ObjMaterial &mtl) {
+	std::unique_ptr<BSDF> bsdf;
 	if (mtl.Tf != Spectrum(0.f)) {
-		bsdf = MakeUnique<Glass>(mtl.Tf, 1.f, mtl.Ni);
+		bsdf = std::make_unique<Glass>(mtl.Tf, 1.f, mtl.Ni);
 	}
 	else if (mtl.Ks[0] > 0.4f) {
-		bsdf = MakeUnique<Glass>(Spectrum(1.f, 1.f, 1.f), 1.f, 1.5f);
+		bsdf = std::make_unique<Glass>(Spectrum(1.f, 1.f, 1.f), 1.f, 1.5f);
 	}
 	else {
-		/*UniquePtr<Texture2D<float>> specular;
+		/*std::unique_ptr<Texture2D<float>> specular;
 		if (mtl.map_Ks[0])
-			specular = MakeUnique<ImageTexture2D<float, float>>(mtl.map_Ks);
+			specular = std::make_unique<ImageTexture2D<float, float>>(mtl.map_Ks);
 		else
-			specular = MakeUnique<ConstantTexture2D<float>>((mtl.Ks[0] +
+			specular = std::make_unique<ConstantTexture2D<float>>((mtl.Ks[0] +
 				mtl.Ks[1] +
 				mtl.Ks[2]) / 3.f);
 
-		UniquePtr<Texture2D<float>> roughness = MakeUnique<ConstantTexture2D<float>>((512.f - mtl.Ns) / 512.f);
+		std::unique_ptr<Texture2D<float>> roughness = std::make_unique<ConstantTexture2D<float>>((512.f - mtl.Ns) / 512.f);
 		float metallic = mtl.Ns / 512.f; */
 
 		if (mtl.map_Kd[0])
-			bsdf = MakeUnique<LambertianDiffuse>(mtl.map_Kd);
+			bsdf = std::make_unique<LambertianDiffuse>(mtl.map_Kd);
 		else
-			bsdf = MakeUnique<LambertianDiffuse>(Spectrum(mtl.Kd));
+			bsdf = std::make_unique<LambertianDiffuse>(Spectrum(mtl.Kd));
 	}
 	//if (mtl.map_Bump[0])
 	//	bsdf->setNormalMap(mtl.map_Bump);
@@ -71,10 +71,10 @@ UniquePtr<BSDF> scene_parser_lambertian(const ObjMaterial &mtl) {
 	return bsdf;
 }
 RNG rr;
-UniquePtr<BSDF> hahaha(const ObjMaterial &mtl) {
-	return MakeUnique<Disney>(Spectrum::fromRGB(rr.drand48(), rr.drand48(), rr.drand48()),
-		MakeUnique<ConstantTexture2D<float>>(0.1f),
-		MakeUnique<ConstantTexture2D<float>>(0.9f));
+std::unique_ptr<BSDF> hahaha(const ObjMaterial &mtl) {
+	return std::make_unique<Disney>(Spectrum::fromRGB(rr.drand48(), rr.drand48(), rr.drand48()),
+		std::make_unique<ConstantTexture2D<float>>(0.1f),
+		std::make_unique<ConstantTexture2D<float>>(0.9f));
 }
 int main(void) {
 	ayaInit();
@@ -120,34 +120,34 @@ int main(void) {
 	Primitive *teapot = new Primitive();
 	Primitive *plane = new Primitive();
 	//primitive->loadMesh(o2w, "teapot.obj", true);
-	//primitive->loadPlane(o2w, 3, MakeUnique<LambertianDiffuse>(Spectrum(1.f, 1.f, 1.f)));
+	//primitive->loadPlane(o2w, 3, std::make_unique<LambertianDiffuse>(Spectrum(1.f, 1.f, 1.f)));
 	//light_p->loadMesh(cb, "./cornell-box/light.obj");
 	//mur->loadMesh(murb, "mur.obj", true);
 	RNG dr;
 	dr.srand(time(0));
 	printf("Reading models...\n");
-	bunny0->loadMesh(bunnyb, "bunny.obj", 
-		[](const ObjMaterial &mtl) { return MakeUnique<Glass>(Spectrum::fromRGB(1.f, 1.f, 1.f), 1.f, 2.f); }
-		,true, true);
-	bunny->loadMesh(bunnyc, "bunny.obj", 
-		[](const ObjMaterial &mtl) { return MakeUnique<LambertianDiffuse>(Spectrum::fromRGB(100.f / 255.f, 149.f / 255.f, 225.0f / 255.0f)); }
+	bunny0->loadMesh(bunnyb, "bunny.obj",
+		[](const ObjMaterial &mtl) { return std::make_unique<Glass>(Spectrum::fromRGB(1.f, 1.f, 1.f), 1.f, 2.f); }
 	, true, true);
-	//bunny->loadMesh(bunnyc, "bunny.obj", true, true, MakeUnique<Disney>(Spectrum::fromRGB(100.f / 255.f, 149.f / 255.f, 225.0f / 255.0f), 0.1f, 0.9f));
-	//plane->loadPlane(o2w, 1, MakeUnique<Disney>("background.jpg", 0.0f, 1.0f));
-	//plane->loadPlane(o2w, 1, MakeUnique<LambertianDiffuse>(Spectrum(0.5, 0.5, 0.5)));
-	//primitive->loadPlane(o2w, 2, MakeUnique<Glass>(Spectrum::fromRGB(1.f, 1.f, 1.f)));
-	//primitive->loadMesh(o2w, "teapot.obj", true, MakeUnique<Glass>(Spectrum::fromRGB(1.f, 0.7529f, 0.796f), 1.f, 1.5f));
-	//teapot->loadMesh(bunnyc, "teapot.obj", false, true, MakeUnique<Glass>(Spectrum::fromRGB(1.f, 1.f, 1.f), 1.f, 1.5f));
-	//primitive->loadMesh(idt, "Alucy.obj", true, MakeUnique<Mirror>(Spectrum::fromRGB(1.f, 1.f, 1.f)));
-	//primitive->loadMesh(idt, "Alucy.obj", true, MakeUnique<LambertianDiffuse>(Spectrum::fromRGB(1.f, 1.f, 1.f)));
+	bunny->loadMesh(bunnyc, "bunny.obj",
+		[](const ObjMaterial &mtl) { return std::make_unique<LambertianDiffuse>(Spectrum::fromRGB(100.f / 255.f, 149.f / 255.f, 225.0f / 255.0f)); }
+	, true, true);
+	//bunny->loadMesh(bunnyc, "bunny.obj", true, true, std::make_unique<Disney>(Spectrum::fromRGB(100.f / 255.f, 149.f / 255.f, 225.0f / 255.0f), 0.1f, 0.9f));
+	//plane->loadPlane(o2w, 1, std::make_unique<Disney>("background.jpg", 0.0f, 1.0f));
+	//plane->loadPlane(o2w, 1, std::make_unique<LambertianDiffuse>(Spectrum(0.5, 0.5, 0.5)));
+	//primitive->loadPlane(o2w, 2, std::make_unique<Glass>(Spectrum::fromRGB(1.f, 1.f, 1.f)));
+	//primitive->loadMesh(o2w, "teapot.obj", true, std::make_unique<Glass>(Spectrum::fromRGB(1.f, 0.7529f, 0.796f), 1.f, 1.5f));
+	//teapot->loadMesh(bunnyc, "teapot.obj", false, true, std::make_unique<Glass>(Spectrum::fromRGB(1.f, 1.f, 1.f), 1.f, 1.5f));
+	//primitive->loadMesh(idt, "Alucy.obj", true, std::make_unique<Mirror>(Spectrum::fromRGB(1.f, 1.f, 1.f)));
+	//primitive->loadMesh(idt, "Alucy.obj", true, std::make_unique<LambertianDiffuse>(Spectrum::fromRGB(1.f, 1.f, 1.f)));
 	//primitive->loadMesh(cb, "./cornell-box/CornellBox-Water.obj");
 	primitive->loadMesh(cb, "./cornell-box/CornellBox-Empty-Squashed.obj", &scene_parser_lambertian);
 	//primitive->loadMesh(Transform(), "san-miguel.obj", &scene_parser_lambertian, true, true);
-	//primitive->loadMesh(o2w, "teapot.obj", true, MakeUnique<Glass>(Spectrum::fromRGB(1.f, 1.f, 1.f)));
-	//primitive->loadMesh(o2w, "teapot.obj", true, true, MakeUnique<Disney>(Spectrum::fromRGB(65.f / 255.f, 105.f / 255.f, 225.f / 255.f), 0.0f, 1.0f, 0.0f, 0, 0, 0.5f, 0.f));
+	//primitive->loadMesh(o2w, "teapot.obj", true, std::make_unique<Glass>(Spectrum::fromRGB(1.f, 1.f, 1.f)));
+	//primitive->loadMesh(o2w, "teapot.obj", true, true, std::make_unique<Disney>(Spectrum::fromRGB(65.f / 255.f, 105.f / 255.f, 225.f / 255.f), 0.0f, 1.0f, 0.0f, 0, 0, 0.5f, 0.f));
 	//primitive->loadMesh(cb, "shaderball.obj", true, true);
-	//primitive->loadSphere(cbb, 1, MakeUnique<Disney>(Spectrum::fromRGB(0.05f, 0.05f, 0.05f),
-	//	MakeUnique<ImageTexture2D<float, float>> ("piso_rustico_Spec.png"), MakeUnique<ImageTexture2D<float, float>> ("piso_rustico_Spec.png")));
+	//primitive->loadSphere(cbb, 1, std::make_unique<Disney>(Spectrum::fromRGB(0.05f, 0.05f, 0.05f),
+	//	std::make_unique<ImageTexture2D<float, float>> ("piso_rustico_Spec.png"), std::make_unique<ImageTexture2D<float, float>> ("piso_rustico_Spec.png")));
 	Scene *scene = new Scene();
 	//scene->addPrimitive(plane);
 	scene->addPrimitive(primitive);
@@ -163,8 +163,8 @@ int main(void) {
 	////scene->addLight(new DirectionalLight(Vector3(1.3, -1, 0), Spectrum(2.f, 2.f, 2.f), scene, 30));
 	Primitive * l1 = new Primitive();
 	//Primitive * l2 = new Primitive();
-	//l1->loadSphere(Transform().setTranslate(3, 1, 0), 0.5, MakeUnique<LambertianDiffuse>(Spectrum::fromRGB(1.f, 1.f, 1.f)));
-	//l2->loadSphere(Transform().setTranslate(-0.6, 2.7, 1.3), 0.2, MakeUnique<LambertianDiffuse>(Spectrum::fromRGB(1.f, 1.f, 1.f)));
+	//l1->loadSphere(Transform().setTranslate(3, 1, 0), 0.5, std::make_unique<LambertianDiffuse>(Spectrum::fromRGB(1.f, 1.f, 1.f)));
+	//l2->loadSphere(Transform().setTranslate(-0.6, 2.7, 1.3), 0.2, std::make_unique<LambertianDiffuse>(Spectrum::fromRGB(1.f, 1.f, 1.f)));
 	//scene->addLight(new AreaLight(l1, Spectrum(10.f, 10.f, 10.f)));
 	//scene->addLight(new AreaLight(l2, Spectrum(0.f, 0, 1.f)));
 	//scene->addLight(new PointLight(Point3(0.6, 3.0, 1.2), Spectrum(1.f, 55.0 / 255.0 * 1, 0.f)));
@@ -184,11 +184,11 @@ int main(void) {
 	BidirectionalPathTracingIntegrator *bdpt = new BidirectionalPathTracingIntegrator(task, spp, 32, cam, film);
 	VertexCMIntegrator *vcm = new VertexCMIntegrator(task, spp, 0, 16, cam, film, VertexCMIntegrator::AlgorithmType::kBpt, 0.003f, 0.75f);
 	MemoryPool memory;
-	//bdpt->render(scene, cam, random_sampler, film);
-	vcm->render(scene, cam, random_sampler, film);
+	bdpt->render(scene, cam, random_sampler, film);
+	//vcm->render(scene, cam, random_sampler, film);
 	//pt->render(scene, cam, sobol_sampler , film);
 	//dl->render(scene, cam, sobol_sampler, film);
 	cout << clock() - st << endl;
 	Bitmap::save("test.bmp", (float*)film->getPixelBuffer(), testnumx, testnumy, RGBA_32);
-		return 0;
+	return 0;
 }
