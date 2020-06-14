@@ -159,4 +159,19 @@ namespace Aya {
 
 		m_pixelBuffer = scaled_image;
 	}
+
+	void FilmRHF::histogramFusion(BlockedArray<RGBSpectrum> &input, const Histogram &histogram) {
+
+	}
+	float FilmRHF::chiSquareDistance(const Vector2i &x, const Vector2i &y, const int halfPathSize, const Histogram &histogram) {
+		return 0.f;
+	}
+
+	template<typename T>
+	void FilmRHF::gaussianDownSample(const BlockedArray<T> &input, BlockedArray<T> &output, float scale) {
+
+	}
+	void FilmRHF::bicubicInterpolation(const BlockedArray<RGBSpectrum> &input, BlockedArray<RGBSpectrum> &output) {
+
+	}
 }
