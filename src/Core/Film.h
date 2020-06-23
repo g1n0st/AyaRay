@@ -56,7 +56,7 @@ namespace Aya {
 		void updateDisplay(const float splat_scale = 0.f);
 		inline void addSampleCount() {
 			++m_sampleCount;
-			printf("%d spp(s) is rendered\n", m_sampleCount);
+			printf("\033[01;31m %d spp(s) \033[0m is rendered\n", m_sampleCount);
 		}
 
 		const RGBSpectrum* getPixelBuffer() const {
