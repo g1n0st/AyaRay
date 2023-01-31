@@ -1,9 +1,7 @@
 # AyaRay
 Last update: 2020/4/16
 
-g1n0st
-
-**AyaRay** is a physically based Windows-platform renderer  developing by [Chang Yu]( https://github.com/g1n0st ),  for the purpose of learning global illumination and Ray Tracing. AyaRay is written in modern C ++ and integrates multi-threading and SIMD at the bottom to optimize high-performance computing. It includes many state of the art algorithms published in recent years in light transport simulation. The ultimate goal of AyaRay is to have a complete offline rendering procedure,  and provide the corresponding workflow for the artist.
+**AyaRay** is a physically based Windows-platform renderer. AyaRay is written in modern C++ and integrates multi-threading and SIMD at the bottom to optimize high-performance computing. It includes many state of the art algorithms published in recent years in light transport simulation. The ultimate goal of AyaRay is to have a complete offline rendering procedure,  and provide the corresponding workflow for the artist.
 
 Welcome to use any part of the code or the application in any place, but it should be warned that for now the code is just a demo. And it has no enough ability in any commercial occasions. If you have any issue, please post to the issue page and I will reply as early as I can.
 
